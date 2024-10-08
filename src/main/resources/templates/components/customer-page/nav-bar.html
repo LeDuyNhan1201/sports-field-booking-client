@@ -1,0 +1,28 @@
+<div th:fragment="navBar">
+    <ul>
+        <li>
+            <a th:text="#{customer.home.title}"
+               th:href="@{/}"
+               th:class="${content == 'home'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+
+        <li>
+            <a th:text="#{customer.sports_field.title}"
+               th:href="@{/sports-field}"
+               th:class="${content == 'sportsField'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+
+        <li>
+            <a th:text="#{customer.booking.title}"
+               th:href="@{/booking}"
+               th:class="${content == 'booking'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+
+        <li>
+            <a th:text="#{customer.account.title}"
+               th:href="@{/account}"
+               th:class="${content == 'account'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+    </ul>
+    <hr>
+</div>

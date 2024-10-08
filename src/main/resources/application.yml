@@ -1,0 +1,37 @@
+server:
+  port: 3333
+  servlet:
+    context-path: /sports-field-booking
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-request: true
+      force-response: true
+
+jwt:
+  accessSignerKey: ${ACCESS_SIGNER_KEY}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+spring:
+  config:
+    import: file:env.properties
+
+  application:
+    name: sports-field-booking-client
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    default-locale: en
+    cache-duration: 3600

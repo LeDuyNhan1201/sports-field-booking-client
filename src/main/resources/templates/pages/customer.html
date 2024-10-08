@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/components/head :: head}"></head>
+<body>
+<header th:replace="~{/components/header :: header}"></header>
+
+<div>
+    <div th:replace="~{/components/customer-page/nav-bar :: navBar}"></div>
+    <div th:replace="~{/components/customer-page/main-content :: mainContent}"></div>
+</div>
+
+<footer th:replace="~{/components/footer :: footer}"></footer>
+</body>
+</html>

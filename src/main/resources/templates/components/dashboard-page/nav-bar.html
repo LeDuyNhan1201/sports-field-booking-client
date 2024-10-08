@@ -1,0 +1,22 @@
+<div th:fragment="navBar">
+    <ul>
+        <li>
+            <a th:text="#{dashboard.home.title}"
+               th:href="@{/dashboard}"
+               th:class="${content == 'home'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+
+        <li>
+            <a th:text="#{dashboard.sports_field.title}"
+               th:href="@{/dashboard/sports-field}"
+               th:class="${content == 'sportsField'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+
+        <li>
+            <a th:text="#{dashboard.user_profile.title}"
+               th:href="@{/dashboard/user-profile}"
+               th:class="${content == 'userProfile'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
+        </li>
+    </ul>
+    <hr>
+</div>

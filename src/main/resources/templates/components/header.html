@@ -1,0 +1,9 @@
+<header th:fragment="header">
+    <div>
+        <button type="button" onclick="switchLanguage('en')">English</button>
+        <button type="button" onclick="switchLanguage('vi')">Vietnamese</button>
+        <div id="current-user"></div>
+        <button id="btn-sign-out" type="button">Sign out</button>
+    </div>
+    <script th:src="@{/js/header.js}"></script>
+</header>

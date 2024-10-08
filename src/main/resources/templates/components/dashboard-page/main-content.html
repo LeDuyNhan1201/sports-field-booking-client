@@ -1,0 +1,13 @@
+<div th:fragment="mainContent" th:switch="${content}">
+    <div th:case="'home'">
+        <div th:replace="~{/components/dashboard-page/home :: home}"></div>
+    </div>
+
+    <div th:case="'sportsField'">
+        <div th:replace="~{/components/dashboard-page/sports-field :: sportsField}"></div>
+    </div>
+
+    <div th:case="'userProfile'">
+        <div th:replace="~{/components/dashboard-page/user-profile :: userProfile}"></div>
+    </div>
+</div>
