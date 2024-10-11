@@ -1,4 +1,49 @@
-<footer th:fragment="footer">
-    <p>&copy; 2024 Your Company</p>
-    <div id="loading">Loading...</div> <!-- Đặt loading ở đây -->
+<footer th:fragment="footer" xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Footer -->
+    <footer class="bg-black text-white py-8">
+        <div class="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:text-left">
+            <div>
+                <h3 class="text-2xl font-bold">Sports field</h3>
+                <p class="mt-4 text-gray-500">An online sports booking platform is a service that allows users to find,
+                    reserve, and pay for sports venues near them.</p>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h3 class="text-xl font-bold">Contact us</h3>
+                <ul class="mt-4 space-y-2 text-gray-400">
+                    <li><span>📞</span> +00000000</li>
+                    <li><span>📧</span> test@gmail.com</li>
+                    <li><span>📍</span> TPHCM, Viet Nam</li>
+                </ul>
+            </div>
+
+            <!-- Social -->
+            <div>
+                <h3 class="text-xl font-bold">Follow us</h3>
+                <div class="mt-4 flex flex-col space-y-4">
+                    <a href="#" class="hover:text-gray-300 flex items-center">
+                        <img th:src="@{/image/facebook.png}" alt="facebook" class="w-6 h-6 mr-2">
+                        Facebook</a>
+                    <a href="#" class="hover:text-gray-300 flex items-center">
+                        <img th:src="@{/image/linkedin.png}" alt="linkedin" class="w-6 h-6 mr-2">
+                        LinkedIn</a>
+                    <a href="#" class="hover:text-gray-300 flex items-center">
+                        <img th:src="@{/image/instagram.png}" alt="instagram" class="w-6 h-6 mr-2">
+                        Instagram</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Policy -->
+        <div class="mt-8 border-t border-gray-700 pt-4">
+            <div class="container mx-auto text-center text-gray-400 text-sm">
+                <p>All right @sports 2024</p>
+                <div class="mt-2 flex justify-center space-x-4">
+                    <a href="#" class="hover:text-white">Privacy policy</a>
+                    <a href="#" class="hover:text-white">Terms of use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </footer>

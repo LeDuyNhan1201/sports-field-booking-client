@@ -1,6 +1,6 @@
 document.getElementById('sign-in-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-    showLoading(true);
+//    showLoading(true);
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -40,12 +40,44 @@ document.getElementById('sign-in-form').addEventListener('submit', async (event)
 
     } catch (error) {
         alert(error.message);
-    } finally {
-        showLoading(false);
     }
+//    finally {
+//        showLoading(false);
+//    }
 });
 
 document.getElementById('refresh-btn').addEventListener('click', async (event) => {
     event.preventDefault();
     await refreshToken();
+});
+
+const labels = document.querySelectorAll('label');
+const passwordField = document.getElementById('password');
+const togglePassword = document.getElementById('togglePassword');
+const passwordIcon = document.getElementById('passwordIcon');
+
+togglePassword.addEventListener('click', () => {
+    const isPasswordHidden = passwordField.type === 'password';
+    passwordField.type = isPasswordHidden ? 'text' : 'password';
+
+    const eyePath = passwordIcon.getAttribute('data-eye-path');
+    const hiddenPath = passwordIcon.getAttribute('data-hidden-path');
+
+    passwordIcon.src = isPasswordHidden ? eyePath : hiddenPath;
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const rememberMeCheckbox = document.getElementById('rememberMe');
+    const toggleBackground = rememberMeCheckbox.nextElementSibling;
+    const dot = toggleBackground.querySelector('.dot');
+
+    rememberMeCheckbox.addEventListener('change', () => {
+        if (rememberMeCheckbox.checked) {
+            console.log('Remember Password: true');
+            toggleBackground.classList.add('bg-green-500');
+        } else {
+            console.log('Remember Password: false');
+            toggleBackground.classList.remove('bg-green-500');
+        }
+    });
 });

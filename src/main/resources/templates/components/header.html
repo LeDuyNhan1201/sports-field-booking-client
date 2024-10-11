@@ -1,9 +1,22 @@
-<header th:fragment="header">
-    <div>
-        <button type="button" onclick="switchLanguage('en')">English</button>
-        <button type="button" onclick="switchLanguage('vi')">Vietnamese</button>
-        <div id="current-user"></div>
-        <button id="btn-sign-out" type="button">Sign out</button>
+<!-- Header -->
+<header class="bg-green-800 text-white" th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="flex justify-between items-center py-4 px-16">
+        <a href="#"
+           th:href="@{/}"
+           th:class="${content == 'Sports booking'} ? 'nav active text-3xl font-bold' : 'nav inactive'" aria-current="page">Sports booking</a>
+        <ul class="flex space-x-4">
+            <li class="relative group">
+                <a href="#"
+                   th:href="@{/sports-field}"
+                   th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'" aria-current="page">Sports list</a>
+            </li>
+
+            <li><a href="#"
+                   th:href="@{/sign-in}"
+                   th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'" >Login</a></li>
+            <button type="button" onclick="switchLanguage('en')">English</button>
+            <button type="button" onclick="switchLanguage('vi')">Vietnamese</button>
+            <div id="current-user"></div>
+        </ul>
     </div>
-    <script th:src="@{/js/header.js}"></script>
 </header>

@@ -60,7 +60,9 @@ public class SecurityConfiguration {
 
                 // Frontend Resources
                 "/css/**",
-                "/js/**"
+                "/js/**",
+                "/image/**",
+                "/image/login/**"
                 ).toList().toArray(new String[0]);
 
                 httpSecurity.authorizeHttpRequests(request -> {

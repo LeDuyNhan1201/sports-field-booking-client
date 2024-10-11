@@ -1,1 +1,133 @@
-<h1 th:text="#{sign_up.title}"></h1>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:replace="~{/components/head :: head}"></div>
+<body>
+<div class="min-h-screen flex">
+    <!-- Left side (Image and Button) -->
+    <div class="w-1/2 bg-cover bg-center relative"
+         th:style="'background-image: url(' + @{/image/login/background2.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
+        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="text-center text-white p-10 rounded-lg bg-opacity-30 bg-gray-900">
+                <h2 class="text-2xl font-bold mb-4">👍 Register now!!</h2>
+                <p class="text-2xl mb-4">Register now for our innovative sports software solutions, designed to tackle challenges in everyday sports activities and events.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-1/2 flex items-center justify-center bg-gray-50 min-h-screen mx-auto">
+        <div class="bg-white p-10 shadow-lg rounded-lg">
+            <!-- Logo Section -->
+            <div class="mb-6">
+                <img th:src="@{/image/login/run.png}" alt="Logo" class="mx-auto mb-4 w-20">
+                <h2 class="text-2xl font-bold">Get Started With Sports Booking</h2>
+                <p class="text-gray-500">Ignite your sports journey with sports and get started now.</p>
+            </div>
+
+            <form id="sign-up-form">
+                <!-- Radio -->
+                <div class="flex justify-around mb-6">
+                    <label id="userLabel"
+                           class="flex items-center border-2 border-green-500 p-2 rounded-lg cursor-pointer">
+                        <input type="radio" name="role" value="user" class="mr-2" checked>
+                        <span>I am a User</span>
+                    </label>
+                    <label id="ownerLabel"
+                           class="flex items-center border-2 border-gray-300 p-2 rounded-lg cursor-pointer">
+                        <input type="radio" name="role" value="owner" class="mr-2">
+                        <span>I am a Owner</span>
+                    </label>
+                    <label id="adminLabel"
+                           class="flex items-center border-2 border-gray-300 p-2 rounded-lg cursor-pointer">
+                        <input type="radio" name="role" value="admin" class="mr-2">
+                        <span>I am a Admin</span>
+                    </label>
+                </div>
+
+                <!-- Username Field-->
+                <div class="mb-4">
+                    <input type="text" id="username" name="username" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                           placeholder="Username">
+                </div>
+
+                <!-- Email Field -->
+                <div class="mb-4">
+                    <input type="email" id="email" name="email" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                           placeholder="Email">
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-4 relative">
+                    <input type="password" id="password" name="password" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                           placeholder="Password">
+                    <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" id="togglePassword">
+                            <img th:src="@{/image/login/hidden.png}"
+                                 th:data-eye-path="@{/image/login/eye.png}"
+                                 th:data-hidden-path="@{/image/login/hidden.png}"
+                                 alt="Toggle Password" id="passwordIcon" class="w-6 h-6">
+                        </span>
+                </div>
+
+                <!-- Repeat Password Field -->
+                <div class="mb-4 relative">
+                    <input type="password" id="repeatPassword" name="repeatPassword" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                           placeholder="Repeat Password">
+                    <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" id="toggleRepeatPassword">
+                            <img th:src="@{/image/login/hidden.png}"
+                                 th:data-eye-path="@{/image/login/eye.png}"
+                                 th:data-hidden-path="@{/image/login/hidden.png}"
+                                 alt="Repeat Toggle Password" id="repeatPasswordIcon" class="w-6 h-6">
+                        </span>
+                </div>
+
+                <!-- Remember Password and Forgot Password -->
+                <div class="flex justify-between items-center mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="form-checkbox text-green-500 mr-2">
+                        <span class="text-sm text-center">By continuing you indicate that you read and agreed to the Terms of Use
+                            </span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                        class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6">Sign
+                    In</button>
+
+                <!-- Or continue with -->
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-1/3 border-b border-gray-300"></div>
+                    <span class="mx-3 text-gray-500">or continue with</span>
+                    <div class="w-1/3 border-b border-gray-300"></div>
+                </div>
+
+                <!-- Social Login Buttons -->
+                <div class="flex justify-between">
+                    <button
+                            class="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-lg mr-2">
+                        <img th:src="@{/image/login/google.png}"  alt="Google" class="w-6 h-6 mr-2">
+                        <span>Google</span>
+                    </button>
+                    <button
+                            class="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-lg">
+                        <img th:src="@{/image/login/facebook.png}" alt="Facebook" class="w-6 h-6 mr-2">
+                        <span>Facebook</span>
+                    </button>
+                </div>
+
+                <!-- Signup Link -->
+                <p class="text-center mt-6 text-sm">Have an account?<a th:href="@{sign-in}"
+                                                                       class="text-green-500 font-bold">Sign in!</a></p>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script th:src="@{/js/sign-up.js}"></script>
+</body>
+
+
+<script src="https://cdn.tailwindcss.com"></script>
