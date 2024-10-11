@@ -1,10 +1,24 @@
+const currentUser = localStorage.getItem('current-user');
+const loginSection = document.getElementById('login-section');
+const userInfoSection = document.getElementById('user-info');
+const userImage = document.getElementById('user-image');
+const usernameElement = document.getElementById('username');
+
 if (localStorage.getItem('current-user') !== null) {
     console.log('Current user:', JSON.parse(localStorage.getItem('current-user')));
-    document.getElementById('current-user').innerHTML = JSON.parse(localStorage.getItem('current-user')).email;
-    document.getElementById('btn-sign-out').style.display = 'block';
-} else {
-    document.getElementById('current-user').innerHTML = 'Guest';
-    document.getElementById('btn-sign-out').style.display = 'none';
+
+    if (currentUser) {
+        const user = JSON.parse(currentUser)
+        console.log("test cai", user)
+
+        loginSection.classList.add('hidden')
+        userInfoSection.classList.remove('hidden')
+        userImage.src = user.image || 'default-avatar.png'
+        usernameElement.textContent = user.username
+   } else {
+        loginSection.classList.remove('hidden')
+        userInfoSection.classList.add('hidden')
+   }
 }
 
 function switchLanguage(lang) {
@@ -14,7 +28,7 @@ function switchLanguage(lang) {
 
 document.getElementById('btn-sign-out').addEventListener('click', async (event) => {
     event.preventDefault();
-    showLoading(true);
+//    showLoading(true);
 
     try {
         const response = await fetchCustom({
@@ -33,7 +47,8 @@ document.getElementById('btn-sign-out').addEventListener('click', async (event) 
 
     } catch (error) {
         console.error('Error refreshing token:', error);
-    } finally {
-        showLoading(false);
     }
+//    finally {
+//        showLoading(false);
+//    }
 });

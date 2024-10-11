@@ -11,12 +11,24 @@
                    th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'" aria-current="page">Sports list</a>
             </li>
 
-            <li><a href="#"
+            <li id="login-section"><a href="#"
                    th:href="@{/sign-in}"
                    th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'" >Login</a></li>
             <button type="button" onclick="switchLanguage('en')">English</button>
             <button type="button" onclick="switchLanguage('vi')">Vietnamese</button>
-            <div id="current-user"></div>
+<!--            <div id="current-user"></div>-->
+            <li id="user-info" class="hidden relative group">
+                <div class="relative flex items-center space-x-2 cursor-pointer group-hover:visible">
+                    <img id="user-image" class="w-8 h-8 rounded-full"/>
+                    <span id="username" class="font-bold">Username</span>
+                </div>
+                <!-- Dropdown menu -->
+                <div class="absolute right-0 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300" style="z-index: 10;">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">Thông tin cá nhân</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">Lịch sử đặt sân</a>
+                    <a href="#" id="btn-sign-out" class="block px-4 py-2 hover:bg-gray-100">Đăng xuất</a>
+                </div>
+            </li>
         </ul>
     </div>
 </header>
