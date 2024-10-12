@@ -3,17 +3,17 @@
     <section class="bg-cover bg-center py-20"
              th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
         <div class="container mx-auto text-center text-white">
-            <h2 class="text-5xl font-bold mb-4 text-black">Best sports booking in your area</h2>
-            <p class="mb-8 text-black">You can choose from a variety of sports such as cricket, football, badminton,
+            <h2 class="text-5xl font-bold mb-4 text-black" th:text="#{homepage.background_header.title}">Best sports booking in your area</h2>
+            <p class="mb-8 text-black" th:text="#{homepage.background_content.title}">You can choose from a variety of sports such as cricket, football, badminton,
                 tennis, and
                 more, and book your preferred time slot and location.</p>
             <!-- Search -->
             <div class="bg-white text-black rounded-lg p-6 space-x-6 inline-flex">
                 <select class="p-2 border border-gray-300 rounded-lg">
-                    <option value="football">Football</option>
-                    <option value="basketball">Basketball</option>
-                    <option value="tennis">Tennis</option>
-                    <option value="badminton">Badminton</option>
+                    <option value="football" th:text="#{homepage.football_category.title}">Football</option>
+                    <option value="basketball" th:text="#{homepage.badminton_category.title}">Basketball</option>
+                    <option value="tennis" th:text="#{homepage.basketball_category.title}">Tennis</option>
+                    <option value="badminton" th:text="#{homepage.tennis_category.title}">Badminton</option>
                 </select>
 
                 <input type="text" placeholder="Location" class="p-2 border border-gray-300 rounded-lg">
@@ -23,14 +23,14 @@
                     <option value="">51$ - 100$</option>
                     <option value="">Above 100$</option>
                 </select>
-                <button class="bg-green-600 text-white px-6 py-2 rounded-lg">Search</button>
+                <button class="bg-green-600 text-white px-6 py-2 rounded-lg" th:text="#{homepage.search.title}">Search</button>
             </div>
         </div>
     </section>
 
     <!-- Highest rating sports field (booking)-->
     <section class="container max-w-5xl mx-auto py-6">
-        <h3 class="text-3xl font-bold text-center mb-8">Explore best sports field nearby you</h3>
+        <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}">Explore best sports field nearby you</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Card -->
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
@@ -74,26 +74,26 @@
 
     <!-- Category -->
     <section class="container mx-auto py-12">
-        <h3 class="text-2xl font-bold text-center mb-8">Fields Category</h3>
+        <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.category.title}">Fields Category</h3>
         <div class="flex justify-center space-x-6">
             <!-- Football Card -->
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
                 <img th:src="@{/image/ball.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10">
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10">Football</span>
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.football_category.title}">Football</span>
             </a>
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
                 <img th:src="@{/image/badminton.png}" alt="Badminton" class="w-16 h-16 mt-8 ml-4 relative z-10">
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10">Badminton</span>
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.badminton_category.title}">Badminton</span>
             </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
             <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
             <img th:src="@{/image/basketball.png}" alt="Basketball" class="w-16 h-16 mt-8 ml-4 relative z-10">
-            <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10">Basketball</span>
+            <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.basketball_category.title}">Basketball</span>
         </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
             <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
             <img th:src="@{/image/tennis.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10">
-            <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10">Tennis</span>
+            <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.tennis_category.title}">Tennis</span>
         </a>
         </div>
     </section>
@@ -102,7 +102,7 @@
     <!-- Partner -->
     <section class="bg-green-100 py-12">
         <div class="container mx-auto">
-            <h3 class="text-2xl font-bold text-center mb-8">Out partner</h3>
+            <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.partner.title}">Out partner</h3>
             <div class="flex justify-center space-x-6">
                 <img th:src="@{/image/partner1.png}" alt="logo" class="w-16 h-16 rounded-full">
                 <img th:src="@{/image/partner2.png}" alt="logo" class="w-16 h-16 rounded-full">

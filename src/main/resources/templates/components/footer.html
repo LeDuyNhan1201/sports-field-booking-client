@@ -3,14 +3,14 @@
     <footer class="bg-black text-white py-8">
         <div class="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:text-left">
             <div>
-                <h3 class="text-2xl font-bold">Sports field</h3>
-                <p class="mt-4 text-gray-500">An online sports booking platform is a service that allows users to find,
+                <h3 class="text-2xl font-bold" th:text="#{homepage.footer_sports_header.title}">Sports field</h3>
+                <p class="mt-4 text-gray-500" th:text="#{homepage.footer_sports_content.title}">An online sports booking platform is a service that allows users to find,
                     reserve, and pay for sports venues near them.</p>
             </div>
 
             <!-- Contact -->
             <div>
-                <h3 class="text-xl font-bold">Contact us</h3>
+                <h3 class="text-xl font-bold" th:text="#{homepage.footer_contact_header.title}">Contact us</h3>
                 <ul class="mt-4 space-y-2 text-gray-400">
                     <li><span>📞</span> +00000000</li>
                     <li><span>📧</span> test@gmail.com</li>
@@ -20,7 +20,7 @@
 
             <!-- Social -->
             <div>
-                <h3 class="text-xl font-bold">Follow us</h3>
+                <h3 class="text-xl font-bold" th:text="#{homepage.footer_follow_header.title}">Follow us</h3>
                 <div class="mt-4 flex flex-col space-y-4">
                     <a href="#" class="hover:text-gray-300 flex items-center">
                         <img th:src="@{/image/facebook.png}" alt="facebook" class="w-6 h-6 mr-2">
@@ -40,8 +40,8 @@
             <div class="container mx-auto text-center text-gray-400 text-sm">
                 <p>All right @sports 2024</p>
                 <div class="mt-2 flex justify-center space-x-4">
-                    <a href="#" class="hover:text-white">Privacy policy</a>
-                    <a href="#" class="hover:text-white">Terms of use</a>
+                    <a href="#" class="hover:text-white" th:text="#{homepage.policy.title}">Privacy policy</a>
+                    <a href="#" class="hover:text-white" th:text="#{homepage.terms.title}">Terms of use</a>
                 </div>
             </div>
         </div>

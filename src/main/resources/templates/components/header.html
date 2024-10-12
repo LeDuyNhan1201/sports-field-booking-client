@@ -3,17 +3,17 @@
     <div class="flex justify-between items-center py-4 px-16">
         <a href="#"
            th:href="@{/}"
-           th:class="${content == 'Sports booking'} ? 'nav active text-3xl font-bold' : 'nav inactive'" aria-current="page">Sports booking</a>
+           th:class="${content == 'Sports booking'} ? 'nav active text-3xl font-bold' : 'nav inactive'" aria-current="page" th:text="#{homepage.name.title}">Sports booking</a>
         <ul class="flex space-x-4">
             <li class="relative group">
                 <a href="#"
                    th:href="@{/sports-field}"
-                   th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'" aria-current="page">Sports list</a>
+                   th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'" aria-current="page" th:text="#{homepage.sports_list.title}">Sports list</a>
             </li>
 
             <li id="login-section"><a href="#"
                    th:href="@{/sign-in}"
-                   th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'" >Login</a></li>
+                   th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'" th:text="#{homepage.login.title}">Login</a></li>
             <button type="button" onclick="switchLanguage('en')">English</button>
             <button type="button" onclick="switchLanguage('vi')">Vietnamese</button>
 <!--            <div id="current-user"></div>-->
@@ -24,9 +24,9 @@
                 </div>
                 <!-- Dropdown menu -->
                 <div class="absolute right-0 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300" style="z-index: 10;">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">Thông tin cá nhân</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">Lịch sử đặt sân</a>
-                    <a href="#" id="btn-sign-out" class="block px-4 py-2 hover:bg-gray-100">Đăng xuất</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" th:text="#{homepage.personal_info.title}">Thông tin cá nhân</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" th:text="#{homepage.booking_history.title}">Lịch sử đặt sân</a>
+                    <a href="#" id="btn-sign-out" class="block px-4 py-2 hover:bg-gray-100" th:text="#{homepage.logout.title}">Đăng xuất</a>
                 </div>
             </li>
         </ul>
