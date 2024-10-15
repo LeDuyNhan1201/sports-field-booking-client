@@ -5,7 +5,7 @@
            th:href="@{/}"
            th:class="${content == 'Sports booking'} ? 'nav active text-3xl font-bold' : 'nav inactive'" aria-current="page" th:text="#{homepage.name.title}">Sports booking</a>
         <ul class="flex space-x-4">
-            <li class="relative group">
+            <li class="relative group flex items-center">
                 <a href="#"
                    th:href="@{/sports-field}"
                    th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'" aria-current="page" th:text="#{homepage.sports_list.title}">Sports list</a>
@@ -24,9 +24,18 @@
                 </div>
                 <!-- Dropdown menu -->
                 <div class="absolute right-0 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300" style="z-index: 10;">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" th:text="#{homepage.personal_info.title}">Thông tin cá nhân</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100" th:text="#{homepage.booking_history.title}">Lịch sử đặt sân</a>
-                    <a href="#" id="btn-sign-out" class="block px-4 py-2 hover:bg-gray-100" th:text="#{homepage.logout.title}">Đăng xuất</a>
+                    <div class="flex flex-col items-center w-full">
+                        <a th:href="@{/userInfo}"
+                           th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
+                           th:text="#{homepage.personal_info.title}"
+                           class="w-full block text-left">Thông tin cá nhân</a>
+                        <a href="#"
+                           class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
+                           th:text="#{homepage.booking_history.title}">Lịch sử đặt sân</a>
+                        <a href="#" id="btn-sign-out"
+                           class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
+                           th:text="#{homepage.logout.title}">Đăng xuất</a>
+                    </div>
                 </div>
             </li>
         </ul>

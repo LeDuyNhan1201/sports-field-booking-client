@@ -42,4 +42,11 @@ public class CustomerController {
         return "pages/customer";
     }
 
+    @GetMapping("/userInfo")
+    public String userInfoPage(Model model){
+        model.addAttribute("title", getLocalizedMessage("userInfo.profile_menu.title "));
+        model.addAttribute("content", "userInfo");
+        return "pages/customer";
+    }
+
 }

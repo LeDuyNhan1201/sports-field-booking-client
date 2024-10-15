@@ -15,7 +15,7 @@
         <div th:replace="~{/components/pages/authentication/sign-in :: signIn}"></div>
     </div>
 
-    <div th:case="'register'">
-        <div th:replace="~{/components/pages/authentication/sign-up :: signUp}"></div>
+    <div th:case="'userInfo'">
+        <div th:replace="~{/components/customer-page/userInfo :: userInfo}"></div>
     </div>
 </div>
