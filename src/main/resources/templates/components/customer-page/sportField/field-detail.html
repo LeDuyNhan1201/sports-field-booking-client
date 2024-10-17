@@ -1,0 +1,89 @@
+<div class="flex justify-center items-center my-10 bg-transparent" xmlns:th="http://www.w3.org/1999/xhtml" th:fragment="fieldDetail">
+    <div class="h-3/5 w-4/5 border border-black rounded-xl shadow-xl border-gray-400">
+        <div class="flex justify-between p-4 border-b items-center">
+            <span class="text-2xl font-semibold" th:text="#{fieldDetail.fieldDetailHeader.title}">Sport Field Detail</span>
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div class="bg-yellow-50 mx-8 my-6 rounded-2xl">
+            <div class="flex p-8 items-center">
+                <div>
+                    <img src="https://placehold.co/600x400" alt="" class="rounded-2xl w-40 h-40" />
+                </div>
+                <div class="flex-1 px-8">
+                    <div class="flex flex-row items-center">
+                        <span class="text-2xl font-bold text-green-700" th:text="${id}">Etihad Stadium</span>
+                        <div class="ml-5">
+                            <i class="fa-solid fa-star" style="color: #ffd43b"></i>
+                            <i class="fa-solid fa-star" style="color: #ffd43b"></i>
+                            <i class="fa-solid fa-star" style="color: #ffd43b"></i>
+                        </div>
+                    </div>
+                    <div class="flex justify-between py-4">
+                        <div class="flex items-center">
+                            <i class="fa fa-location-arrow mr-2" aria-hidden="true"></i>
+                            <span class="text-gray-500">Manchester City, England</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-phone mr-2"></i>
+                            <span class="text-gray-500">+88 098 463</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fa-regular fa-envelope mr-2"></i>
+                            <span class="text-gray-500">mcontop@gmail.com</span>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex flex-column items-center">
+                            <i class="fa-solid fa-basketball p-2 w-10 rounded-full mx-3"></i>
+                            <div class="flex flex-col">
+                                <span th:text="#{fieldDetail.category.title}">Loại</span>
+                                <span class="text-md font-bold">Sân bóng đá</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-column items-center px-8">
+                            <img src="https://placehold.co/600x400" class="w-10 rounded-full mx-3" alt="" />
+                            <div class="flex flex-col">
+                                <span th:text="#{fieldDetail.owner.title}">Chủ sân</span>
+                                <span class="text-md font-bold">Chủ tịch Mohamed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex px-20">
+                    <span class="text-xl font-bold text-green-500">100.000/h</span>
+                </div>
+            </div>
+        </div>
+        <div class="mx-4">
+            <a 
+            th:text="#{fieldDetail.buttonDetail.title}"
+            th:href="@{/field-detail/1}"
+            th:class="${content == 'fieldDetail'} ? 
+            'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800' 
+            : 'text-2xl font-semibold text-gray-600 pr-5 cursor-pointer'"
+            >Chi tiết</a>
+
+            <a
+            th:text="#{fieldDetail.buttonReview.title}"
+            th:href="@{/field-review/1}"
+            th:class="${content == 'fieldReview'} ? 
+            'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800' 
+            : 'text-2xl font-semibold text-gray-600 pl-5 cursor-pointer'"
+            >Đánh giá</a>
+
+        </div>
+        <div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml">
+            <div th:case="'fieldDetail'">
+                <div th:replace="~{/components/customer-page/sportField/detail}"></div>
+            </div>
+            <div th:case="'fieldReview'">
+                <div th:replace="~{/components/customer-page/sportField/review(id=${id})}"></div>
+                <div th:replace="~{/components/customer-page/sportField/review(id=${id})}"></div>
+            </div>
+        </div>
+
+        <div class="flex justify-end px-3 pb-3">
+            <button class="bg-green-200 py-2 px-4 rounded-2xl font-semibold" th:text="#{fieldDetail.buttonOrder.title}">Thuê</button>
+        </div>
+    </div>
+</div>

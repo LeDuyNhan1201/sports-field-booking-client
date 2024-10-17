@@ -18,4 +18,12 @@
     <div th:case="'userInfo'">
         <div th:replace="~{/components/customer-page/userInfo :: userInfo}"></div>
     </div>
+
+    <div th:case="'fieldDetail'">
+        <div th:replace="~{/components/customer-page/sportField/field-detail :: fieldDetail}"></div>
+    </div>
+
+    <div th:case="'fieldReview'">
+        <div th:replace="~{/components/customer-page/sportField/field-detail :: fieldDetail}"></div>
+    </div>
 </div>

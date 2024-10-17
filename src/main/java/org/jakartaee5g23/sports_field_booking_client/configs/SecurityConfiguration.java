@@ -57,6 +57,8 @@ public class SecurityConfiguration {
                 "/sports-field",
                 "/booking",
                 "/account",
+                "/field-detail/**",
+                "/field-review/**",
 
                 // Frontend Resources
                 "/css/**",

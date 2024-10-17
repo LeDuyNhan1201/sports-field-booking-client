@@ -1,0 +1,42 @@
+<div class="mx-8 my-6">
+    <div class="px-4 bg-gray-100 rounded-2xl">
+        <div class="flex flex-row items-center border-b py-2">
+            <div class="flex w-7 h-7 justify-center items-center rounded-full bg-yellow-50 mr-2">
+                <i class="fa-solid fa-stopwatch" style="color: #00fa1d"></i>
+            </div>
+            <span class="font-semibold text-lg" th:text="#{fieldDetail.time.title}">Thời Gian</span>
+        </div>
+        <div class="flex flex-row ml-5 items-center py-3">
+            <div class="flex items-center mx-5">
+                <span class="text-lg font-medium" th:text="#{fieldDetail.openingTime.title}">Giờ mở cửa:</span>
+                <span class="text-lg ml-5 text-gray-500">10:10</span>
+            </div>
+            <div class="flex items-center mx-5">
+                <span class="text-lg font-medium" th:text="#{fieldDetail.closingTime.title}">Giờ đóng cửa:</span>
+                <span class="text-lg ml-5 text-gray-500">16:10</span>
+            </div>
+        </div>
+    </div>
+    <div class="px-4 bg-gray-100 mt-2 rounded-2xl">
+        <div class="flex flex-row items-center border-b py-2">
+            <div class="flex w-7 h-7 justify-center items-center rounded-full bg-yellow-50 mr-2">
+                <i class="fa-solid fa-signal" style="color: #00fa1d"></i>
+            </div>
+            <span class="font-semibold text-lg" th:text="#{fieldDetail.status.title}">Trạng thái</span>
+        </div>
+        <div class="flex flex-row ml-5 items-center py-2">
+            <div class="flex items-center mx-5 bg-yellow-100 p-1 px-2 rounded-3xl cursor-pointer">
+                <span class="text-lg font-medium text-green-800">Sẵn sàng</span>
+            </div>
+            <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
+                <span class="text-lg font-medium text-gray-300">Đang hoạt động</span>
+            </div>
+            <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
+                <span class="text-lg font-medium text-gray-300">Bảo trì</span>
+            </div>
+            <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
+                <span class="text-lg font-medium text-gray-300">Đóng cửa</span>
+            </div>
+        </div>
+    </div>
+</div>
