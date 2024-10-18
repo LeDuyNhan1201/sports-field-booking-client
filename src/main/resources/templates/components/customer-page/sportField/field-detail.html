@@ -1,4 +1,4 @@
-<div class="flex justify-center items-center my-10 bg-transparent" xmlns:th="http://www.w3.org/1999/xhtml" th:fragment="fieldDetail">
+<div class="flex justify-center items-center my-10" id='field-detail' xmlns:th="http://www.w3.org/1999/xhtml" th:fragment="fieldDetail">
     <div class="h-3/5 w-4/5 border border-black rounded-xl shadow-xl border-gray-400">
         <div class="flex justify-between p-4 border-b items-center">
             <span class="text-2xl font-semibold" th:text="#{fieldDetail.fieldDetailHeader.title}">Sport Field Detail</span>
@@ -77,13 +77,26 @@
                 <div th:replace="~{/components/customer-page/sportField/detail}"></div>
             </div>
             <div th:case="'fieldReview'">
+                <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
+                    <div class="flex flex-col">
+                        <div class="flex flex-row items-center">
+                            <img src="https://placehold.co/600x400" class="h-10 w-10 m-2" alt="" />
+                            <div class="flex flex-col">
+                                <span class="text-red-600 italic">Parent</span>
+                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700" placeholder="Nhập văn bản..." />
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer"></i>
+                        </div>
+                    </div>
+                </div>
                 <div th:replace="~{/components/customer-page/sportField/review(id=${id})}"></div>
                 <div th:replace="~{/components/customer-page/sportField/review(id=${id})}"></div>
             </div>
         </div>
-
-        <div class="flex justify-end px-3 pb-3">
-            <button class="bg-green-200 py-2 px-4 rounded-2xl font-semibold" th:text="#{fieldDetail.buttonOrder.title}">Thuê</button>
-        </div>
+    </div>
+    <div class="absolute w-full h-full top-0 hidden bg-gray-200 bg-opacity-50" id='booking-detail'>
+        <div th:replace="~{/components/customer-page/sportField/booking-detail}"></div>
     </div>
 </div>
