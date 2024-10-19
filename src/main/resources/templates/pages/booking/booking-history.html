@@ -1,0 +1,36 @@
+<!-- src/main/resources/templates/pages/booking-history.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="${title}">Booking History</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+
+<body>
+    <div th:replace="components/header :: header"></div>
+    <div class="container">
+        <h1 th:text="#{booking.history.title}">Booking History</h1>
+        <div id="no-bookings-message" style="display: none;" th:text="#{booking.history.no_bookings}">Không có lịch sử
+            đặt sân</div>
+        <table class="table table-striped" id="booking-history-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Sport Field</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="booking-history-body">
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="components/footer :: footer"></div>
+    <script th:src="@{/js/booking-history.js}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+
+</html>
