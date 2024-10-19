@@ -1,3 +1,18 @@
+/* src/main/resources/static/css/styles.css */
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 10px 0;
+}
+
 .container {
     margin: 20px;
 }
@@ -10,7 +25,7 @@
 .table th, .table td {
     padding: 10px;
     border: 1px solid #ddd;
-    text-align: center;
+    text-align: center; 
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
