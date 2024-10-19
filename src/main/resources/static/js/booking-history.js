@@ -1,5 +1,6 @@
 // src/main/resources/static/js/booking-history.js
 
+// Function to get a cookie by name
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -50,12 +51,12 @@ async function fetchBookingHistory() {
             bookings.forEach(booking => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${booking.id}</td>
-                    <td>${booking.user.username}</td>
-                    <td>${booking.sportField.name}</td>
-                    <td>${booking.startTime}</td>
-                    <td>${booking.endTime}</td>
-                    <td>${booking.status}</td>
+                    <td class="border px-4 py-2">${booking.id}</td>
+                    <td class="border px-4 py-2">${booking.user.username}</td>
+                    <td class="border px-4 py-2">${booking.sportField.name}</td>
+                    <td class="border px-4 py-2">${booking.startTime}</td>
+                    <td class="border px-4 py-2">${booking.endTime}</td>
+                    <td class="border px-4 py-2">${booking.status}</td>
                 `;
                 tableBody.appendChild(row);
             });
