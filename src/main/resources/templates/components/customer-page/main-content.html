@@ -1,14 +1,14 @@
-<div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="mainContent" th:switch="${content}">
     <div th:case="'home'">
         <div th:replace="~{/components/customer-page/home :: home}"></div>
     </div>
 
     <div th:case="'sportsField'">
-        <div th:replace="~{/components/customer-page/sports-field :: sportsField}"></div>
+        <div th:replace="~{/components/customer-page/sports-field.html :: sportsField}"></div>
     </div>
 
     <div th:case="'booking'">
-        <div th:replace="~{/components/customer-page/userBooking :: userBooking}"></div>
+        <div th:replace="~{/components/customer-page/user-booking :: userBooking}"></div>
     </div>
 
     <div th:case="'login'">
@@ -16,14 +16,14 @@
     </div>
 
     <div th:case="'userInfo'">
-        <div th:replace="~{/components/customer-page/userInfo :: userInfo}"></div>
+        <div th:replace="~{/components/customer-page/user-info :: userInfo}"></div>
     </div>
 
     <div th:case="'fieldDetail'">
-        <div th:replace="~{/components/customer-page/sportField/field-detail :: fieldDetail}"></div>
+        <div th:replace="~{/components/customer-page/sports-field/field-detail :: fieldDetail}"></div>
     </div>
 
-    <div th:case="'fieldReview'">
-        <div th:replace="~{/components/customer-page/sportField/field-detail :: fieldDetail}"></div>
-    </div>
+    <div id="loading"></div>
+
+    <script th:src="@{/js/utils.js}"></script>
 </div>

@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/components/head :: head}"></head>
+<div th:replace="~{/components/head :: head}"></div>
+
 <body>
 <header th:replace="~{/components/header :: header}"></header>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.css" />
 <div>
-<!--    <div th:replace="~{/components/nav-bar :: navBar}"></div>-->
     <div th:replace="~{/components/customer-page/main-content :: mainContent}"></div>
 </div>
 
 <footer th:replace="~{/components/footer :: footer}"></footer>
-</body>
-<script th:src="@{/js/header.js}"></script>
-<script th:src="@{/js/customer-page/field-detail.js}"></script>
-<script th:src="@{/js/customer-page/booking-detail.js}"></script>
-<script src="https://cdn.tailwindcss.com"></script>
 
-<link rel="stylesheet" th:href="@{/css/scrollbar.css}">
+<script th:src="@{/js/header.js}"></script>
+</body>
+
 </html>

@@ -18,6 +18,10 @@ function checkAccessToken() {
     if (!cookies.accessToken) window.location.href = CLIENT_DOMAIN + "/auth";
 }
 
+function setCookie(name, value, path = '/', domain = 'localhost', expires = '', sameSite = 'Strict') {
+    document.cookie = `${name}=${value}; path=${path}; domain=${domain}; expires=${expires}; SameSite=${sameSite}`;
+}
+
 function getAccessTokenFromCookie() {
     const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
         const [name, value] = cookie.split('=');
@@ -65,16 +69,16 @@ async function refreshToken() {
             return payload.exp * 1000; // chuyển đổi sang milliseconds
         };
 
-        const accessTokenExpiry = new Date(decodeToken(accessToken));
         // Lưu accessToken mới vào cookie
-        document.cookie = `accessToken=${accessToken}; path=/; domain=localhost; expires=${accessTokenExpiry.toUTCString()}`;
+        const accessTokenExpiry = new Date(decodeToken(accessToken));
+        setCookie('accessToken', accessToken, '/', 'localhost', accessTokenExpiry.toUTCString(), 'Strict');
+
         // Đặt lại bộ đếm thời gian để kiểm tra token hết hạn
         scheduleTokenRefresh(accessToken);
         console.log('Token refreshed');
 
     } catch (error) {
         console.error('Error refreshing token:', error.message);
-        alert('Failed to refresh token');
         window.location.href = CLIENT_DOMAIN + "/auth";
     }
 }
@@ -98,12 +102,15 @@ async function fetchCustom({
     if (queryString) endpoint += `?${queryString}`;
 
     // Prepare headers
-    const headers = { 'Content-Type': 'application/json', };
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+    };
 
     if (withAuth) {
         const accessToken = getAccessTokenFromCookie();
 
-        if (!accessToken) showError('Access token not found. Please log in.');
+        if (!accessToken) window.location.href = CLIENT_DOMAIN + "/auth";
 
         headers['Authorization'] = `Bearer ${accessToken}`;
     }

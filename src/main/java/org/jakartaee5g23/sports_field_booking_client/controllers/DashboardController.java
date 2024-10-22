@@ -37,4 +37,11 @@ public class DashboardController {
         return "pages/dashboard";
     }
 
+    @GetMapping("/file-storage")
+    public String fileStoragePage(Model model){
+        model.addAttribute("title", getLocalizedMessage("dashboard.file_storage.title"));
+        model.addAttribute("content", "fileStorage");
+        return "pages/dashboard";
+    }
+
 }

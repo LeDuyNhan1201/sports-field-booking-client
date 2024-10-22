@@ -1,15 +1,15 @@
-<div class="flex justify-center items-center mt-10">
+<div class="flex justify-center items-center mt-10" th:fragment="bookingDetail">
     <div class="h-3/5 w-5/6 border border-black rounded-xl shadow-xl border-gray-400 bg-white">
         <div class="flex justify-between p-4 border-b items-center">
             <div class="flex items-center">
-                <span class="text-2xl font-semibold text" th:text="#{bookingDetail.header.title}">Booking Detail</span>
+                <span class="text-2xl font-semibold text" th:text="#{booking_detail.header.title}"></span>
                 <span class="py-1 px-2 mx-2 bg-purple-100 rounded-2xl">Đang được thuê</span>
             </div>
             <i class="fa-solid fa-xmark cursor-pointer text-xl text-red-500" id="buttonCloseBookingDetail"></i>
         </div>
         <div class="bg-gray-100 mx-6 my-4 py-5 px-7 rounded-2xl flex flex-row justify-between items-center">
             <div class="flex flex-col">
-                <span class="font-semibold text-xl text-green-800" th:text="#{bookingDetail.info.title}">Information</span>
+                <span class="font-semibold text-xl text-green-800" th:text="#{booking_detail.info.title}"></span>
                 <div class="flex flex-row items-center mt-3">
                     <div class="flex flex-row px-2 mr-4">
                         <img src="https://placehold.co/600x400" class="w-16 rounded-full mx-3" alt="" />
@@ -23,39 +23,41 @@
             </div>
             <div class="flex flex-col items-center">
                 <div>
-                    <span class="text-lg" th:text='#{bookingDetail.fieldSelectQuantity.title}'>Tổng số chỗ đã đặt:</span>
+                    <span class="text-lg" th:text="#{booking_detail.field_select_quantity.title}"></span>
                     <span class="text-xl text-green-800 font-bold mx-2" id="slotsSelectQuantity">0</span>
                 </div>
                 <span class="text-2xl text-red-500 font-bold mx-2">10.000đ</span>
             </div>
         </div>
         <div class="flex justify-end mx-12">
-            <button class="h-9 w-28 bg-green-300 rounded-xl font-bold" th:text='#{bookingDetail.buttonOrder.title}'>Đặt</button>
+            <button class="h-9 w-28 bg-green-300 rounded-xl font-bold" th:text="#{booking_detail.button_order.title}"></button>
         </div>
         <div class="m-5 p-5 border-2 bg-green-100">
             <div class="flex flex-row justify-between items-center pb-3 border-b">
-                <span class="font-semibold text-xl text-green-800" th:text='#{bookingDetail.fieldAvailability.title}'>Availability</span>
+                <span class="font-semibold text-xl text-green-800" th:text="#{booking_detail.field_availability.title}"></span>
                 <div class="flex flex-row items-center">
                     <i class="fa-solid fa-chevron-left text-xl cursor-pointer text-green-600"></i>
                     <span class="mx-1 text-lg mx-4">20-10-2027</span>
                     <i class="fa-solid fa-chevron-right text-xl cursor-pointer text-green-600"></i>
                 </div>
                 <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md font-semibold rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                    <option selected th:text='#{bookingDetail.statusFilter.title}'>Status</option>
+                    <option selected th:text="#{booking_detail.status_filter.title}"></option>
                     <option value="US">Ordered</option>
                     <option value="CA">Close</option>
                     <option value="FR">Open</option>
                 </select>
             </div>
+
             <div class="py-4 mx-8">
                 <div class="flex flex-row justify-between">
                     <div class="flex flex-1 justify-between">
-                        <span class="text-lg font-semibold flex-1" th:text='#{bookingDetail.openingTime.title}'>Giờ bắt đầu</span>
-                        <span class="text-lg font-semibold flex-1 text-center" th:text='#{bookingDetail.closingTime.title}'>Giờ kết thúc</span>
-                        <span class="text-lg font-semibold flex-1 text-end" th:text='#{bookingDetail.price.title}'>Giá tiền</span>
+                        <span class="text-lg font-semibold flex-1" th:text="#{booking_detail.opening_time.title}"></span>
+                        <span class="text-lg font-semibold flex-1 text-center" th:text="#{booking_detail.closing_time.title}"></span>
+                        <span class="text-lg font-semibold flex-1 text-end" th:text="#{booking_detail.price.title}"></span>
                     </div>
-                    <span class="flex w-1/2 justify-end text-lg font-semibold" th:text='#{bookingDetail.statusFilter.title}'>Trạng thái</span>
+                    <span class="flex w-1/2 justify-end text-lg font-semibold" th:text="#{booking_detail.status_filter.title}"></span>
                 </div>
+
                 <div class="overflow-y-scroll custom-scrollbar max-h-40">
                     <a class="flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 field_availability">
                         <div class="flex flex-1 justify-between">
@@ -77,4 +79,6 @@
             </div>
         </div>
     </div>
+
+    <script th:src="@{/js/customer-page/booking-detail.js}"></script>
 </div>

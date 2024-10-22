@@ -1,9 +1,10 @@
-<div class="flex justify-center items-center my-10" id='field-detail' xmlns:th="http://www.w3.org/1999/xhtml" th:fragment="fieldDetail">
+ <div class="flex justify-center items-center my-10" id='field-detail' th:fragment="fieldDetail">
     <div class="h-3/5 w-4/5 border border-black rounded-xl shadow-xl border-gray-400">
         <div class="flex justify-between p-4 border-b items-center">
-            <span class="text-2xl font-semibold" th:text="#{fieldDetail.fieldDetailHeader.title}">Sport Field Detail</span>
+            <span class="text-2xl font-semibold" th:text="#{field_detail.field_detail_header.title}">Sport Field Detail</span>
             <i class="fa-solid fa-xmark"></i>
         </div>
+
         <div class="bg-yellow-50 mx-8 my-6 rounded-2xl">
             <div class="flex p-8 items-center">
                 <div>
@@ -36,14 +37,14 @@
                         <div class="flex flex-column items-center">
                             <i class="fa-solid fa-basketball p-2 w-10 rounded-full mx-3"></i>
                             <div class="flex flex-col">
-                                <span th:text="#{fieldDetail.category.title}">Loại</span>
+                                <span th:text="#{field_detail.category.title}">Loại</span>
                                 <span class="text-md font-bold">Sân bóng đá</span>
                             </div>
                         </div>
                         <div class="flex flex-column items-center px-8">
                             <img src="https://placehold.co/600x400" class="w-10 rounded-full mx-3" alt="" />
                             <div class="flex flex-col">
-                                <span th:text="#{fieldDetail.owner.title}">Chủ sân</span>
+                                <span th:text="#{field_detail.owner.title}">Chủ sân</span>
                                 <span class="text-md font-bold">Chủ tịch Mohamed</span>
                             </div>
                         </div>
@@ -54,36 +55,36 @@
                 </div>
             </div>
         </div>
-        <div class="mx-4">
-            <a 
-            th:text="#{fieldDetail.buttonDetail.title}"
-            th:href="@{/field-detail/1}"
-            th:class="${content == 'fieldDetail'} ? 
-            'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800' 
-            : 'text-2xl font-semibold text-gray-600 pr-5 cursor-pointer'"
-            >Chi tiết</a>
 
-            <a
-            th:text="#{fieldDetail.buttonReview.title}"
-            th:href="@{/field-review/1}"
-            th:class="${content == 'fieldReview'} ? 
-            'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800' 
-            : 'text-2xl font-semibold text-gray-600 pl-5 cursor-pointer'"
-            >Đánh giá</a>
+        <div class="mx-4">
+            <a th:text="#{field_detail.button_detail.title}"
+                th:href="@{/sports-field/1/details}"
+                th:class="${content == 'detailTab'} ?
+                'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800'
+                : 'text-2xl font-semibold text-gray-600 pr-5 cursor-pointer'"></a>
+
+            <a th:text="#{field_detail.button_review.title}"
+                th:href="@{/sports-field/1/reviews}"
+                th:class="${content == 'reviewTab'} ?
+                'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800'
+                : 'text-2xl font-semibold text-gray-600 pl-5 cursor-pointer'"></a>
 
         </div>
-        <div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml">
-            <div th:case="'fieldDetail'">
-                <div th:replace="~{/components/customer-page/sportField/detail}"></div>
+
+        <div th:switch="${subContent}">
+            <div th:case="'detailTab'">
+                <div th:replace="~{/components/customer-page/sports-field/tab-detail}"></div>
             </div>
-            <div th:case="'fieldReview'">
+
+            <div th:case="'reviewTab'">
                 <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
                     <div class="flex flex-col">
                         <div class="flex flex-row items-center">
                             <img src="https://placehold.co/600x400" class="h-10 w-10 m-2" alt="" />
                             <div class="flex flex-col">
                                 <span class="text-red-600 italic">Parent</span>
-                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700" placeholder="Nhập văn bản..." />
+                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700"
+                                       th:placeholder="#{input.placeholder}" />
                             </div>
                         </div>
                         <div class="ml-3">
@@ -91,12 +92,15 @@
                         </div>
                     </div>
                 </div>
-                <div th:replace="~{/components/customer-page/sportField/review(id=${id})}"></div>
-                <div th:replace="~{/components/customer-page/sportField/review(id=${id})}"></div>
+                <div th:replace="~{/components/customer-page/sports-field/tab-review :: reviewTab}"></div>
             </div>
+
         </div>
     </div>
+
     <div class="absolute w-full h-full top-0 hidden bg-gray-200 bg-opacity-50" id='booking-detail'>
-        <div th:replace="~{/components/customer-page/sportField/booking-detail}"></div>
+        <div th:replace="~{/components/customer-page/sports-field/booking-detail :: bookingDetail}"></div>
     </div>
+
+    <script th:src="@{/js/customer-page/field-detail.js}"></script>
 </div>

@@ -43,22 +43,32 @@ public class CustomerController {
         return "pages/customer";
     }
 
-    @GetMapping("/userInfo")
+    @GetMapping("/user-info")
     public String userInfoPage(Model model){
-        model.addAttribute("title", getLocalizedMessage("userInfo.profile_menu.title "));
+        model.addAttribute("title", getLocalizedMessage("user_info.profile_menu.title"));
         model.addAttribute("content", "userInfo");
         return "pages/customer";
     }
 
-    @GetMapping("/field-detail/{id}")
+    @GetMapping("/sports-field/{id}")
     public String fieldDetailPage(@PathVariable String id, Model model){
         model.addAttribute("content", "fieldDetail");
         model.addAttribute("id", id);
         return "pages/customer";
     }
-    @GetMapping("/field-review/{id}")
-    public String fieldReviewPage(@PathVariable String id, Model model){
-        model.addAttribute("content", "fieldReview");
+
+    @GetMapping("/sports-field/{id}/details")
+    public String fieldDetailTab(@PathVariable String id, Model model){
+        model.addAttribute("content", "fieldDetail");
+        model.addAttribute("subContent", "detailTab");
+        model.addAttribute("id", id);
+        return "pages/customer";
+    }
+
+    @GetMapping("/sports-field/{id}/reviews")
+    public String fieldReviewTab(@PathVariable String id, Model model){
+        model.addAttribute("content", "fieldDetail");
+        model.addAttribute("subContent", "reviewTab");
         model.addAttribute("id", id);
         return "pages/customer";
     }

@@ -1,19 +1,17 @@
-<div th:fragment="home" xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="home">
     <!-- Search section -->
     <section class="bg-cover bg-center py-20"
              th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
         <div class="container mx-auto text-center text-white">
-            <h2 class="text-5xl font-bold mb-4 text-black" th:text="#{homepage.background_header.title}">Best sports booking in your area</h2>
-            <p class="mb-8 text-black" th:text="#{homepage.background_content.title}">You can choose from a variety of sports such as cricket, football, badminton,
-                tennis, and
-                more, and book your preferred time slot and location.</p>
+            <h2 class="text-5xl font-bold mb-4 text-black" th:text="#{homepage.background_header.title}"></h2>
+            <p class="mb-8 text-black" th:text="#{homepage.background_content.title}"></p>
             <!-- Search -->
             <div class="bg-white text-black rounded-lg p-6 space-x-6 inline-flex">
                 <select class="p-2 border border-gray-300 rounded-lg">
-                    <option value="football" th:text="#{homepage.football_category.title}">Football</option>
-                    <option value="basketball" th:text="#{homepage.badminton_category.title}">Basketball</option>
-                    <option value="tennis" th:text="#{homepage.basketball_category.title}">Tennis</option>
-                    <option value="badminton" th:text="#{homepage.tennis_category.title}">Badminton</option>
+                    <option value="football" th:text="#{homepage.football_category.title}"></option>
+                    <option value="basketball" th:text="#{homepage.badminton_category.title}"></option>
+                    <option value="tennis" th:text="#{homepage.basketball_category.title}"></option>
+                    <option value="badminton" th:text="#{homepage.tennis_category.title}"></option>
                 </select>
 
                 <input type="text" placeholder="Location" class="p-2 border border-gray-300 rounded-lg">
@@ -23,18 +21,18 @@
                     <option value="">51$ - 100$</option>
                     <option value="">Above 100$</option>
                 </select>
-                <button class="bg-green-600 text-white px-6 py-2 rounded-lg" th:text="#{homepage.search.title}">Search</button>
+                <button class="bg-green-600 text-white px-6 py-2 rounded-lg" th:text="#{homepage.search.title}"></button>
             </div>
         </div>
     </section>
 
     <!-- Highest rating sports field (booking)-->
     <section class="container max-w-5xl mx-auto py-6">
-        <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}">Explore best sports field nearby you</h3>
+        <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}"></h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Card -->
             <a
-            th:href="@{/field-detail/1}"
+            th:href="@{/sports-field/1/details}"
             th:class="${content == 'fieldDetail'} ? 'bg-white shadow-lg rounded-lg overflow-hidden block' : 'bg-white shadow-lg rounded-lg overflow-hidden block'">
                 <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover">
                 <div class="p-4">
@@ -100,11 +98,10 @@
         </div>
     </section>
 
-
     <!-- Partner -->
     <section class="bg-green-100 py-12">
         <div class="container mx-auto">
-            <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.partner.title}">Out partner</h3>
+            <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.partner.title}"></h3>
             <div class="flex justify-center space-x-6">
                 <img th:src="@{/image/partner/partner1.png}" alt="logo" class="w-16 h-16 rounded-full">
                 <img th:src="@{/image/partner/partner2.png}" alt="logo" class="w-16 h-16 rounded-full">

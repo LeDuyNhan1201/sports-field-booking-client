@@ -1,53 +1,53 @@
 <!-- Header -->
-<header class="bg-green-800 text-white" th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+<header class="bg-green-800 text-white" th:fragment="header">
     <div class="flex justify-between items-center py-4 px-16">
-        <a href="#" th:href="@{/}"
+        <a th:href="@{/}"
            th:class="${content == 'Sports booking'} ? 'nav active text-4xl font-bold flex items-center' : 'nav inactive flex items-center'"
            aria-current="page">
-            <span th:text="#{homepage.name.title}">Sports booking</span>
+            <span th:text="#{homepage.name.title}"></span>
             <img th:src="@{/image/run.png}" alt="Run" class="ml-2 w-8 h-8">
         </a>
+
         <ul class="flex space-x-4">
             <li class="relative group flex items-center">
                 <a href="#" th:href="@{/sports-field}"
                     th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'"
-                    aria-current="page" th:text="#{homepage.sports_list.title}">Sports list</a>
+                    aria-current="page" th:text="#{homepage.sports_list.title}"></a>
             </li>
 
             <li id="login-section">
-                <a href="#" th:href="@{/sign-in}"
+                <a th:href="@{/sign-in}"
                     th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'"
-                    th:text="#{homepage.login.title}">Login</a>
+                    th:text="#{homepage.login.title}"></a>
             </li>
 
             <li class="relative group flex items-center">
                 <select id="languageSelect" class="bg-transparent border-none text-white p-0 appearance-none"
                     onchange="switchLanguage(this.value)">
-                    <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}">Choose Language</option>
-                    <option value="en" class="text-black" th:text="#{homepage.english.title}">English</option>
-                    <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}">Vietnamese</option>
+                    <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}"></option>
+                    <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
+                    <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
                 </select>
 
             </li>
             <!--            <div id="current-user"></div>-->
             <li id="user-info" class="hidden relative group">
                 <div class="relative flex items-center space-x-2 cursor-pointer group-hover:visible">
-                    <img id="user-image" class="w-8 h-8 rounded-full" />
+                    <img id="avatar" class="w-8 h-8 rounded-full" th:src="@{/image/user-info/user-info.png}" alt="user-info" />
                     <span id="username" class="font-bold">Username</span>
                 </div>
                 <!-- Dropdown menu -->
                 <div class="absolute right-0 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"
                     style="z-index: 10;">
                     <div class="flex flex-col items-center w-full">
-                        <a th:href="@{/userInfo}"
+                        <a th:href="@{/user-info}"
                             th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
-                            th:text="#{homepage.personal_info.title}" class="w-full block text-left">Thông tin cá
-                            nhân</a>
+                            th:text="#{homepage.personal_info.title}" class="w-full block text-left"></a>
                         <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
-                            th:text="#{homepage.booking_history.title}">Lịch sử đặt sân</a>
+                            th:text="#{homepage.booking_history.title}"></a>
                         <a href="#" id="btn-sign-out"
                             class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
-                            th:text="#{homepage.logout.title}">Đăng xuất</a>
+                            th:text="#{homepage.logout.title}"></a>
                     </div>
                 </div>
             </li>

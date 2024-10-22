@@ -1,6 +1,6 @@
 document.getElementById('sign-in-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-//    showLoading(true);
+    showLoading(true);
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -24,14 +24,13 @@ document.getElementById('sign-in-form').addEventListener('submit', async (event)
             return payload.exp * 1000; // chuyển đổi sang milliseconds
         };
 
+        // console.log("expire in minutes: ", (accessTokenExpiry - Date.now()) / 1000 / 60);
+        // console.log("expire in minutes: ", (refreshTokenExpiry - Date.now()) / 1000 / 60);
+        // Lưu cookie với thời gian hết hạn từ token
         const accessTokenExpiry = new Date(decodeToken(accessToken));
         const refreshTokenExpiry = new Date(decodeToken(refreshToken));
-
-        console.log("expire in minutes: ", (accessTokenExpiry - Date.now()) / 1000 / 60);
-        console.log("expire in minutes: ", (refreshTokenExpiry - Date.now()) / 1000 / 60);
-        // Lưu cookie với thời gian hết hạn từ token
-        document.cookie = `accessToken=${accessToken}; path=/; domain=localhost; expires=${accessTokenExpiry.toUTCString()}`;
-        document.cookie = `refreshToken=${refreshToken}; path=/; domain=localhost; expires=${refreshTokenExpiry.toUTCString()}`;
+        setCookie('accessToken', accessToken, '/', 'localhost', accessTokenExpiry.toUTCString(), 'Strict');
+        setCookie('refreshToken', refreshToken, '/', 'localhost', refreshTokenExpiry.toUTCString(), 'Strict');
 
         localStorage.setItem('current-user', JSON.stringify(data.userInfo));
 
@@ -39,11 +38,12 @@ document.getElementById('sign-in-form').addEventListener('submit', async (event)
         window.location.href = CLIENT_DOMAIN;
 
     } catch (error) {
-        alert(error.message);
-    }
-//    finally {
-//        showLoading(false);
-//    }
+        console.error('Error signing in:', error);
+        alert('Login failed');
+
+    } finally {
+       showLoading(false);
+   }
 });
 
 document.getElementById('refresh-btn').addEventListener('click', async (event) => {
@@ -51,7 +51,7 @@ document.getElementById('refresh-btn').addEventListener('click', async (event) =
     await refreshToken();
 });
 
-const labels = document.querySelectorAll('label');
+document.querySelectorAll('label');
 const passwordField = document.getElementById('password');
 const togglePassword = document.getElementById('togglePassword');
 const passwordIcon = document.getElementById('passwordIcon');

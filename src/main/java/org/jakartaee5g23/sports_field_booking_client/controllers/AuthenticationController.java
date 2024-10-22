@@ -17,6 +17,7 @@ import static org.jakartaee5g23.sports_field_booking_client.components.Translato
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
+
     @GetMapping
     public String signInPage(Model model){
         model.addAttribute("title", getLocalizedMessage("sign_in.title"));

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <div th:replace="~{/components/head :: head}"></div>
 
 <body>
@@ -13,8 +13,7 @@
                         👍
                         <p th:text="#{login.login_header.title}">Login</p>
                     </h2>
-                    <p class="text-2xl mb-4" th:text="#{login.login_content.title}">Log in right away for our advanced
-                        sports software solutions...</p>
+                    <p class="text-2xl mb-4" th:text="#{login.login_content.title}"></p>
                 </div>
             </div>
         </div>
@@ -105,11 +104,12 @@
                 </form>
             </div>
         </div>
-
     </div>
+
+    <div id="loading" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden"></div>
+
+    <script th:src="@{/js/utils.js}"></script>
     <script th:src="@{/js/sign-in.js}"></script>
 </body>
-<script src="https://cdn.tailwindcss.com"></script>
-<script></script>
 
 </html>

@@ -1,7 +1,7 @@
 const currentUser = localStorage.getItem('current-user');
 const loginSection = document.getElementById('login-section');
 const userInfoSection = document.getElementById('user-info');
-const userImage = document.getElementById('user-image');
+const userAvatar = document.getElementById('avatar');
 const usernameElement = document.getElementById('username');
 
 if (localStorage.getItem('current-user') !== null) {
@@ -13,7 +13,7 @@ if (localStorage.getItem('current-user') !== null) {
 
         loginSection.classList.add('hidden')
         userInfoSection.classList.remove('hidden')
-        userImage.src = user.image || 'default-avatar.png'
+        userAvatar.src = user.avatar || 'image/user-info/user-info.png'
         usernameElement.textContent = user.username
    } else {
         loginSection.classList.remove('hidden')
@@ -28,7 +28,7 @@ function switchLanguage(lang) {
 
 document.getElementById('btn-sign-out').addEventListener('click', async (event) => {
     event.preventDefault();
-//    showLoading(true);
+    showLoading(true);
 
     try {
         const response = await fetchCustom({
@@ -48,7 +48,7 @@ document.getElementById('btn-sign-out').addEventListener('click', async (event) 
     } catch (error) {
         console.error('Error refreshing token:', error);
     }
-//    finally {
-//        showLoading(false);
-//    }
+   finally {
+       showLoading(false);
+   }
 });

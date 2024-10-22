@@ -1,0 +1,8 @@
+<div th:fragment="fileStorage">
+    <h1 th:text="#{dashboard.file_storage.title}"></h1>
+    <input type="file" id="fileInput" />
+    <progress id="uploadProgress" value="0" max="100"></progress>
+    <span id="progressText">0%</span>
+
+    <script th:src="@{/js/dashboard-page/file-storage.js}"></script>
+</div>
