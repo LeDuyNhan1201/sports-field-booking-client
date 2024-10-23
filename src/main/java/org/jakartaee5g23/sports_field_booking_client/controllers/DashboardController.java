@@ -15,7 +15,6 @@ import static org.jakartaee5g23.sports_field_booking_client.components.Translato
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DashboardController {
-
     @GetMapping
     public String homePage(Model model){
         model.addAttribute("title", getLocalizedMessage("dashboard.home.title"));
@@ -41,6 +40,13 @@ public class DashboardController {
     public String fileStoragePage(Model model){
         model.addAttribute("title", getLocalizedMessage("dashboard.file_storage.title"));
         model.addAttribute("content", "fileStorage");
+        return "pages/dashboard";
+    }
+
+    @GetMapping("/promotion")
+    public String promotionPage(Model model){
+        model.addAttribute("title", getLocalizedMessage("dashboard.promotion.title"));
+        model.addAttribute("content", "promotion");
         return "pages/dashboard";
     }
 

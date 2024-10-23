@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:replace="~{/components/head :: head}"></div>
-
-<body>
-<header th:replace="~{/components/header :: header}"></header>
-
-<div>
-    <div th:replace="~{/components/dashboard-page/nav-bar :: navBar}"></div>
-    <div th:replace="~{/components/dashboard-page/main-content :: mainContent}"></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<body class="bg-gray-100 font-sans">
+<div class="flex">
+    <div th:replace="~{/components/dashboard-page/nav-bar :: navBar}" class="w-1/5"></div>
+    <div th:replace="~{/components/dashboard-page/main-content :: mainContent}" class="w-full"></div>
 </div>
 
-<footer th:replace="~{/components/footer :: footer}"></footer>
+<script th:src="@{/js/utils.js}"></script>
+<script th:src="@{/js/dashboard-page/home.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>

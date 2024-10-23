@@ -1,22 +1,64 @@
-<div th:fragment="navBar" xmlns:th="http://www.w3.org/1999/xhtml">
-    <ul>
-        <li>
-            <a th:text="#{dashboard.home.title}"
-               th:href="@{/dashboard}"
-               th:class="${content == 'home'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
-        </li>
+<div th:fragment="navBar" xmlns:th="http://www.w3.org/1999/xhtml" class="w-1/5 bg-gradient-to-b from-green-500 via-green-400 to-green-300 min-h-screen p-4 flex flex-col justify-between">
+    <div>
+        <div class="flex items-center mb-8">
+            <img class="w-10 h-10 rounded-full" src="https://via.placeholder.com/40" alt="User Avatar" id="avatar">
+            <span class="text-white text-xl font-bold ml-4" id="username">John Doe</span>
+        </div>
 
-        <li>
-            <a th:text="#{dashboard.sports_field.title}"
-               th:href="@{/dashboard/sports-field}"
-               th:class="${content == 'sportsField'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
-        </li>
+        <div class="text-white text-xl font-bold mb-8">Main</div>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a th:text="#{dashboard.home.title}"
+                       th:href="@{/dashboard}"
+                       th:class="${content == 'home'} ? 'text-white flex items-center space-x-2' : 'text-white flex items-center space-x-2 opacity-70'" aria-current="page">
+                        <span>🏠</span><span>Dashboard</span>
+                    </a>
+                </li>
 
-        <li>
-            <a th:text="#{dashboard.user_profile.title}"
-               th:href="@{/dashboard/user-profile}"
-               th:class="${content == 'userProfile'} ? 'nav active' : 'nav inactive'" aria-current="page"></a>
-        </li>
-    </ul>
-    <hr>
+                <li class="mb-4">
+                    <a th:text="#{dashboard.report.title}"
+                       th:href="@{/dashboard/report}"
+                       th:class="${content == 'report'} ? 'text-white' : 'text-white opacity-70'">
+                        Report
+                    </a>
+                </li>
+
+                <li class="mb-4">
+                    <a th:text="#{dashboard.promotion.title}"
+                       th:href="@{/dashboard/promotion}"
+                       th:class="${content == 'promotion'} ? 'text-white' : 'text-white opacity-70'">
+                        Promotion
+                    </a>
+                </li>
+
+                <li class="mb-4">
+                    <a th:text="#{dashboard.sales.title}"
+                       th:href="@{/dashboard/sales}"
+                       th:class="${content == 'sales'} ? 'text-white' : 'text-white opacity-70'">
+                        Sales
+                    </a>
+                </li>
+
+                <li class="mb-4">
+                    <a th:text="#{dashboard.user.title}"
+                       th:href="@{/dashboard/user}"
+                       th:class="${content == 'user'} ? 'text-white' : 'text-white opacity-70'">
+                        User
+                    </a>
+                </li>
+
+                <li class="mb-4">
+                    <a th:text="#{dashboard.schedule.title}"
+                       th:href="@{/dashboard/schedule}"
+                       th:class="${content == 'schedule'} ? 'text-white' : 'text-white opacity-70'">
+                        Schedule
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="mb-4">
+        <a href="#" class="text-white opacity-70" th:text="#{dashboard.logout.title}" id="btn-sign-out">Log out</a>
+    </div>
 </div>

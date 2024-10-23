@@ -1,4 +1,4 @@
-<div th:fragment="mainContent" th:switch="${content}">
+<div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml" class="w-full">
     <div th:case="'home'">
         <div th:replace="~{/components/dashboard-page/home :: home}"></div>
     </div>
@@ -14,4 +14,10 @@
     <div th:case="'fileStorage'">
         <div th:replace="~{/components/dashboard-page/file-storage :: fileStorage}"></div>
     </div>
+
+    <div th:case="'promotion'">
+        <div th:replace="~{/components/dashboard-page/promotion :: promotion}"></div>
+    </div>
+
+    <div id="loading"></div>
 </div>

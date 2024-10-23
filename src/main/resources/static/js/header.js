@@ -10,7 +10,6 @@ if (localStorage.getItem('current-user') !== null) {
 
     if (currentUser) {
         const user = JSON.parse(currentUser)
-        console.log("test cai", user)
 
         loginSection.classList.add('hidden')
         userInfoSection.classList.remove('hidden')
@@ -22,6 +21,11 @@ if (localStorage.getItem('current-user') !== null) {
         }else {
            fieldManagement.classList.add('hidden')
         }
+
+        if (user.roles && user.roles.includes('ADMIN')) {
+            window.location.href = CLIENT_DOMAIN + '/dashboard';
+        }
+
    } else {
         loginSection.classList.remove('hidden')
         userInfoSection.classList.add('hidden')
