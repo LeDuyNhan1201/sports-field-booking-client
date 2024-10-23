@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <div th:replace="~{/components/head :: head}"></div>
 
 <body>
@@ -60,7 +60,7 @@
                             </div>
                             <span class="ml-3 text-sm" th:text="#{login.remember.title}">Remember Password</span>
                         </label>
-                        <a href="#" class="text-sm text-red-500 hover:underline" th:text="#{login.forgot.title}">Forgot
+                        <a th:href="@{/auth/forgot}" class="text-sm text-red-500 hover:underline" th:text="#{login.forgot.title}">Forgot
                             Password?</a>
                     </div>
 

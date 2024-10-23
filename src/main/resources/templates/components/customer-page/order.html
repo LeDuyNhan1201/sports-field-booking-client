@@ -1,9 +1,11 @@
-<h2 class="text-3xl font-bold text-center mt-8 flex justify-center items-center">
+<h2 class="text-3xl font-bold text-center mt-8 flex justify-center items-center"
+    xmlns:th="http://www.w3.org/1999/xhtml">
     <img th:src="@{/image/bills.png}" class="w-12 h-12 mr-3">
     <p th:text="#{order.header.title}"></p>
 </h2>
 
-<div class="flex-grow container mx-auto flex flex-col lg:flex-row mt-8 space-y-6 lg:space-y-0 lg:space-x-8">
+<div class="flex-grow container mx-auto flex flex-col lg:flex-row mt-8 space-y-6 lg:space-y-0 lg:space-x-8"
+     xmlns:th="http://www.w3.org/1999/xhtml">
     <!-- Left: List of booked fields -->
     <div class="order-list flex-1 bg-white p-4 shadow-md rounded-md min-h-[70vh]">
         <h2 class="text-3xl font-bold text-center mb-4" th:text="#{order.booking_details.title}"></h2>

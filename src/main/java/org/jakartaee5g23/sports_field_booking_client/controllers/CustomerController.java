@@ -73,4 +73,11 @@ public class CustomerController {
         return "pages/customer";
     }
 
+    @GetMapping("/booking-history")
+    public String bookingHistoryPage(Model model) {
+        model.addAttribute("title", getLocalizedMessage("booking.history.title"));
+        model.addAttribute("content", "bookingHistory");
+        return "pages/customer";
+    }
+
 }

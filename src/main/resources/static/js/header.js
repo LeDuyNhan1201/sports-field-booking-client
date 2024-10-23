@@ -3,6 +3,7 @@ const loginSection = document.getElementById('login-section');
 const userInfoSection = document.getElementById('user-info');
 const userAvatar = document.getElementById('avatar');
 const usernameElement = document.getElementById('username');
+const fieldManagement = document.getElementById('field-management');
 
 if (localStorage.getItem('current-user') !== null) {
     console.log('Current user:', JSON.parse(localStorage.getItem('current-user')));
@@ -15,6 +16,12 @@ if (localStorage.getItem('current-user') !== null) {
         userInfoSection.classList.remove('hidden')
         userAvatar.src = user.avatar || 'image/user-info/user-info.png'
         usernameElement.textContent = user.username
+
+        if (user.roles && user.roles.includes('FIELD_OWNER')) {
+           fieldManagement.classList.remove('hidden')
+        }else {
+           fieldManagement.classList.add('hidden')
+        }
    } else {
         loginSection.classList.remove('hidden')
         userInfoSection.classList.add('hidden')

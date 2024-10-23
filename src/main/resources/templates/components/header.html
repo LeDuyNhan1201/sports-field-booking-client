@@ -1,5 +1,5 @@
 <!-- Header -->
-<header class="bg-green-800 text-white" th:fragment="header">
+<header class="bg-green-800 text-white" th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="flex justify-between items-center py-4 px-16">
         <a th:href="@{/}"
            th:class="${content == 'Sports booking'} ? 'nav active text-4xl font-bold flex items-center' : 'nav inactive flex items-center'"
@@ -43,8 +43,11 @@
                         <a th:href="@{/user-info}"
                             th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
                             th:text="#{homepage.personal_info.title}" class="w-full block text-left"></a>
-                        <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
-                            th:text="#{homepage.booking_history.title}"></a>
+                        <a th:href="@{/booking-history}" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
+                           th:class="${content == 'bookingHistory'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
+                           th:text="#{homepage.booking_history.title}"></a>
+                        <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left hidden" id="field-management"
+                           th:text="#{homepage.field_owner.title}"></a>
                         <a href="#" id="btn-sign-out"
                             class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
                             th:text="#{homepage.logout.title}"></a>

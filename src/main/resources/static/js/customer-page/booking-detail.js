@@ -20,5 +20,5 @@ function checkSlotsSelectQuantity() {
             quantity += 1
         }
     })
-    availabilitySelectQuantity.innerHTML = quantity
+    slotsSelectQuantity.innerHTML = quantity
 }
