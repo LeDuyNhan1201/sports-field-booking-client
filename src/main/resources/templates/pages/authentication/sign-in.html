@@ -49,18 +49,7 @@
 
                     <!-- Remember Password and Forgot Password -->
                     <div class="flex justify-between items-center mb-6">
-                        <label class="flex items-center">
-                            <!-- Thanh trượt nhỏ -->
-                            <div class="relative">
-                                <input type="checkbox" id="rememberMe" class="sr-only">
-                                <div class="w-10 h-4 bg-gray-300 rounded-full shadow-inner"></div>
-                                <div
-                                    class="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition">
-                                </div>
-                            </div>
-                            <span class="ml-3 text-sm" th:text="#{login.remember.title}">Remember Password</span>
-                        </label>
-                        <a th:href="@{/auth/forgot}" class="text-sm text-red-500 hover:underline" th:text="#{login.forgot.title}">Forgot
+                        <a th:href="@{/auth/forgot}" class="text-sm text-red-500 hover:underline ml-auto" th:text="#{login.forgot.title}">Forgot
                             Password?</a>
                     </div>
 
