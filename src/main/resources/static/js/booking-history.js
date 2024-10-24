@@ -1,6 +1,5 @@
 // src/main/resources/static/js/booking-history.js
 
-// Function to get a cookie by name
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -14,7 +13,11 @@ async function fetchBookingHistory() {
             throw new Error('No auth token found');
         }
 
-        const response = await fetch('http://localhost:8888/sports-field-booking/api/v1/booking/my-bookings', {
+        const selectElement = document.getElementById('booking-type-select');
+        const bookingType = selectElement.value;
+        const endpoint = bookingType === 'my-upcoming' ? 'my-upcoming' : 'my-bookings';
+
+        const response = await fetch(`http://localhost:8888/sports-field-booking/api/v1/booking/${endpoint}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -66,4 +69,22 @@ async function fetchBookingHistory() {
     }
 }
 
-window.onload = fetchBookingHistory;
+function setupBookingTypeSelector() {
+    const selectElement = document.getElementById('booking-type-select');
+
+    // Retrieve the selected value from local storage
+    const savedBookingType = localStorage.getItem('bookingType');
+    if (savedBookingType) {
+        selectElement.value = savedBookingType;
+    }
+
+    selectElement.addEventListener('change', () => {
+        // Save the selected value to local storage
+        localStorage.setItem('bookingType', selectElement.value);
+        fetchBookingHistory();
+    });
+
+    fetchBookingHistory(); // Initial fetch
+}
+
+window.onload = setupBookingTypeSelector;
