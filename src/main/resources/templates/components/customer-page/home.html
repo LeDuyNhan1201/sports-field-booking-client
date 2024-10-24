@@ -1,4 +1,4 @@
-<div th:fragment="home">
+<div th:fragment="home" xmlns:th="http://www.w3.org/1999/xhtml">
     <!-- Search section -->
     <section class="bg-cover bg-center py-20"
              th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
@@ -30,45 +30,7 @@
     <section class="container max-w-5xl mx-auto py-6">
         <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}"></h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Card -->
-            <a
-            th:href="@{/sports-field/1/details}"
-            th:class="${content == 'fieldDetail'} ? 'bg-white shadow-lg rounded-lg overflow-hidden block' : 'bg-white shadow-lg rounded-lg overflow-hidden block'">
-                <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
-                    <p class="text-gray-600">24.000/đ</p>
-                    <p class="text-gray-500">Best fields in the world</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ 4.2/5</span>
-                    </div>
-                </div>
-            </a>
-
-            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
-                <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
-                    <p class="text-gray-600">24.000/đ</p>
-                    <p class="text-gray-500">Best fields in the world</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ 4.2/5</span>
-                    </div>
-                </div>
-            </a>
-
-            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
-                <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover">
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
-                    <p class="text-gray-600">24.000/đ</p>
-                    <p class="text-gray-500">Best fields in the world</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ 4.2/5</span>
-                    </div>
-                </div>
-            </a>
-
+            <div th:replace="~{/components/customer-page/sports-field/sport-field}"></div>
         </div>
     </section>
 
