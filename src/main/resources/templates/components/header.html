@@ -44,7 +44,7 @@
                         <a th:href="@{/user-info}"
                             th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
                             th:text="#{homepage.personal_info.title}" class="w-full block text-left"></a>
-                        <a th:href="@{/booking-history}" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
+                        <a th:href="@{/my-booking}" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
                             th:class="${content == 'bookingHistory'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
                             th:text="#{homepage.my_booking.title}"></a>
                         <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left hidden"
