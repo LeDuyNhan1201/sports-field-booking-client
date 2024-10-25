@@ -35,9 +35,9 @@ async function fetchBookingHistory() {
 
         console.log('Data fetched from API:', data);
 
-        const tableBody = document.getElementById('booking-history-body');
+        const tableBody = document.getElementById('my-booking-body');
         const noBookingsMessage = document.getElementById('no-bookings-message');
-        const bookingHistoryTable = document.getElementById('booking-history-table');
+        const bookingHistoryTable = document.getElementById('my-booking-table');
 
         if (!tableBody) {
             throw new Error('Table body element not found');
@@ -59,8 +59,8 @@ async function fetchBookingHistory() {
                     <td class="border px-4 py-2">${booking.id}</td>
                     <td class="border px-4 py-2">${booking.user.username}</td>
                     <td class="border px-4 py-2">${booking.sportField.name}</td>
-                    <td class="border px-4 py-2">${booking.startTime}</td>
-                    <td class="border px-4 py-2">${booking.endTime}</td>
+                    <td class="border px-4 py-2">${booking.fieldAvailability.startTime}</td>
+                    <td class="border px-4 py-2">${booking.fieldAvailability.endTime}</td>
                     <td class="border px-4 py-2">${booking.status}</td>
                     <td class="border px-4 py-2">
                         <button class="view-details-button bg-blue-500 text-white px-2 py-1 rounded" data-booking-id="${booking.id}">View Details</button>
