@@ -1,7 +1,7 @@
 <div th:fragment="navBar" xmlns:th="http://www.w3.org/1999/xhtml" class="w-1/5 bg-gradient-to-b from-green-500 via-green-400 to-green-300 min-h-screen p-4 flex flex-col justify-between">
     <div>
         <div class="flex items-center mb-8">
-            <img class="w-10 h-10 rounded-full" src="https://via.placeholder.com/40" alt="User Avatar" id="avatar">
+            <img class="w-10 h-10 rounded-full" th:src="@{/image/user-info/user-info.png}" alt="User Avatar" id="avatar">
             <span class="text-white text-xl font-bold ml-4" id="username">John Doe</span>
         </div>
 
@@ -17,26 +17,10 @@
                 </li>
 
                 <li class="mb-4">
-                    <a th:text="#{dashboard.report.title}"
-                       th:href="@{/dashboard/report}"
-                       th:class="${content == 'report'} ? 'text-white' : 'text-white opacity-70'">
-                        Report
-                    </a>
-                </li>
-
-                <li class="mb-4">
                     <a th:text="#{dashboard.promotion.title}"
                        th:href="@{/dashboard/promotion}"
                        th:class="${content == 'promotion'} ? 'text-white' : 'text-white opacity-70'">
                         Promotion
-                    </a>
-                </li>
-
-                <li class="mb-4">
-                    <a th:text="#{dashboard.sales.title}"
-                       th:href="@{/dashboard/sales}"
-                       th:class="${content == 'sales'} ? 'text-white' : 'text-white opacity-70'">
-                        Sales
                     </a>
                 </li>
 
@@ -49,10 +33,10 @@
                 </li>
 
                 <li class="mb-4">
-                    <a th:text="#{dashboard.schedule.title}"
-                       th:href="@{/dashboard/schedule}"
-                       th:class="${content == 'schedule'} ? 'text-white' : 'text-white opacity-70'">
-                        Schedule
+                    <a th:text="#{dashboard.order.title}"
+                       th:href="@{/dashboard/order}"
+                       th:class="${content == 'order'} ? 'text-white' : 'text-white opacity-70'">
+                        Order
                     </a>
                 </li>
             </ul>

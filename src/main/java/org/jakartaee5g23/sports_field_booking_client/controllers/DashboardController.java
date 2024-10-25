@@ -50,4 +50,11 @@ public class DashboardController {
         return "pages/dashboard";
     }
 
+    @GetMapping("/order")
+    public String orderPage(Model model){
+        model.addAttribute("title", getLocalizedMessage("dashboard.order.title"));
+        model.addAttribute("content", "order");
+        return "pages/dashboard";
+    }
+
 }

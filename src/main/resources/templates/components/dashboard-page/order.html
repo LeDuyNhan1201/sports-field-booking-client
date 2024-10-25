@@ -1,0 +1,214 @@
+<div class="w-full p-6 bg-white rounded-lg shadow" th:fragment="order" xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold" th:text="#{dashboard.order_heading.title}">Order</h1>
+        <select id="languageSelect" class="bg-transparent border-none text-black p-0 appearance-none"
+            onchange="switchLanguage(this.value)">
+            <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}"></option>
+            <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
+            <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
+        </select>
+    </div>
+
+    <!-- Orders Found -->
+    <div class="flex justify-between items-center mb-6">
+        <span class="flex text-gray-500">
+            <p class="mr-1">50</p>
+            <span th:text="#{dashboard.order_found.title}"> đơn hàng được tìm thấy</span>
+        </span>
+    </div>
+
+    <!-- Search Section -->
+    <div class="mb-6 flex justify-between">
+        <!-- Search and Status Select -->
+        <div class="flex items-center space-x-4 w-2/3">
+            <!-- Search Input -->
+            <div class="flex w-full">
+                <input type="text" id="search"
+                    class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    th:placeholder="#{dashboard.order_search.placeholder}" placeholder="Tìm kiếm đơn hàng...">
+            </div>
+
+            <!-- Status Select -->
+            <div>
+                <select id="status"
+                    class="block w-64 bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="" th:text="#{dashboard.order_searchStatus.title}" class="w-full">Tất cả trạng thái
+                    </option>
+                    <option value="pending" th:text="#{dashboard.order_status.pending}" class="w-full">Pending</option>
+                    <option value="dispatch" th:text="#{dashboard.order_status.dispatch}" class="w-full">Dispatch
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="flex items-center space-x-4">
+            <!-- From Date -->
+            <div>
+                <label for="from-date" class="block text-sm font-medium text-gray-700"
+                    th:text="#{dashboard.order_fromDate.title}">Từ ngày</label>
+                <input type="date" id="from-date"
+                    class="mt-1 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <!-- To Date -->
+            <div>
+                <label for="to-date" class="block text-sm font-medium text-gray-700"
+                    th:text="#{dashboard.order_toDate.title}">Đến ngày</label>
+                <input type="date" id="to-date"
+                    class="mt-1 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <!-- Search Button -->
+            <div class="flex items-end">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    th:text="#{dashboard.order_searchButton.title}">Tìm kiếm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="text-gray-600 bg-gray-100">
+                <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.order_code.title}">Mã đơn
+                </th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.order_buyerName.title}">Tên
+                    người mua</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.order_address.title}">Địa chỉ
+                </th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.order_date.title}">Ngày</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.order_price.title}">Giá</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.order_status.title}">Trạng
+                    thái</th>
+                <th class="p-4" th:text="#{dashboard.order_action.title}">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example Order Rows -->
+            <tr class="border-b">
+                <td class="p-4">#3412</td>
+                <td class="p-4 flex items-center">
+                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+                    <span>Manoj</span>
+                </td>
+                <td class="p-4">Lorem ipsum dummy text industry.</td>
+                <td class="p-4">25/10/2024</td>
+                <td class="p-4">$64.00</td>
+                <td class="p-4">
+                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.order_status.dispatch}">Dispatch</span>
+                </td>
+                <td class="p-4">
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="border-b">
+                <td class="p-4">#3413</td>
+                <td class="p-4 flex items-center">
+                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+                    <span>Jane Doe</span>
+                </td>
+                <td class="p-4">123 Main St, Cityville</td>
+                <td class="p-4">24/10/2024</td>
+                <td class="p-4">$82.00</td>
+                <td class="p-4">
+                    <span class="bg-red-100 text-red-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.order_status.pending}">Pending</span>
+                </td>
+                <td class="p-4">
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="border-b">
+                <td class="p-4">#3414</td>
+                <td class="p-4 flex items-center">
+                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+                    <span>John Smith</span>
+                </td>
+                <td class="p-4">456 Broadway, Metropolis</td>
+                <td class="p-4">23/10/2024</td>
+                <td class="p-4">$93.50</td>
+                <td class="p-4">
+                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.order_status.dispatch}">Dispatch</span>
+                </td>
+                <td class="p-4">
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="border-b">
+                <td class="p-4">#3415</td>
+                <td class="p-4 flex items-center">
+                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+                    <span>Emily Davis</span>
+                </td>
+                <td class="p-4">789 Oak St, Gotham</td>
+                <td class="p-4">22/10/2024</td>
+                <td class="p-4">$75.25</td>
+                <td class="p-4">
+                    <span class="bg-red-100 text-red-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.order_status.pending}">Pending</span>
+                </td>
+                <td class="p-4">
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="border-b">
+                <td class="p-4">#3416</td>
+                <td class="p-4 flex items-center">
+                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
+                    <span>David Brown</span>
+                </td>
+                <td class="p-4">123 Maple St, Star City</td>
+                <td class="p-4">21/10/2024</td>
+                <td class="p-4">$100.00</td>
+                <td class="p-4">
+                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.order_status.dispatch}">Dispatch</span>
+                </td>
+                <td class="p-4">
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-between items-center">
+        <span class="text-sm text-gray-700" th:text="#{dashboard.order_pagination.title(1, 10, 50)}">Hiển thị từ 1 đến
+            10 của 50 đơn hàng</span>
+        <div class="inline-flex">
+            <button class="px-3 py-2 mr-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50"
+                th:text="#{dashboard.order_previousPage.title}">
+                Trước
+            </button>
+            <button
+                class="px-3 py-2 mr-1 text-gray-700 bg-white border-t border-b border-gray-300 hover:bg-gray-50">1</button>
+            <button
+                class="px-3 py-2 mr-1 text-gray-700 bg-white border-t border-b border-gray-300 hover:bg-gray-50">2</button>
+            <button class="px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50"
+                th:text="#{dashboard.order_nextPage.title}">
+                Sau
+            </button>
+        </div>
+    </div>
+
+    <script th:src="@{/js/dashboard-page/order.js}"></script>
+</div>
