@@ -1,6 +1,6 @@
 const CHUNK_SIZE = 1024 * 1024; // 1MB
 const STORAGE_KEY = 'upload_progress'; // Khóa lưu trữ trạng thái
-const MAX_FILES = 5; // Tối đa 5 file
+const MAX_FILES = 10; // Tối đa 5 file
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 // const progressBar = document.getElementById('uploadProgress');
 // const progressText = document.getElementById('progressText');
@@ -10,6 +10,7 @@ document.getElementById('fileInput').addEventListener('change', (event) => {
     const files = Array.from(event.target.files); // Lấy danh sách file
     if (files.length > MAX_FILES) {
         alert(`You can upload a maximum of ${MAX_FILES} files at a time.`);
+        cleanUpAfterUpload(files);
         return;
     }
 
@@ -17,6 +18,7 @@ document.getElementById('fileInput').addEventListener('change', (event) => {
     for (const file of files) {
         if (file.size > MAX_FILE_SIZE) {
             alert(`${file.name} exceeds the maximum file size of 50MB.`);
+            cleanUpAfterUpload(files);
             return;
         }
     }
@@ -50,7 +52,7 @@ async function uploadFileInChunks(file, fileIndex) {
     const progressBar = document.createElement('progress');
     const progressText = document.createElement('span');
 
-    fileNameLabel.innerText = file.name;
+    fileNameLabel.innerText = `Uploading as: ${file.name}`;
     progressBar.id = `uploadProgress_${fileIndex}`;
     progressBar.max = 100;
     progressBar.value = 0;
@@ -85,6 +87,7 @@ async function uploadFileInChunks(file, fileIndex) {
         };
         formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' })); // Đảm bảo là Blob JSON
 
+        console.log((file.type));
         try {
             const response = await fetch(SERVER_DOMAIN + '/file/upload-chunk', {
                 method: 'POST',
