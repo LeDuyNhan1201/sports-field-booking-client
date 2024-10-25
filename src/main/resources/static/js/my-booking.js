@@ -1,4 +1,4 @@
-// src/main/resources/static/js/booking-history.js
+// src/main/resources/static/js/my-booking.js
 
 const BASE_URL = 'http://localhost:8888/sports-field-booking/api/v1/booking';
 

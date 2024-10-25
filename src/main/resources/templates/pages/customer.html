@@ -3,16 +3,16 @@
 <div th:replace="~{/components/head :: head}"></div>
 
 <body>
-<header th:replace="~{/components/header :: header}"></header>
+    <header th:replace="~{/components/header :: header}"></header>
 
-<div class="bg-gray-100 flex flex-col min-h-[60vh]">
-    <div th:replace="~{/components/customer-page/main-content :: mainContent}"></div>
-</div>
+    <div class="bg-gray-100 flex flex-col min-h-[60vh]">
+        <div th:replace="~{/components/customer-page/main-content :: mainContent}"></div>
+    </div>
 
-<footer th:replace="~{/components/footer :: footer}"></footer>
+    <footer th:replace="~{/components/footer :: footer}"></footer>
 
-<script th:src="@{/js/header.js}"></script>
-<script th:src="@{/js/booking-history.js}"></script>
+    <script th:src="@{/js/header.js}"></script>
+    <script th:src="@{/js/my-booking.js}"></script>
 </body>
 
 </html>
