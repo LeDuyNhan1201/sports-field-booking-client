@@ -38,7 +38,16 @@
                        th:class="${content == 'order'} ? 'text-white' : 'text-white opacity-70'">
                         Order
                     </a>
+
+                <li class="mb-4">
+                    <a th:text="#{dashboard.sports_field.title}"
+                       th:href="@{/dashboard/sport-field}"
+                       th:class="${content == 'sportField'} ? 'text-white' : 'text-white opacity-70'">
+                        Sport fields
+                    </a>
                 </li>
+                </li>
+
             </ul>
         </nav>
     </div>

@@ -22,7 +22,7 @@ public class DashboardController {
         return "pages/dashboard";
     }
 
-    @GetMapping("sports-field")
+    @GetMapping("/sport-field")
     public String sportFieldPage(Model model){
         model.addAttribute("title", getLocalizedMessage("dashboard.sports_field.title"));
         model.addAttribute("content", "sportsField");
