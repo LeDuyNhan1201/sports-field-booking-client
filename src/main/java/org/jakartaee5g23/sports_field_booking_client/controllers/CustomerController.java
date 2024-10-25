@@ -16,49 +16,49 @@ import static org.jakartaee5g23.sports_field_booking_client.components.Translato
 public class CustomerController {
 
     @GetMapping
-    public String homePage(Model model){
+    public String homePage(Model model) {
         model.addAttribute("title", getLocalizedMessage("customer.home.title"));
         model.addAttribute("content", "home");
         return "pages/customer";
     }
 
     @GetMapping("/sports-field")
-    public String sportFieldPage(Model model){
+    public String sportFieldPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("customer.sports_field.title"));
         model.addAttribute("content", "sportsField");
         return "pages/customer";
     }
 
     @GetMapping("/booking")
-    public String bookingPage(Model model){
+    public String bookingPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("customer.booking.title"));
         model.addAttribute("content", "booking");
         return "pages/customer";
     }
 
     @GetMapping("/account")
-    public String accountPage(Model model){
+    public String accountPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("customer.account.title"));
         model.addAttribute("content", "account");
         return "pages/customer";
     }
 
     @GetMapping("/user-info")
-    public String userInfoPage(Model model){
+    public String userInfoPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("user_info.profile_menu.title"));
         model.addAttribute("content", "userInfo");
         return "pages/customer";
     }
 
     @GetMapping("/sports-field/{id}")
-    public String fieldDetailPage(@PathVariable String id, Model model){
+    public String fieldDetailPage(@PathVariable String id, Model model) {
         model.addAttribute("content", "fieldDetail");
         model.addAttribute("id", id);
         return "pages/customer";
     }
 
     @GetMapping("/sports-field/{id}/details")
-    public String fieldDetailTab(@PathVariable String id, Model model){
+    public String fieldDetailTab(@PathVariable String id, Model model) {
         model.addAttribute("content", "fieldDetail");
         model.addAttribute("subContent", "detailTab");
         model.addAttribute("id", id);
@@ -66,14 +66,14 @@ public class CustomerController {
     }
 
     @GetMapping("/sports-field/{id}/reviews")
-    public String fieldReviewTab(@PathVariable String id, Model model){
+    public String fieldReviewTab(@PathVariable String id, Model model) {
         model.addAttribute("content", "fieldDetail");
         model.addAttribute("subContent", "reviewTab");
         model.addAttribute("id", id);
         return "pages/customer";
     }
 
-    @GetMapping("/booking-history")
+    @GetMapping("/my-booking")
     public String bookingHistoryPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("booking.history.title"));
         model.addAttribute("content", "bookingHistory");
