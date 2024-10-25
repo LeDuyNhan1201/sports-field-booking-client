@@ -1,4 +1,4 @@
- <div class="flex justify-center items-center my-10" id='field-detail' th:fragment="fieldDetail">
+<div class="flex justify-center items-center my-10" id="field-detail" th:fieldId="${id}" th:fragment="fieldDetail">
     <div class="h-3/5 w-4/5 border border-black rounded-xl shadow-xl border-gray-400">
         <div class="flex justify-between p-4 border-b items-center">
             <span class="text-2xl font-semibold" th:text="#{field_detail.field_detail_header.title}">Sport Field Detail</span>
@@ -7,12 +7,10 @@
 
         <div class="bg-yellow-50 mx-8 my-6 rounded-2xl">
             <div class="flex p-8 items-center">
-                <div>
-                    <img src="https://placehold.co/600x400" alt="" class="rounded-2xl w-40 h-40" />
-                </div>
+                <img src="https://placehold.co/600x400" alt="" class="rounded-2xl w-40 h-40" />
                 <div class="flex-1 px-8">
                     <div class="flex flex-row items-center">
-                        <span class="text-2xl font-bold text-green-700" th:text="${id}">Etihad Stadium</span>
+                        <span class="text-2xl font-bold text-green-700" id="field_detail.fieldName"></span>
                         <div class="ml-5">
                             <i class="fa-solid fa-star" style="color: #ffd43b"></i>
                             <i class="fa-solid fa-star" style="color: #ffd43b"></i>
@@ -22,15 +20,15 @@
                     <div class="flex justify-between py-4">
                         <div class="flex items-center">
                             <i class="fa fa-location-arrow mr-2" aria-hidden="true"></i>
-                            <span class="text-gray-500">Manchester City, England</span>
+                            <span class="text-gray-500" id="field_detail.location">Manchester City, England</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fa-solid fa-phone mr-2"></i>
-                            <span class="text-gray-500">+88 098 463</span>
+                            <span class="text-gray-500" id="field_detail.phone">+88 098 463</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fa-regular fa-envelope mr-2"></i>
-                            <span class="text-gray-500">mcontop@gmail.com</span>
+                            <span class="text-gray-500" id="field_detail.email">mcontop@gmail.com</span>
                         </div>
                     </div>
                     <div class="flex">
@@ -50,25 +48,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex px-20">
-                    <span class="text-xl font-bold text-green-500">100.000/h</span>
-                </div>
             </div>
         </div>
 
         <div class="mx-4">
-            <a th:text="#{field_detail.button_detail.title}"
+            <a
+                th:text="#{field_detail.button_detail.title}"
                 th:href="@{/sports-field/1/details}"
                 th:class="${content == 'detailTab'} ?
                 'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800'
-                : 'text-2xl font-semibold text-gray-600 pr-5 cursor-pointer'"></a>
+                : 'text-2xl font-semibold text-gray-600 pr-5 cursor-pointer'"
+            ></a>
 
-            <a th:text="#{field_detail.button_review.title}"
+            <a
+                th:text="#{field_detail.button_review.title}"
                 th:href="@{/sports-field/1/reviews}"
                 th:class="${content == 'reviewTab'} ?
                 'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800'
-                : 'text-2xl font-semibold text-gray-600 pl-5 cursor-pointer'"></a>
-
+                : 'text-2xl font-semibold text-gray-600 pl-5 cursor-pointer'"
+            ></a>
         </div>
 
         <div th:switch="${subContent}">
@@ -83,8 +81,7 @@
                             <img src="https://placehold.co/600x400" class="h-10 w-10 m-2" alt="" />
                             <div class="flex flex-col">
                                 <span class="text-red-600 italic">Parent</span>
-                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700"
-                                       th:placeholder="#{input.placeholder}" />
+                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700" th:placeholder="#{input.placeholder}" />
                             </div>
                         </div>
                         <div class="ml-3">
@@ -94,11 +91,10 @@
                 </div>
                 <div th:replace="~{/components/customer-page/sports-field/tab-review :: reviewTab}"></div>
             </div>
-
         </div>
     </div>
 
-    <div class="absolute w-full h-full top-0 hidden bg-gray-200 bg-opacity-50" id='booking-detail'>
+    <div class="absolute w-full h-full top-0 hidden bg-gray-200 bg-opacity-50" id="booking-detail">
         <div th:replace="~{/components/customer-page/sports-field/booking-detail :: bookingDetail}"></div>
     </div>
 

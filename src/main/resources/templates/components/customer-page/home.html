@@ -1,7 +1,6 @@
 <div th:fragment="home" xmlns:th="http://www.w3.org/1999/xhtml">
     <!-- Search section -->
-    <section class="bg-cover bg-center py-20"
-             th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
+    <section class="bg-cover bg-center py-20" th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
         <div class="container mx-auto text-center text-white">
             <h2 class="text-5xl font-bold mb-4 text-black" th:text="#{homepage.background_header.title}"></h2>
             <p class="mb-8 text-black" th:text="#{homepage.background_content.title}"></p>
@@ -14,8 +13,8 @@
                     <option value="badminton" th:text="#{homepage.tennis_category.title}"></option>
                 </select>
 
-                <input type="text" placeholder="Location" class="p-2 border border-gray-300 rounded-lg">
-                <input type="date" class="p-2 border border-gray-300 rounded-lg">
+                <input type="text" placeholder="Location" class="p-2 border border-gray-300 rounded-lg" />
+                <input type="date" class="p-2 border border-gray-300 rounded-lg" />
                 <select class="p-2 border border-gray-300 rounded-lg">
                     <option value="">20$ - 50$</option>
                     <option value="">51$ - 100$</option>
@@ -30,7 +29,46 @@
     <section class="container max-w-5xl mx-auto py-6">
         <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}"></h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div th:replace="~{/components/customer-page/sports-field/sport-field}"></div>
+            <!-- Card -->
+            <a
+                th:href="@{/sports-field/1/details}"
+                th:class="${content == 'fieldDetail'} ? 'bg-white shadow-lg rounded-lg overflow-hidden block' : 'bg-white shadow-lg rounded-lg overflow-hidden block'"
+                xmlns:th="http://www.w3.org/1999/xhtml"
+            >
+                <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover" />
+                <div class="p-4">
+                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
+                    <p class="text-gray-600">24.000/đ</p>
+                    <p class="text-gray-500">Best fields in the world</p>
+                    <div class="mt-2 flex space-x-2">
+                        <span>⭐ 4.2/5</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
+                <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover" />
+                <div class="p-4">
+                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
+                    <p class="text-gray-600">24.000/đ</p>
+                    <p class="text-gray-500">Best fields in the world</p>
+                    <div class="mt-2 flex space-x-2">
+                        <span>⭐ 4.2/5</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
+                <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover" />
+                <div class="p-4">
+                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
+                    <p class="text-gray-600">24.000/đ</p>
+                    <p class="text-gray-500">Best fields in the world</p>
+                    <div class="mt-2 flex space-x-2">
+                        <span>⭐ 4.2/5</span>
+                    </div>
+                </div>
+            </a>
         </div>
     </section>
 
@@ -41,22 +79,22 @@
             <!-- Football Card -->
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/ball.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10">
+                <img th:src="@{/image/category/ball.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10" />
                 <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.football_category.title}">Football</span>
             </a>
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/badminton.png}" alt="Badminton" class="w-16 h-16 mt-8 ml-4 relative z-10">
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.badminton_category.title}">Badminton</span>
-            </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
-            <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-            <img th:src="@{/image/category/basketball.png}" alt="Basketball" class="w-16 h-16 mt-8 ml-4 relative z-10">
-            <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.basketball_category.title}">Basketball</span>
-        </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
-            <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-            <img th:src="@{/image/category/tennis.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10">
-            <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.tennis_category.title}">Tennis</span>
-        </a>
+                <img th:src="@{/image/category/badminton.png}" alt="Badminton" class="w-16 h-16 mt-8 ml-4 relative z-10" />
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.badminton_category.title}">Badminton</span> </a
+            ><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
+                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
+                <img th:src="@{/image/category/basketball.png}" alt="Basketball" class="w-16 h-16 mt-8 ml-4 relative z-10" />
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.basketball_category.title}">Basketball</span> </a
+            ><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
+                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
+                <img th:src="@{/image/category/tennis.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10" />
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.tennis_category.title}">Tennis</span>
+            </a>
         </div>
     </section>
 
@@ -65,12 +103,12 @@
         <div class="container mx-auto">
             <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.partner.title}"></h3>
             <div class="flex justify-center space-x-6">
-                <img th:src="@{/image/partner/partner1.png}" alt="logo" class="w-16 h-16 rounded-full">
-                <img th:src="@{/image/partner/partner2.png}" alt="logo" class="w-16 h-16 rounded-full">
-                <img th:src="@{/image/partner/partner3.png}" alt="logo" class="w-16 h-16 rounded-full">
-                <img th:src="@{/image/partner/partner4.png}" alt="logo" class="w-16 h-16 rounded-full">
-                <img th:src="@{/image/partner/partner5.png}" alt="logo" class="w-16 h-16 rounded-full">
-                <img th:src="@{/image/partner/partner6.png}" alt="logo" class="w-16 h-16 rounded-full">
+                <img th:src="@{/image/partner/partner1.png}" alt="logo" class="w-16 h-16 rounded-full" />
+                <img th:src="@{/image/partner/partner2.png}" alt="logo" class="w-16 h-16 rounded-full" />
+                <img th:src="@{/image/partner/partner3.png}" alt="logo" class="w-16 h-16 rounded-full" />
+                <img th:src="@{/image/partner/partner4.png}" alt="logo" class="w-16 h-16 rounded-full" />
+                <img th:src="@{/image/partner/partner5.png}" alt="logo" class="w-16 h-16 rounded-full" />
+                <img th:src="@{/image/partner/partner6.png}" alt="logo" class="w-16 h-16 rounded-full" />
             </div>
         </div>
     </section>
