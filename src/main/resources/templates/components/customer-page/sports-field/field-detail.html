@@ -1,49 +1,53 @@
 <div class="flex justify-center items-center my-10" id="field-detail" th:fieldId="${id}" th:fragment="fieldDetail">
-    <div class="h-3/5 w-4/5 border border-black rounded-xl shadow-xl border-gray-400">
+    <div class="h-3/5 w-4/5 border rounded-xl shadow-xl border-gray-300">
         <div class="flex justify-between p-4 border-b items-center">
             <span class="text-2xl font-semibold" th:text="#{field_detail.field_detail_header.title}">Sport Field Detail</span>
-            <i class="fa-solid fa-xmark"></i>
+            <i onclick="history.back()" class="fa-solid fa-xmark cursor-pointer text-red-500"></i>
         </div>
 
         <div class="bg-yellow-50 mx-8 my-6 rounded-2xl">
             <div class="flex p-8 items-center">
-                <img src="https://placehold.co/600x400" alt="" class="rounded-2xl w-40 h-40" />
+                <div>
+                    <img alt="" id="field_detail.image" class="rounded-2xl w-40 h-40" />
+                    <div class='flex mt-3' id="field_detail.imageItems">
+                        
+                    </div>
+                </div>
                 <div class="flex-1 px-8">
-                    <div class="flex flex-row items-center">
+                    <div class="flex flex-row items-end">
                         <span class="text-2xl font-bold text-green-700" id="field_detail.fieldName"></span>
-                        <div class="ml-5">
-                            <i class="fa-solid fa-star" style="color: #ffd43b"></i>
-                            <i class="fa-solid fa-star" style="color: #ffd43b"></i>
+                        <div class="ml-5 flex items-center">
+                            <span class='text-md font-semibold italic mr-1' id="field_detail.rating">2.5</span>
                             <i class="fa-solid fa-star" style="color: #ffd43b"></i>
                         </div>
                     </div>
                     <div class="flex justify-between py-4">
                         <div class="flex items-center">
                             <i class="fa fa-location-arrow mr-2" aria-hidden="true"></i>
-                            <span class="text-gray-500" id="field_detail.location">Manchester City, England</span>
+                            <span class="text-gray-500" id="field_detail.location"></span>
                         </div>
                         <div class="flex items-center">
                             <i class="fa-solid fa-phone mr-2"></i>
-                            <span class="text-gray-500" id="field_detail.phone">+88 098 463</span>
+                            <span class="text-gray-500" id="field_detail.phone"></span>
                         </div>
                         <div class="flex items-center">
                             <i class="fa-regular fa-envelope mr-2"></i>
-                            <span class="text-gray-500" id="field_detail.email">mcontop@gmail.com</span>
+                            <span class="text-gray-500" id="field_detail.email"></span>
                         </div>
                     </div>
                     <div class="flex">
                         <div class="flex flex-column items-center">
-                            <i class="fa-solid fa-basketball p-2 w-10 rounded-full mx-3"></i>
+                            <i class="fa-solid fa-basketball p-2 text-xl w-10 rounded-full mx-3"></i>
                             <div class="flex flex-col">
                                 <span th:text="#{field_detail.category.title}">Loại</span>
-                                <span class="text-md font-bold">Sân bóng đá</span>
+                                <span class="text-md font-bold" id="field_detail.category"></span>
                             </div>
                         </div>
                         <div class="flex flex-column items-center px-8">
-                            <img src="https://placehold.co/600x400" class="w-10 rounded-full mx-3" alt="" />
+                            <img id="field_detail.ownerImage" class="w-10 rounded-full mx-3" alt="" />
                             <div class="flex flex-col">
                                 <span th:text="#{field_detail.owner.title}">Chủ sân</span>
-                                <span class="text-md font-bold">Chủ tịch Mohamed</span>
+                                <span class="text-md font-bold" id="field_detail.ownerName">Chủ tịch Mohamed</span>
                             </div>
                         </div>
                     </div>
@@ -53,16 +57,16 @@
 
         <div class="mx-4">
             <a
+                id='field_detail.button_tab_detail'
                 th:text="#{field_detail.button_detail.title}"
-                th:href="@{/sports-field/1/details}"
                 th:class="${content == 'detailTab'} ?
                 'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800'
                 : 'text-2xl font-semibold text-gray-600 pr-5 cursor-pointer'"
             ></a>
 
             <a
+                id='field_detail.button_tab_review'
                 th:text="#{field_detail.button_review.title}"
-                th:href="@{/sports-field/1/reviews}"
                 th:class="${content == 'reviewTab'} ?
                 'text-2xl font-semibold text-green-800 cursor-pointer border-b border-b-2 border-green-800'
                 : 'text-2xl font-semibold text-gray-600 pl-5 cursor-pointer'"

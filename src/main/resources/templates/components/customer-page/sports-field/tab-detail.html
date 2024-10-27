@@ -1,4 +1,4 @@
-<div class="mx-8 my-6">
+<div class="mx-8 my-6" id="field_detail.tabDetail">
     <div class="px-4 bg-gray-100 rounded-2xl">
         <div class="flex flex-row items-center border-b py-2">
             <div class="flex w-7 h-7 justify-center items-center rounded-full bg-yellow-50 mr-2">
@@ -25,18 +25,18 @@
             </div>
             <span class="font-semibold text-lg" th:text="#{field_detail.status.title}"></span>
         </div>
-        <div class="flex flex-row ml-5 items-center py-2">
-            <div class="flex items-center mx-5 bg-yellow-100 p-1 px-2 rounded-3xl cursor-pointer">
-                <span class="text-lg font-medium text-green-800">Sẵn sàng</span>
+        <div class="flex flex-row ml-5 items-center py-2" id='field_detail.tabDetail.status'>
+            <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
+                <span class="text-lg font-medium text-gray-300">Mở cửa</span>
             </div>
             <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
-                <span class="text-lg font-medium text-gray-300">Đang hoạt động</span>
+                <span class="text-lg font-medium text-gray-300">Đóng cửa</span>
             </div>
             <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
                 <span class="text-lg font-medium text-gray-300">Bảo trì</span>
             </div>
             <div class="flex items-center mx-5 p-1 px-2 rounded-3xl cursor-pointer">
-                <span class="text-lg font-medium text-gray-300">Đóng cửa</span>
+                <span class="text-lg font-medium text-gray-300">Tạm khóa</span>
             </div>
         </div>
     </div>
