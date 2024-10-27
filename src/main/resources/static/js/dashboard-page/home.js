@@ -4,11 +4,13 @@ const currentUser = localStorage.getItem('current-user');
 
 
 if (localStorage.getItem('current-user') !== null) {
+    const defaultAvatarUrl = document.getElementById('avatar').getAttribute('src');
+
     if (currentUser) {
         const user = JSON.parse(currentUser)
 
-        userAvatar.src = user.avatar || 'image/user-info/user-info.png'
-        usernameElement.textContent = user.username
+        userAvatar.src = user.avatar || defaultAvatarUrl
+        usernameElement.textContent = user.username || "John doe"
 
     }
 }

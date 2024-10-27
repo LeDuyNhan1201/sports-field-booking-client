@@ -22,7 +22,7 @@ public class DashboardController {
         return "pages/dashboard";
     }
 
-    @GetMapping("sports-field")
+    @GetMapping("/sport-field")
     public String sportFieldPage(Model model){
         model.addAttribute("title", getLocalizedMessage("dashboard.sports_field.title"));
         model.addAttribute("content", "sportsField");
@@ -47,6 +47,13 @@ public class DashboardController {
     public String promotionPage(Model model){
         model.addAttribute("title", getLocalizedMessage("dashboard.promotion.title"));
         model.addAttribute("content", "promotion");
+        return "pages/dashboard";
+    }
+
+    @GetMapping("/order")
+    public String orderPage(Model model){
+        model.addAttribute("title", getLocalizedMessage("dashboard.order.title"));
+        model.addAttribute("content", "order");
         return "pages/dashboard";
     }
 

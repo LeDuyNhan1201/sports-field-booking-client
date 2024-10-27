@@ -19,5 +19,13 @@
         <div th:replace="~{/components/dashboard-page/promotion :: promotion}"></div>
     </div>
 
+    <div th:case="'order'">
+        <div th:replace="~{/components/dashboard-page/order :: order}"></div>
+    </div>
+
+    <div th:case="'sportField'">
+        <div th:replace="~{/components/dashboard-page/sport-field :: sportField}"></div>
+    </div>
+
     <div id="loading"></div>
 </div>

@@ -1,4 +1,6 @@
 <div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml">
+    <script th:src="@{/js/utils.js}"></script>
+
     <div th:case="'home'">
         <div th:replace="~{/components/customer-page/home :: home}"></div>
     </div>
@@ -29,5 +31,4 @@
 
     <div id="loading"></div>
 
-    <script th:src="@{/js/utils.js}"></script>
 </div>
