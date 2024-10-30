@@ -8,6 +8,8 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+let bookings = [];
+
 async function fetchBookingHistory() {
     try {
         const token = getCookie('accessToken');
@@ -45,7 +47,7 @@ async function fetchBookingHistory() {
 
         tableBody.innerHTML = '';
 
-        const bookings = data.items;
+        bookings = data.items;
         if (!Array.isArray(bookings) || bookings.length === 0) {
             noBookingsMessage.style.display = 'block';
             bookingHistoryTable.style.display = 'none';
@@ -53,16 +55,21 @@ async function fetchBookingHistory() {
             noBookingsMessage.style.display = 'none';
             bookingHistoryTable.style.display = 'table';
 
-            bookings.forEach(booking => {
+            bookings.forEach((booking, index) => {
+                const startTime = new Date(booking.fieldAvailability.startTime);
+                const endTime = new Date(booking.fieldAvailability.endTime);
+
+                const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
+                const totalPrice = durationInHours * booking.fieldAvailability.pricePerHour;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="border px-4 py-2">${booking.id}</td>
-                    <td class="border px-4 py-2">${booking.user.username}</td>
-                    <td class="border px-4 py-2">${booking.sportField.name}</td>
-                    <td class="border px-4 py-2">${booking.fieldAvailability.startTime}</td>
-                    <td class="border px-4 py-2">${booking.fieldAvailability.endTime}</td>
-                    <td class="border px-4 py-2">${booking.status}</td>
-                    <td class="border px-4 py-2">
+                    <td class="border px-4 py-2 text-center">${index + 1}</td>
+                    <td class="border px-4 py-2 text-center">${booking.user.username}</td>
+                    <td class="border px-4 py-2 text-center">${booking.sportField.name}</td>
+                    <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)} đ</td>
+                    <td class="border px-4 py-2 text-center">${booking.status}</td>
+                    <td class="border px-4 py-2 text-center">
                         <button class="view-details-button bg-blue-500 text-white px-2 py-1 rounded" data-booking-id="${booking.id}">View Details</button>
                         ${bookingType === 'my-upcoming' && booking.status === 'PENDING' ? `<button class="cancel-button bg-red-500 text-white px-2 py-1 rounded" data-booking-id="${booking.id}">Cancel</button>` : ''}
                     </td>
@@ -119,7 +126,54 @@ async function cancelBooking(bookingId) {
 }
 
 function viewBookingDetails(bookingId) {
-    console.log('Viewing details for booking ID:', bookingId);
+    const booking = bookings.find(b => b.id === bookingId);
+    if (!booking) {
+        console.error('Booking not found:', bookingId);
+        return;
+    }
+
+    const modal = document.getElementById('booking-detail-modal');
+    const detailNo = document.getElementById('detail-no');
+    const detailUser = document.getElementById('detail-user');
+    const detailSportField = document.getElementById('detail-sport-field');
+    const detailDate = document.getElementById('detail-date');
+    const detailStartTime = document.getElementById('detail-start-time');
+    const detailEndTime = document.getElementById('detail-end-time');
+    const detailTotalPrice = document.getElementById('detail-total-price');
+    const detailStatus = document.getElementById('detail-status');
+
+    const startTime = new Date(booking.fieldAvailability.startTime);
+    const endTime = new Date(booking.fieldAvailability.endTime);
+    const date = startTime.toLocaleDateString('en-US');
+    const formattedStartTime = startTime.toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+    const formattedEndTime = endTime.toLocaleString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
+    const totalPrice = durationInHours * booking.fieldAvailability.pricePerHour;
+
+    detailNo.textContent = bookings.findIndex(b => b.id === bookingId) + 1;
+    detailUser.textContent = booking.user.username;
+    detailSportField.textContent = booking.sportField.name;
+    detailDate.textContent = date;
+    detailStartTime.textContent = formattedStartTime;
+    detailEndTime.textContent = formattedEndTime;
+    detailTotalPrice.textContent = totalPrice.toFixed(2) + ' đ';
+    detailStatus.textContent = booking.status;
+
+    modal.classList.remove('hidden');
+
+    const closeModalButton = document.getElementById('close-modal-button');
+    closeModalButton.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
 }
 
 function setupBookingTypeSelector() {
