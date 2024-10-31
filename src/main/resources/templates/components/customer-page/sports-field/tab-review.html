@@ -34,9 +34,10 @@
         </div>
     </div>
 </div>-->
-<div class="border-l-2 rounded-xl p-2 my-4 ml-12" th:fragment="reviewTab">
+<div class="border-l-2 rounded-xl p-2 my-4 ml-12" th:fragment="reviewTab" xmlns:th="http://www.w3.org/1999/xhtml">
     <div id="reviews"></div>
     <button id="loadMoreButton">Load More</button>
 
+    <script th:src="@{/js/customer-page/field-detail.js}"></script>
     <script th:src="@{/js/customer-page/review.js}"></script>
 </div>

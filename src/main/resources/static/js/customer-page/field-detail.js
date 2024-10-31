@@ -3,6 +3,7 @@ let buttonOrder = document.getElementById("buttonOrder");
 let buttonCloseBookingDetail = document.getElementById("buttonCloseBookingDetail");
 let container = document.getElementById("field-detail");
 let id = container.getAttribute("fieldId");
+
 async function loadDetail() {
     try {
         const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
