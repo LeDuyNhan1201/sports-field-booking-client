@@ -56,11 +56,12 @@ async function fetchBookingHistory() {
             bookingHistoryTable.style.display = 'table';
 
             bookings.forEach((booking, index) => {
-                const startTime = new Date(booking.fieldAvailability.startTime);
-                const endTime = new Date(booking.fieldAvailability.endTime);
-
-                const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
-                const totalPrice = durationInHours * booking.fieldAvailability.pricePerHour;
+                const totalPrice = booking.bookingItems.reduce((sum, item) => {
+                    const startTime = new Date(item.startTime);
+                    const endTime = new Date(item.endTime);
+                    const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
+                    return sum + (durationInHours * item.pricePerHour);
+                }, 0);
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -136,37 +137,65 @@ function viewBookingDetails(bookingId) {
     const detailNo = document.getElementById('detail-no');
     const detailUser = document.getElementById('detail-user');
     const detailSportField = document.getElementById('detail-sport-field');
-    const detailDate = document.getElementById('detail-date');
-    const detailStartTime = document.getElementById('detail-start-time');
-    const detailEndTime = document.getElementById('detail-end-time');
+    const bookingItemsContainer = document.getElementById('booking-items-container');
     const detailTotalPrice = document.getElementById('detail-total-price');
     const detailStatus = document.getElementById('detail-status');
-
-    const startTime = new Date(booking.fieldAvailability.startTime);
-    const endTime = new Date(booking.fieldAvailability.endTime);
-    const date = startTime.toLocaleDateString('en-US');
-    const formattedStartTime = startTime.toLocaleString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
-    const formattedEndTime = endTime.toLocaleString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-    });
-
-    const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
-    const totalPrice = durationInHours * booking.fieldAvailability.pricePerHour;
 
     detailNo.textContent = bookings.findIndex(b => b.id === bookingId) + 1;
     detailUser.textContent = booking.user.username;
     detailSportField.textContent = booking.sportField.name;
-    detailDate.textContent = date;
-    detailStartTime.textContent = formattedStartTime;
-    detailEndTime.textContent = formattedEndTime;
-    detailTotalPrice.textContent = totalPrice.toFixed(2) + ' đ';
     detailStatus.textContent = booking.status;
+
+    bookingItemsContainer.innerHTML = '';
+
+    let totalPrice = 0;
+
+    booking.bookingItems.forEach((item, index) => {
+        const startTime = new Date(item.startTime);
+        const endTime = new Date(item.endTime);
+        const date = startTime.toLocaleDateString('en-US');
+        const formattedStartTime = startTime.toLocaleString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        const formattedEndTime = endTime.toLocaleString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
+        const itemTotalPrice = durationInHours * item.pricePerHour;
+        totalPrice += itemTotalPrice;
+
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('border', 'p-4', 'rounded', 'bg-gray-100', 'mb-2');
+        itemElement.innerHTML = `
+            <div class="flex justify-between">
+                <span class="font-semibold">Item ${index + 1}:</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold">Date:</span>
+                <span class="text-gray-700">${date}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold">Start Time:</span>
+                <span class="text-gray-700">${formattedStartTime}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold">End Time:</span>
+                <span class="text-gray-700">${formattedEndTime}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold">Total Price:</span>
+                <span class="text-gray-700">${itemTotalPrice.toFixed(2)} đ</span>
+            </div>
+        `;
+        bookingItemsContainer.appendChild(itemElement);
+    });
+
+    detailTotalPrice.textContent = totalPrice.toFixed(2) + ' đ';
 
     modal.classList.remove('hidden');
 
