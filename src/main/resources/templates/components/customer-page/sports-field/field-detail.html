@@ -1,4 +1,5 @@
-<div class="flex justify-center items-center my-10" id="field-detail" th:fieldId="${id}" th:fragment="fieldDetail">
+<div class="flex justify-center items-center my-10" id="field-detail" th:fieldId="${id}" th:fragment="fieldDetail"
+     xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="h-3/5 w-4/5 border rounded-xl shadow-xl border-gray-300">
         <div class="flex justify-between p-4 border-b items-center">
             <span class="text-2xl font-semibold" th:text="#{field_detail.field_detail_header.title}">Sport Field Detail</span>
@@ -79,20 +80,6 @@
             </div>
 
             <div th:case="'reviewTab'">
-                <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
-                    <div class="flex flex-col">
-                        <div class="flex flex-row items-center">
-                            <img src="https://placehold.co/600x400" class="h-10 w-10 m-2" alt="" />
-                            <div class="flex flex-col">
-                                <span class="text-red-600 italic">Parent</span>
-                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700" th:placeholder="#{input.placeholder}" />
-                            </div>
-                        </div>
-                        <div class="ml-3">
-                            <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer"></i>
-                        </div>
-                    </div>
-                </div>
                 <div th:replace="~{/components/customer-page/sports-field/tab-review :: reviewTab}"></div>
             </div>
         </div>
