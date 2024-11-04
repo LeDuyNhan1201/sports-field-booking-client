@@ -50,11 +50,46 @@ async function appendReviews(reviews) {
     const container = document.getElementById('reviews');
     container.innerHTML = '';
 
-    for (let review of reviews) {
-        console.log(review);
+    function createNewReviewBox() {
+        const newReviewElement = document.createElement('div');
+        newReviewElement.classList.add('new-review');
+        newReviewElement.innerHTML = `
+            <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
+                <div class="flex flex-col">
+                    <div class="flex flex-row items-center">
+                        <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
+                        <div class="flex flex-col">
+                            <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
+                            <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 new-review-input" placeholder="Write a review..." />
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer new-review-submit"></i>
+                    </div>
+                </div>
+            </div>
+        `;
 
-        if (review.parentReview) continue;
+        const reviewInput = newReviewElement.querySelector('.new-review-input');
+        reviewInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                await submitNewReview(reviewInput);
+            }
+        });
 
+        return newReviewElement;
+    }
+
+    async function submitNewReview(inputElement) {
+        const reviewInput = inputElement.value.trim();
+        if (reviewInput) {
+            await sendReview(reviewInput);
+            inputElement.value = '';
+            loadReviews();
+        }
+    }
+
+    function createReviewElement(review) {
         const reviewElement = document.createElement('div');
         reviewElement.classList.add('review');
         reviewElement.innerHTML = `
@@ -91,72 +126,44 @@ async function appendReviews(reviews) {
             </div>
         `;
 
-        reviewElement.querySelector('.buttonNewChildCmt').addEventListener('click', () => {
-            const replyInputContainer = document.getElementById(`replyInputContainer-${review.id}`);
+        const replyButton = reviewElement.querySelector('.buttonNewChildCmt');
+        replyButton.addEventListener('click', () => {
+            const replyInputContainer = reviewElement.querySelector(`#replyInputContainer-${review.id}`);
             replyInputContainer.classList.toggle('hidden');
         });
 
-        reviewElement.querySelector('.reply-input').addEventListener('keypress', async (e) => {
+        const replyInput = reviewElement.querySelector('.reply-input');
+        replyInput.addEventListener('keypress', async (e) => {
             if (e.key === 'Enter') {
-                const replyInput = e.target.value.trim();
-                if (replyInput) {
-                    await sendReply(review.id, replyInput);
-
-                    e.target.value = '';
-
-                    const replyInputContainer = document.getElementById(`replyInputContainer-${review.id}`);
-                    replyInputContainer.classList.add('hidden');
-
-                    const newReplies = await loadReplies(review.id);
-                    appendReplies(newReplies, `repliesContainer-${review.id}`);
-                }
+                await handleReply(review.id, replyInput);
             }
         });
 
-        container.appendChild(reviewElement);
-
-        const replies = await loadReplies(review.id);
-        appendReplies(replies, `repliesContainer-${review.id}`);
+        return reviewElement;
     }
-}
 
-// add comment section for new user
-async function submitNewReview() {
-    const reviewInput = newReviewElement.querySelector('.new-review-input').value.trim();
-    if (reviewInput) {
-        await sendReview(reviewInput);
-        newReviewElement.querySelector('.new-review-input').value = '';
-        loadReviews();
-    }
-}
-
-function createCommentSection() {
-    const newReviewElement = document.createElement('div');
-    newReviewElement.classList.add('new-review');
-    newReviewElement.innerHTML = `
-    <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
-        <div class="flex flex-col">
-            <div class="flex flex-row items-center">
-                <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
-                <div class="flex flex-col">
-                    <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
-                    <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 new-review-input" placeholder="Write a review..." />
-                </div>
-            </div>
-            <div class="ml-3">
-                <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer new-review-submit"></i>
-            </div>
-        </div>
-    </div>
-`;
-
-    newReviewElement.querySelector('.new-review-input').addEventListener('keypress', async (e) => {
-        if (e.key === 'Enter') {
-            await submitNewReview();
+    async function handleReply(reviewId, inputElement) {
+        const replyText = inputElement.value.trim();
+        if (replyText) {
+            await sendReply(reviewId, replyText);
+            inputElement.value = '';
+            const replyInputContainer = document.getElementById(`replyInputContainer-${reviewId}`);
+            replyInputContainer.classList.add('hidden');
+            const newReplies = await loadReplies(reviewId);
+            appendReplies(newReplies, `repliesContainer-${reviewId}`);
         }
-    });
+    }
 
-    container.appendChild(newReviewElement);
+    container.appendChild(createNewReviewBox());
+
+    for (const review of reviews) {
+        if (!review.parentReview) {
+            const reviewElement = createReviewElement(review);
+            container.appendChild(reviewElement);
+            const replies = await loadReplies(review.id);
+            appendReplies(replies, `repliesContainer-${review.id}`);
+        }
+    }
 }
 
 // new comment
