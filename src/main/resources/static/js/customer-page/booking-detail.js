@@ -1,16 +1,8 @@
 const fieldAvailable = document.querySelectorAll(".field_availability");
-const slotsSelectQuantity = document.getElementById('slotsSelectQuantity');
+
 
 fieldAvailable.forEach((e) => {
-    e.addEventListener("click", () => {
-        if(e.style.borderLeft != "none") {
-            e.style.borderLeft = 'none'
-        }
-        else {
-            e.style.borderLeft = "5px solid red"
-        }
-        checkSlotsSelectQuantity()
-    });
+    
 });
 
 function checkSlotsSelectQuantity() {

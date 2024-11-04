@@ -1,7 +1,9 @@
 let offset = 0;
 const limit = 10;
 let nextOffset = null;
-id = container.getAttribute("fieldId");
+
+let tabReview = document.getElementById('tabReview')
+let fieldReviewId = tabReview.getAttribute("fieldId");
 
 const currentUser = localStorage.getItem('current-user');
 const userComment = JSON.parse(currentUser);
@@ -11,7 +13,7 @@ loadReviews();
 async function loadReviews() {
     try {
         //        showLoading(true);
-        const response = await fetch(`${SERVER_DOMAIN}/reviews/${id}?offset=${offset}&limit=${limit}`);
+        const response = await fetch(`${SERVER_DOMAIN}/reviews/${fieldReviewId}?offset=${offset}&limit=${limit}`);
         const data = await response.json();
 
         // Append reviews to the container

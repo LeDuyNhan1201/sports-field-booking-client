@@ -4,13 +4,25 @@ let buttonCloseBookingDetail = document.getElementById("buttonCloseBookingDetail
 let container = document.getElementById("field-detail");
 let id = container.getAttribute("fieldId");
 
+const selectQuantityAvailabilities = document.getElementById('booking_detail.select_quantity_availabilities');
+const selectPriceAvailabilities = document.getElementById('booking_detail.select_price_availabilities');
+
+// có nên đẩy hàm này vô ultils luôn k
+function extractTime(isoString) {
+    const date = new Date(isoString);
+    const hours = String(date.getUTCHours()).padStart(2, "0");
+    const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+}
+
 async function loadDetail() {
     try {
         const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
         const field = await fieldRes.json();
 
         await appendDetail(field);
-        await tab_detail(field)
+        await tab_detail(field);
+        await appendBookingDetail(field);
     } catch (error) {
         console.error("Error fetching detail:", error);
     }
@@ -28,7 +40,7 @@ async function appendDetail(field) {
     document.getElementById("field_detail.rating").textContent = field.rating;
     document.getElementById("field_detail.image").src = field.images[0];
 
-        // ảnh nhỏ phía dưới
+    // ảnh nhỏ phía dưới
     let imageItems = document.getElementById("field_detail.imageItems");
     for (let i = 0; i < 2; i++) {
         let imageElement = document.createElement("img");
@@ -67,23 +79,62 @@ async function tab_detail(field) {
     if (tab_detail) {
         let statusContainer = document.getElementById("field_detail.tabDetail.status");
         let statusElements = statusContainer.querySelectorAll("div");
-        switch(field.status) {
-            case 'OPEN':
-                statusElements[0].classList.add('bg-yellow-100')
-                statusElements[0].querySelector('span').classList.add('text-green-800')
+        switch (field.status) {
+            case "OPEN":
+                statusElements[0].classList.add("bg-yellow-100");
+                statusElements[0].querySelector("span").classList.add("text-green-800");
                 break;
-            case 'CLOSE':
-                statusElements[1].classList.add('bg-yellow-100')
-                statusElements[1].querySelector('span').classList.add('text-green-800')
+            case "CLOSE":
+                statusElements[1].classList.add("bg-yellow-100");
+                statusElements[1].querySelector("span").classList.add("text-green-800");
                 break;
-            case 'MAINTENANCE':
-                statusElements[2].classList.add('bg-yellow-100')
-                statusElements[2].querySelector('span').classList.add('text-green-800')
+            case "MAINTENANCE":
+                statusElements[2].classList.add("bg-yellow-100");
+                statusElements[2].querySelector("span").classList.add("text-green-800");
                 break;
             default:
-                statusElements[3].classList.add('bg-yellow-100')
-                statusElements[3].querySelector('span').classList.add('text-green-800')
+                statusElements[3].classList.add("bg-yellow-100");
+                statusElements[3].querySelector("span").classList.add("text-green-800");
                 break;
         }
     }
+}
+
+async function appendBookingDetail(field) {
+    document.getElementById("booking_detail.status").textContent = field.status;
+    document.getElementById("booking_detail.field_name").textContent = field.name;
+    document.getElementById("booking_detail.field_category").textContent = field.category;
+    document.getElementById("booking_detail.field_address").textContent = field.location;
+    document.getElementById("booking_detail.field_image").src = field.images[0];
+
+    let fieldAvailabilitiesElement = document.getElementById("booking_detail.field_availabilities");
+    field.fieldAvailabilities.forEach((fieldAvailability) => {
+        let element = document.createElement("a");
+        element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
+        element.innerHTML = `
+                <div class="flex flex-1 justify-between">
+                    <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
+                    <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
+                    <span class="text-lg flex-1 text-end">${fieldAvailability.price} $</span>
+                    </div>
+                <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">${fieldAvailability.status}</span>
+            `;
+
+        element.addEventListener("click", () => {
+            if(element.style.borderLeft == '5px solid red') {                
+                element.style.borderLeft = 'none'
+                selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
+                selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);                
+            }
+            else {
+                element.style.borderLeft = "5px solid red"
+                selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
+                selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
+            }
+            console.log(element.style.borderLeft);
+            
+        });
+
+        fieldAvailabilitiesElement.appendChild(element);
+    });
 }

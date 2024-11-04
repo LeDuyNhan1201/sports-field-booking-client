@@ -1,19 +1,26 @@
 let currentOffset = 0;
 const limit = 12;
 let currentTab = "grid";
+let searchValue = ' ';
+let colSort = document.getElementById('sportsField.select_colSort').value;
+let sortDirection = -1
 
 let page = document.getElementById("sportsField.page");
 let sportFieldList = document.getElementById("sportsField.list");
 let sportFieldGrid = document.getElementById("sportsField.grid");
 
-async function loadSportFieldList(type, offset) {
+async function loadSportFieldList(type, currentOffset, searchValue) {
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/sports-field?offset=${offset}&limit=${limit}`);
+        let response;
+        if(searchValue === '') {
+            response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+        }else{
+            response = await fetch(`${SERVER_DOMAIN}/sports-field/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+        }
         const data = await response.json();
         if(data.items.length){
             if (type == "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
-            currentOffset = offset
             loadPage(currentOffset);
         }
 
@@ -57,10 +64,11 @@ async function appendFieldList(data) {
 
         let sportFieldTable = sportFieldList.querySelector("tbody");
         sportFieldTable.innerHTML = ''
-        data.forEach((field) => {
+        data.forEach((field, index) => {
             const fieldElement = document.createElement("tr");
             fieldElement.className = "border-b";
             fieldElement.innerHTML = `
+                    <td class="p-4">${index +1 + currentOffset*12}</td>
                     <td class="p-4">${field.name}</td>
                     <td class="p-4">
                         <img src="${field.images[0]}" alt="Stadium Image" class='h-10 w-10' />
@@ -87,15 +95,15 @@ async function appendFieldList(data) {
         console.error("Error fetching sport field:", error);
     }
 }
-loadSportFieldList(currentTab, 0);
+loadSportFieldList(currentTab, 0, searchValue);
 
 document.getElementById("sportsField.button-tab-grid").addEventListener("click", () => {
     currentTab = "grid";
-    loadSportFieldList(currentTab, currentOffset);
+    loadSportFieldList(currentTab, currentOffset, searchValue);
 });
 document.getElementById("sportsField.button-tab-list").addEventListener("click", () => {
     currentTab = "list";
-    loadSportFieldList(currentTab, currentOffset);
+    loadSportFieldList(currentTab, currentOffset, searchValue);
 });
 
 //change page
@@ -104,9 +112,64 @@ async function loadPage(offset) {
     page.textContent = offset + 1;
 }
 
+//action next page
 document.getElementById("sportsField.nextPage").addEventListener("click", () => {
-    loadSportFieldList(currentTab, currentOffset + 1);
+    currentOffset += 1;
+    loadSportFieldList(currentTab, currentOffset, searchValue);
 });
 document.getElementById("sportsField.backPage").addEventListener("click", () => {    
-    loadSportFieldList(currentTab, currentOffset -1);
+    currentOffset -= 1;
+    loadSportFieldList(currentTab, currentOffset, searchValue);
 });
+
+
+//search
+document.getElementById('sportsField.button_search').addEventListener('click', function(e) {
+    actionSearch()
+})
+
+document.getElementById("sportsField.search_value").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        actionSearch()
+    }
+});
+
+async function actionSearch() {    
+    searchValue = document.getElementById('sportsField.search_value').value;
+    loadSportFieldList(currentTab, 0, searchValue);
+}
+
+//select column sort
+document.getElementById('sportsField.select_colSort').addEventListener('change', function(e){
+    colSort = this.value;
+    actionSearch()
+})
+
+//select sort direction
+
+document.getElementById("sportsField.button_sortDirection").addEventListener("click", function(e) {
+    if (e.target.classList.contains("rotate-180")) {
+        e.target.classList.remove("rotate-180");
+        e.target.style.transform = "rotate(0deg)";
+    } else {
+        e.target.classList.add("rotate-180");
+        e.target.style.transform = "rotate(180deg)";
+    }
+    sortDirection = sortDirection * -1;
+    actionSearch()
+});
+
+// sport field quantityAll
+async function sportsFieldQuantityAll() {
+    try {
+
+        response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=name&sortDirection=1&offset=0&limit=100`);
+        const data = await response.json();
+        
+        document.getElementById('sportsField.quantity.value').textContent = data.items.length
+
+    } catch (error) {
+        console.error("Error fetching sport field:", error);
+    }
+}
+sportsFieldQuantityAll()

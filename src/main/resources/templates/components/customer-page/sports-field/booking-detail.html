@@ -1,9 +1,9 @@
 <div class="flex justify-center items-center mt-10" th:fragment="bookingDetail">
-    <div class="h-3/5 w-5/6 border border-black rounded-xl shadow-xl border-gray-400 bg-white">
+    <div class="h-3/5 w-5/6 border rounded-xl shadow-xl border-gray-400 bg-white">
         <div class="flex justify-between p-4 border-b items-center">
             <div class="flex items-center">
                 <span class="text-2xl font-semibold text" th:text="#{booking_detail.header.title}"></span>
-                <span class="py-1 px-2 mx-2 bg-purple-100 rounded-2xl">Đang được thuê</span>
+                <span class="py-1 px-2 mx-2 bg-purple-100 rounded-2xl" id= 'booking_detail.status'>Đang được thuê</span>
             </div>
             <i class="fa-solid fa-xmark cursor-pointer text-xl text-red-500" id="buttonCloseBookingDetail"></i>
         </div>
@@ -12,21 +12,21 @@
                 <span class="font-semibold text-xl text-green-800" th:text="#{booking_detail.info.title}"></span>
                 <div class="flex flex-row items-center mt-3">
                     <div class="flex flex-row px-2 mr-4">
-                        <img src="https://placehold.co/600x400" class="w-16 rounded-full mx-3" alt="" />
+                        <img src="https://placehold.co/600x400" class="w-16 rounded-full mx-3" id='booking_detail.field_image' alt="" />
                         <div class="flex flex-col">
-                            <span class="text-green-900 text-lg font-bold">Etihad</span>
-                            <span class="text-gray-700 text-sm">Sân bóng đá</span>
+                            <span class="text-green-900 text-lg font-bold" id='booking_detail.field_name'>Etihad</span>
+                            <span class="text-gray-700 text-sm" id='booking_detail.field_category'>Sân bóng đá</span>
                         </div>
                     </div>
-                    <span class="text-green-500 bg-gray-200 py-1 px-3 rounded-2xl">London, England</span>
+                    <span class="text-green-500 bg-gray-200 py-1 px-3 rounded-2xl" id='booking_detail.field_address'>London, England</span>
                 </div>
             </div>
             <div class="flex flex-col items-center">
                 <div>
                     <span class="text-lg" th:text="#{booking_detail.field_select_quantity.title}"></span>
-                    <span class="text-xl text-green-800 font-bold mx-2" id="slotsSelectQuantity">0</span>
+                    <span class="text-xl text-green-800 font-bold mx-2" id="booking_detail.select_quantity_availabilities">0</span>
                 </div>
-                <span class="text-2xl text-red-500 font-bold mx-2">10.000đ</span>
+                <span class="text-2xl text-red-500 font-bold mx-2" id="booking_detail.select_price_availabilities">0</span>
             </div>
         </div>
         <div class="flex justify-end mx-12">
@@ -58,27 +58,11 @@
                     <span class="flex w-1/2 justify-end text-lg font-semibold" th:text="#{booking_detail.status_filter.title}"></span>
                 </div>
 
-                <div class="overflow-y-scroll custom-scrollbar max-h-40">
-                    <a class="flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 field_availability">
-                        <div class="flex flex-1 justify-between">
-                            <span class="text-lg flex-1">10:00</span>
-                            <span class="text-lg flex-1 text-center">11:11</span>
-                            <span class="text-lg flex-1 text-end">100.000</span>
-                        </div>
-                        <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Ordered</span>
-                    </a>
-                    <a class="flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 field_availability">
-                        <div class="flex flex-1 justify-between">
-                            <span class="text-lg flex-1">10:00</span>
-                            <span class="text-lg flex-1 text-center">11:11</span>
-                            <span class="text-lg flex-1 text-end">100.000</span>
-                        </div>
-                        <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Ordered</span>
-                    </a>
+                <div class="overflow-y-scroll custom-scrollbar max-h-40" id='booking_detail.field_availabilities'>
+                    
                 </div>
             </div>
         </div>
     </div>
 
-    <script th:src="@{/js/customer-page/booking-detail.js}"></script>
 </div>
