@@ -29,7 +29,6 @@
             <div>
                 <label for="changePictureInput" class="bg-blue-500 text-white px-4 py-2 rounded-md mr-2 cursor-pointer" th:text="#{user_info.change_picture.title}"></label>
                 <input id="changePictureInput" type="file" class="hidden" accept="image/*">
-                <button id="deletePictureBtn" class="bg-red-500 text-white px-4 py-2 rounded-md" th:text="#{user_info.delete_picture.title}"></button>
             </div>
         </div>
 
@@ -38,41 +37,46 @@
             <h3 class="text-2xl font-semibold mb-4" th:text="#{user_info.personal_information.title}"></h3>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label for="firstname" class="block text-gray-700 text-xl mb-2" th:text="#{user_info.first_name.label}"></label>
+                    <label for="firstname" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.first_name.label}"></label>
                     <span id="firstnameDisplay" class="text-gray-700 text-xl mt-4 block">John</span>
                     <input id="firstname" type="text" class="border border-gray-300 rounded-md w-full p-2 hidden">
                 </div>
                 <div>
-                    <label for="lastname" class="block text-gray-700 text-xl" th:text="#{user_info.last_name.label}"></label>
-                    <span id="lastnameDisplay" class="text-gray-700 text-xl mt-4 block">Doe</span>
+                    <label for="lastname" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.last_name.label}"></label>
+                    <span id="lastnameDisplay" class="text-gray-700 text-xl mb-4 mt-4 block">Doe</span>
                     <input id="lastname" type="text" class="border border-gray-300 rounded-md w-full p-2 hidden">
                 </div>
                 <div>
-                    <label for="phone" class="block text-gray-700 text-xl" th:text="#{user_info.phone.label}"></label>
-                    <span id="phoneDisplay" class="text-gray-700 text-xl mt-4 block">123-456-7890</span>
+                    <label for="phone" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.phone.label}"></label>
+                    <span id="phoneDisplay" class="text-gray-700 text-xl mt-4 mb-4 block">123-456-7890</span>
                     <input id="phone" type="text" class="border border-gray-300 rounded-md w-full p-2 hidden">
                 </div>
-            </div>
-        </div>
 
-        <!-- Address Information Section -->
-        <div class="mb-8 border-t border-gray-300 pt-4">
-            <h3 class="text-2xl font-semibold mb-4" th:text="#{user_info.address_information.title}"></h3>
-            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label for="country" class="block text-gray-700 text-xl" th:text="#{user_info.country.label}"></label>
-                    <span id="countryDisplay" class="text-gray-700 text-x mt-4 block">United States of America</span>
-                    <input id="country" type="text" value="United States of America" class="border border-gray-300 rounded-md w-full p-2 hidden mt-4 block">
+                    <label for="email" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.email.label}"></label>
+                    <span id="emailDisplay" class="text-gray-700 text-xl mt-4 mb-4 block">123-456-7890</span>
+                    <input id="email" type="text" class="border border-gray-300 rounded-md w-full p-2 hidden">
                 </div>
+
                 <div>
-                    <label for="state" class="block text-gray-700 text-xl" th:text="#{user_info.state.label}"></label>
-                    <span id="stateDisplay" class="text-gray-700 text-xl mt-4 block">California, USA</span>
-                    <input id="state" type="text" value="California, USA" class="border border-gray-300 rounded-md w-full p-2 hidden mt-4 block">
+                    <label for="birthday" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.birthday.label}"></label>
+                    <span id="birthdayDisplay" class="text-gray-700 text-xl mt-4 block">01-01-1990</span>
+                    <input id="birthday" type="date" class="border border-gray-300 rounded-md w-full p-2 hidden">
                 </div>
+                
                 <div>
-                    <label for="postal" class="block text-gray-700 text-xl" th:text="#{user_info.postal.label}"></label>
-                    <span id="postalDisplay" class="text-gray-700 text-xl mt-4 block">ERT 62574</span>
-                    <input id="postal" type="text" value="ERT 62574" class="border border-gray-300 rounded-md w-full p-2 hidden mt-4 block">
+                    <label for="gender" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.gender.label}"></label>
+                    <span id="gender_male" th:text="#{user_info.gender_male.text}" style="display: none;">Male</span>
+                    <span id="gender_female" th:text="#{user_info.gender_female.text}" style="display: none;">Female</span>
+                    <span id="gender_other" th:text="#{user_info.gender_other.text}" style="display: none;">Other</span>
+
+                    <span id="genderDisplay" class="text-gray-700 text-xl mt-4 mb-4 block"></span>
+
+                    <select id="gender" class="border border-gray-300 rounded-md w-full p-2 hidden">
+                        <option value="Male" th:text="#{user_info.gender_male.text}">Nam</option>
+                        <option value="Female" th:text="#{user_info.gender_female.text}">Nữ</option>
+                        <option value="Other" th:text="#{user_info.gender_other.text}">Khác</option>
+                    </select>
                 </div>
             </div>
         </div>
