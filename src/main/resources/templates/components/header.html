@@ -31,30 +31,103 @@
 
             </li>
             <!--            <div id="current-user"></div>-->
-            <li id="user-info" class="hidden relative group">
-                <div class="relative flex items-center space-x-2 cursor-pointer group-hover:visible">
-                    <img id="avatar" class="w-8 h-8 rounded-full" th:src="@{/image/user-info/user-info.png}"
-                        alt="user-info" />
-                    <span id="username" class="font-bold">Username</span>
-                </div>
-                <!-- Dropdown menu -->
-                <div class="absolute right-0 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"
-                    style="z-index: 10;">
-                    <div class="flex flex-col items-center w-full">
-                        <a th:href="@{/user-info}"
-                            th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
-                            th:text="#{homepage.personal_info.title}" class="w-full block text-left"></a>
-                        <a th:href="@{/my-booking}" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
-                            th:class="${content == 'bookingHistory'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
-                            th:text="#{homepage.my_booking.title}"></a>
-                        <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left hidden"
-                            id="field-management" th:text="#{homepage.field_owner.title}"></a>
-                        <a href="#" id="btn-sign-out"
-                            class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
-                            th:text="#{homepage.logout.title}"></a>
+            <ul class="flex space-x-4">
+                <!-- Notification -->
+                <li id="notification" class="relative group">
+                    <div class="relative flex items-center space-x-2 cursor-pointer">
+                        <!-- Bell icon -->
+                        <svg height="30px" width="30px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"
+                            fill="#000000">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path style="fill:#FFAA00;"
+                                    d="M256,100.174c-27.619,0-50.087-22.468-50.087-50.087S228.381,0,256,0s50.087,22.468,50.087,50.087 S283.619,100.174,256,100.174z M256,33.391c-9.196,0-16.696,7.5-16.696,16.696s7.5,16.696,16.696,16.696 c9.196,0,16.696-7.5,16.696-16.696S265.196,33.391,256,33.391z">
+                                </path>
+                                <path style="fill:#F28D00;"
+                                    d="M256.006,0v33.394c9.194,0.003,16.69,7.5,16.69,16.693s-7.496,16.69-16.69,16.693v33.394 c27.618-0.004,50.081-22.469,50.081-50.087S283.624,0.004,256.006,0z">
+                                </path>
+                                <path style="fill:#FFAA00;"
+                                    d="M256,512c-46.043,0-83.478-37.435-83.478-83.478c0-9.228,7.467-16.696,16.696-16.696h133.565 c9.228,0,16.696,7.467,16.696,16.696C339.478,474.565,302.043,512,256,512z">
+                                </path>
+                                <path style="fill:#F28D00;"
+                                    d="M322.783,411.826h-66.777V512c46.042-0.004,83.473-37.437,83.473-83.478 C339.478,419.293,332.011,411.826,322.783,411.826z">
+                                </path>
+                                <path style="fill:#FFDA44;"
+                                    d="M439.652,348.113v-97.678C439.642,149,357.435,66.793,256,66.783 C154.565,66.793,72.358,149,72.348,250.435v97.678c-19.41,6.901-33.384,25.233-33.391,47.017 c0.01,27.668,22.419,50.075,50.087,50.085h333.913c27.668-0.01,50.077-22.417,50.087-50.085 C473.036,373.346,459.063,355.014,439.652,348.113z">
+                                </path>
+                                <path style="fill:#FFAA00;"
+                                    d="M439.652,348.113v-97.678C439.642,149,357.435,66.793,256,66.783v378.432h166.957 c27.668-0.01,50.077-22.417,50.087-50.085C473.036,373.346,459.063,355.014,439.652,348.113z">
+                                </path>
+                                <path style="fill:#FFF3DB;"
+                                    d="M155.826,267.13c-9.228,0-16.696-7.467-16.696-16.696c0-47.022,28.011-89.283,71.381-107.641 c8.446-3.587,18.294,0.326,21.88,8.836c3.62,8.51-0.358,18.294-8.836,21.88c-31.012,13.142-51.033,43.337-51.033,76.925 C172.522,259.663,165.054,267.13,155.826,267.13z">
+                                </path>
+                            </g>
+                        </svg>
+
+                        <!-- Unread notification count -->
+                        <span
+                            class="absolute top-0 right-[-4px] bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">2</span>
                     </div>
-                </div>
-            </li>
+
+                    <!-- Notification dropdown -->
+                    <div class="absolute right-0 w-96 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"
+                        style="z-index: 10;">
+                        <div class="px-4 py-2 font-bold border-b border-gray-300">Thông báo</div>
+                        <div class="flex flex-col">
+                            <a href="#" class="flex items-center p-2 hover:bg-gray-100 border-b border-gray-300">
+                                <img th:src="@{/image/order.png}" class="w-8 h-8 mr-2"
+                                    alt="order-notification">
+                                <div class="flex-1 text-sm">
+                                    <span class="font-bold">Bạn đã đặt thành công đơn hàng có mã hóa đơn là
+                                        123456</span>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-center p-2 hover:bg-gray-100 bg-gray-200 border-b border-gray-300">
+                                <img th:src="@{/image/message.png}" class="w-8 h-8 mr-2"
+                                    alt="message-notification">
+                                <div class="flex-1 text-sm">
+                                    <span>Bạn nhận được tin nhắn phản hồi của sân 123123</span>
+                                </div>
+                            </a>
+                            <!-- View all notifications -->
+                            <a href="#" class="text-center p-2 hover:bg-gray-100 text-sm">Xem tất cả thông báo</a>
+                        </div>
+                    </div>
+                </li>
+
+
+                <!-- User Info -->
+                <li id="user-info" class="hidden relative group">
+                    <div class="relative flex items-center space-x-2 cursor-pointer group-hover:visible">
+                        <img id="avatar" class="w-8 h-8 rounded-full" th:src="@{/image/user-info/user-info.png}"
+                            alt="user-info" />
+                        <span id="username" class="font-bold">Username</span>
+                    </div>
+
+                    <!-- User info dropdown menu -->
+                    <div class="absolute right-0 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"
+                        style="z-index: 10;">
+                        <div class="flex flex-col items-center w-full">
+                            <a th:href="@{/user-info}"
+                                th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
+                                th:text="#{homepage.personal_info.title}" class="w-full block text-left"></a>
+                            <a th:href="@{/my-booking}" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
+                                th:class="${content == 'bookingHistory'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
+                                th:text="#{homepage.my_booking.title}"></a>
+                            <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left hidden"
+                                id="field-management" th:text="#{homepage.field_owner.title}"></a>
+                            <a href="#" id="btn-sign-out"
+                                class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
+                                th:text="#{homepage.logout.title}"></a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+
         </ul>
     </div>
 </header>
