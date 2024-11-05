@@ -5,8 +5,8 @@ let nextOffset = null;
 let tabReview = document.getElementById('tabReview')
 let fieldReviewId = tabReview.getAttribute("fieldId");
 
-const currentUser = localStorage.getItem('current-user');
-const userComment = JSON.parse(currentUser);
+const user = localStorage.getItem('current-user');
+const userComment = JSON.parse(user);
 
 loadReviews();
 
