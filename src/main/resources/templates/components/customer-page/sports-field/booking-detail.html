@@ -36,9 +36,9 @@
             <div class="flex flex-row justify-between items-center pb-3 border-b">
                 <span class="font-semibold text-xl text-green-800" th:text="#{booking_detail.field_availability.title}"></span>
                 <div class="flex flex-row items-center">
-                    <i class="fa-solid fa-chevron-left text-xl cursor-pointer text-green-600"></i>
-                    <span class="mx-1 text-lg mx-4">20-10-2027</span>
-                    <i class="fa-solid fa-chevron-right text-xl cursor-pointer text-green-600"></i>
+                    <i class="fa-solid fa-chevron-left text-xl cursor-pointer text-green-600" id="booking_detail.previousDate"></i>
+                    <span class="mx-1 text-lg mx-4" id="booking_detail.currentDate"></span>
+                    <i class="fa-solid fa-chevron-right text-xl cursor-pointer text-green-600" id="booking_detail.nextDate"></i>
                 </div>
                 <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-md font-semibold rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                     <option selected th:text="#{booking_detail.status_filter.title}"></option>

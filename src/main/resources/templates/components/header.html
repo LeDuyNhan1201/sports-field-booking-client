@@ -74,14 +74,14 @@
                     <!-- Notification dropdown -->
                     <div class="absolute right-0 w-96 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"
                         style="z-index: 10;">
-                        <div class="px-4 py-2 font-bold border-b border-gray-300">Thông báo</div>
+                        <div class="px-4 py-2 font-bold border-b border-gray-300" th:text="#{homepage.notification.header}"></div>
                         <div class="flex flex-col">
                             <a href="#" class="flex items-center p-2 hover:bg-gray-100 border-b border-gray-300">
                                 <img th:src="@{/image/order.png}" class="w-8 h-8 mr-2"
                                     alt="order-notification">
                                 <div class="flex-1 text-sm">
-                                    <span class="font-bold">Bạn đã đặt thành công đơn hàng có mã hóa đơn là
-                                        123456</span>
+                                    <span th:text="#{homepage.notification_order.title}"></span>
+                                    <span class="font-bold">123456</span>
                                 </div>
                             </a>
                             <a href="#"
@@ -89,11 +89,12 @@
                                 <img th:src="@{/image/message.png}" class="w-8 h-8 mr-2"
                                     alt="message-notification">
                                 <div class="flex-1 text-sm">
-                                    <span>Bạn nhận được tin nhắn phản hồi của sân 123123</span>
+                                    <span th:text="#{homepage.notification_message.title}"></span>
+                                    <span class="font-bold">123123</span>
                                 </div>
                             </a>
                             <!-- View all notifications -->
-                            <a href="#" class="text-center p-2 hover:bg-gray-100 text-sm">Xem tất cả thông báo</a>
+                            <a href="#" class="text-center p-2 hover:bg-gray-100 text-sm" th:text="#{homepage.notification_more.title}"></a>
                         </div>
                     </div>
                 </li>
