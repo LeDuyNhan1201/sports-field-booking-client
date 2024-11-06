@@ -80,4 +80,10 @@ public class CustomerController {
         return "pages/customer";
     }
 
+    @GetMapping("/order")
+    public String order(Model model) {
+        model.addAttribute("title", getLocalizedMessage("order.header.title"));
+        model.addAttribute("content", "orderHistory");
+        return "pages/customer";
+    }
 }

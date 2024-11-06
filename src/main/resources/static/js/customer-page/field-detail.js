@@ -43,7 +43,7 @@ if (prevDateButton && nextDateButton) {
     prevDateButton.addEventListener('click', async () => {
         currentDate.setDate(currentDate.getDate() - 1);
         displayDate(currentDate);
-    
+
         try {
             const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
             const field = await fieldRes.json();
@@ -52,11 +52,11 @@ if (prevDateButton && nextDateButton) {
             console.error("Error fetching field data:", error);
         }
     });
-    
+
     nextDateButton.addEventListener('click', async () => {
         currentDate.setDate(currentDate.getDate() + 1);
         displayDate(currentDate);
-    
+
         try {
             const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
             const field = await fieldRes.json();
@@ -181,8 +181,8 @@ async function appendBookingDetail(field) {
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price} $</span>
-                        </div>
+                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                    </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400" th:text="#{booking_detail.ordered.title}">Ordered</span>
             `;
                 } else {
@@ -190,7 +190,7 @@ async function appendBookingDetail(field) {
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price} $</span>
+                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
                     </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400" th:text="#{booking_detail.available.title}">Available</span>
             `;
@@ -220,3 +220,76 @@ async function appendBookingDetail(field) {
         }
     });
 }
+
+function getSportFieldIdFromPath() {
+    const path = window.location.pathname;
+    const segments = path.split('/');
+    return segments[segments.length - 2]; // Assuming sportFieldId is the last part of the path
+}
+
+function handleOrder() {
+    const data = [];
+
+    console.log("test: "+localStorage.getItem);
+    
+
+    document.querySelectorAll('.field_availability').forEach((element) => {
+        if (element.style.borderLeft === "5px solid red") {
+            const startTime = element.querySelector('.flex-1:first-child').textContent.trim();
+            let formattedStartTime = startTime.split('\n')[0];
+
+            const endTime = element.querySelector('.flex-1:nth-child(2)').textContent.trim();
+            const price = element.querySelector('.flex-1:nth-child(3)').textContent.trim();
+
+            data.push({
+                // sport field info
+                sportFieldID: getSportFieldIdFromPath(),
+                image: document.getElementById("booking_detail.field_image").src,
+                name: document.getElementById("booking_detail.field_name").textContent,
+                location: document.getElementById("booking_detail.field_address").textContent,
+                openingTime: document.getElementById("field_detail.openingTime").textContent,
+                closingTime: document.getElementById("field_detail.closingTime").textContent,
+                rating: document.getElementById("field_detail.rating").textContent,
+                userID: JSON.parse(localStorage.getItem('current-user')).id,
+
+                total: parseFloat(document.getElementById('booking_detail.select_price_availabilities').textContent),
+                // field availability info
+                scheduleTimes: [
+                    {
+                        startTime: formattedStartTime,
+                        endTime: endTime,
+                        price: price
+                    }
+                ]
+            })
+        }
+    })
+
+    if (data.length > 0) {
+        const existingData = JSON.parse(localStorage.getItem("data")) || [];
+
+        if (existingData.length > 0) {
+            existingData.push(...data);
+            localStorage.setItem("data", JSON.stringify(existingData));
+        } else {
+            if (confirm("Are you sure you want to place the order for these time slots")) {
+                localStorage.setItem("data", JSON.stringify(data));
+            }
+        }
+    }
+}
+
+document.getElementById('orderButton').addEventListener('click', (e) => {
+
+    const selectedElements = Array.from(document.querySelectorAll('.field_availability'))
+        .filter(element => element.style.borderLeft === "5px solid red"); console.log(selectedElements);
+
+    if (selectedElements.length === 0) {
+        e.preventDefault();
+        alert("You haven't chosen the time slots yet!!");
+        return;
+    } else {
+        handleOrder();
+    }
+});
+
