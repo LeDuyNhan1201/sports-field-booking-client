@@ -2,7 +2,10 @@
     <h1 th:text="#{dashboard.file_storage.title}"></h1>
 
     <input type="file" id="fileInput" multiple>
+    <div id="previewContainer" style="display: flex; overflow-x: auto; gap: 10px; margin-top: 10px;"></div>
     <div id="progressContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <button id="submitFilesBtn" disabled>Upload Files</button>
 
     <script th:src="@{/js/dashboard-page/file-storage.js}"></script>
 </div>

@@ -11,7 +11,7 @@ async function loadSportFieldList(type, offset) {
         const response = await fetch(`${SERVER_DOMAIN}/sports-field?offset=${offset}&limit=${limit}`);
         const data = await response.json();
         if(data.items.length){
-            if (type == "grid") await appendFieldGrid(data.items);
+            if (type === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
             currentOffset = offset
             loadPage(currentOffset);
