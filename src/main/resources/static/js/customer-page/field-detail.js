@@ -24,7 +24,9 @@ function displayDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    currentDateElement.textContent = `${day}-${month}-${year}`;
+    if (currentDateElement) {
+        currentDateElement.textContent = `${day}-${month}-${year}`;
+    }
 }
 
 function convertDateFormat(isoString) {
@@ -37,31 +39,33 @@ function convertDateFormat(isoString) {
 
 displayDate(currentDate)
 
-prevDateButton.addEventListener('click', async () => {
-    currentDate.setDate(currentDate.getDate() - 1);
-    displayDate(currentDate);
-
-    try {
-        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-        const field = await fieldRes.json();
-        await appendBookingDetail(field);
-    } catch (error) {
-        console.error("Error fetching field data:", error);
-    }
-});
-
-nextDateButton.addEventListener('click', async () => {
-    currentDate.setDate(currentDate.getDate() + 1);
-    displayDate(currentDate);
-
-    try {
-        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-        const field = await fieldRes.json();
-        await appendBookingDetail(field);
-    } catch (error) {
-        console.error("Error fetching field data:", error);
-    }
-});
+if (prevDateButton && nextDateButton) {
+    prevDateButton.addEventListener('click', async () => {
+        currentDate.setDate(currentDate.getDate() - 1);
+        displayDate(currentDate);
+    
+        try {
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const field = await fieldRes.json();
+            await appendBookingDetail(field);
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+        }
+    });
+    
+    nextDateButton.addEventListener('click', async () => {
+        currentDate.setDate(currentDate.getDate() + 1);
+        displayDate(currentDate);
+    
+        try {
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const field = await fieldRes.json();
+            await appendBookingDetail(field);
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+        }
+    });
+}
 
 
 async function loadDetail() {
@@ -87,8 +91,10 @@ async function appendDetail(field) {
     document.getElementById("field_detail.ownerName").textContent = field.owner.firstName + " " + field.owner.lastName;
     document.getElementById("field_detail.ownerImage").src = field.owner.avatar;
     document.getElementById("field_detail.rating").textContent = field.rating;
-    document.getElementById("field_detail.openingTime").textContent = extractTime(field.openingTime);
-    document.getElementById("field_detail.closingTime").textContent = extractTime(field.closingTime);
+    if (document.getElementById("field_detail.openingTime") && document.getElementById("field_detail.closingTime")) {
+        document.getElementById("field_detail.openingTime").textContent = extractTime(field.openingTime);
+        document.getElementById("field_detail.closingTime").textContent = extractTime(field.closingTime);
+    }
     document.getElementById("field_detail.image").src = field.images[0];
 
     // ảnh nhỏ phía dưới
