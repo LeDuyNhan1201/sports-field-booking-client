@@ -10,6 +10,8 @@ if (localStorage.getItem('current-user') !== null) {
 
     if (currentUser) {
         const user = JSON.parse(currentUser)
+        console.log('test: '+user.birthdate);
+        
 
         loginSection.classList.add('hidden')
         userInfoSection.classList.remove('hidden')
@@ -54,8 +56,6 @@ document.getElementById('btn-sign-out').addEventListener('click', async (event) 
         if (!response.ok) showError("Failed to refresh token");
 
         localStorage.removeItem('current-user');
-        window.location.href = CLIENT_DOMAIN + "/sign-out";
-
     } catch (error) {
         console.error('Error refreshing token:', error);
     }
