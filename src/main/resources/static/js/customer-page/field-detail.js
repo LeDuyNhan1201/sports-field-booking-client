@@ -157,7 +157,7 @@ async function tab_detail(field) {
     }
 }
 
-async function appendBookingDetail(field) {
+async function appendBookingDetail(field) {    
     document.getElementById("booking_detail.status").textContent = field.status;
     document.getElementById("booking_detail.field_name").textContent = field.name;
     document.getElementById("booking_detail.field_category").textContent = field.category;
@@ -168,11 +168,11 @@ async function appendBookingDetail(field) {
     fieldAvailabilitiesElement.innerHTML = "";
 
     field.fieldAvailabilities.forEach((fieldAvailability) => {
-        console.log(convertDateFormat(fieldAvailability.startTime) + " " + convertDateFormat(currentDate));
-
         if (convertDateFormat(fieldAvailability.startTime) === convertDateFormat(currentDate)) {
             let element = document.createElement("a");
             element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
+            element.dataset.availabilityId = fieldAvailability.id;
+
             if (extractTime(fieldAvailability.startTime) >= extractTime(field.openingTime) && extractTime(fieldAvailability.endTime) <= extractTime(field.closingTime)) {
                 if (!fieldAvailability.is_available) {
                     element.innerHTML = `
@@ -181,8 +181,8 @@ async function appendBookingDetail(field) {
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
                         <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
                     </div>
-                    <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400" th:text="#{booking_detail.ordered.title}">Ordered</span>
-            `;
+                    <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
+                    `;
                 } else {
                     element.innerHTML = `
                     <div class="flex flex-1 justify-between">
@@ -190,8 +190,8 @@ async function appendBookingDetail(field) {
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
                         <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
                     </div>
-                    <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400" th:text="#{booking_detail.available.title}">Available</span>
-            `;
+                    <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
+                    `;
                 }
 
                 element.addEventListener("click", () => {
@@ -203,20 +203,18 @@ async function appendBookingDetail(field) {
                         element.style.borderLeft = 'none'
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
                         selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
-                    }
-                    else {
+                        fieldAvailabilityList.splice(fieldAvailabilityList.indexOf(fieldAvailability.id), 1);
+                    } else {
                         element.style.borderLeft = "5px solid red"
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
                         selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
                     }
-                    console.log(element.style.borderLeft);
-
                 });
 
                 fieldAvailabilitiesElement.appendChild(element);
             }
         }
-    });
+    }); 
 }
 
 function getSportFieldIdFromPath() {
@@ -225,10 +223,11 @@ function getSportFieldIdFromPath() {
     return segments[segments.length - 2]; // Assuming sportFieldId is the last part of the path
 }
 
+
 function handleOrder() {
     const data = [];
 
-    document.querySelectorAll('.field_availability').forEach((element) => {
+    document.querySelectorAll('.field_availability').forEach((element, index) => {
         if (element.style.borderLeft === "5px solid red") {
             const startTime = element.querySelector('.flex-1:first-child').textContent.trim();
             let formattedStartTime = startTime.split('\n')[0];
@@ -236,30 +235,16 @@ function handleOrder() {
             const endTime = element.querySelector('.flex-1:nth-child(2)').textContent.trim();
             const price = element.querySelector('.flex-1:nth-child(3)').textContent.trim();
 
-            data.push({
-                // sport field info
-                sportFieldID: getSportFieldIdFromPath(),
-                image: document.getElementById("booking_detail.field_image").src,
-                name: document.getElementById("booking_detail.field_name").textContent,
-                location: document.getElementById("booking_detail.field_address").textContent,
-                openingTime: document.getElementById("field_detail.openingTime").textContent,
-                closingTime: document.getElementById("field_detail.closingTime").textContent,
-                rating: document.getElementById("field_detail.rating").textContent,
-                userID: JSON.parse(localStorage.getItem('current-user')).id,
+            const availabilityId = element.dataset.availabilityId;
 
-                total: parseFloat(document.getElementById('booking_detail.select_price_availabilities').textContent),
-                // field availability info
-                scheduleTimes: [
-                    {
-                        startTime: formattedStartTime,
-                        endTime: endTime,
-                        price: price,
-                        currentDate: currentDate
-                    }
-                ]
-            })
+            data.push({
+                sportFieldID: getSportFieldIdFromPath(),
+                userID: JSON.parse(localStorage.getItem('current-user')).id,
+                currentDate: currentDate,
+                fieldAvailabilityID: availabilityId,
+            });
         }
-    })
+    });
 
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];
@@ -272,7 +257,7 @@ function handleOrder() {
             if (newData.length > 0) {
                 existingData.push(...newData);
                 localStorage.setItem("data", JSON.stringify(existingData));
-            }else {
+            } else {
                 alert("You have ordered this field availability");
                 return;
             }

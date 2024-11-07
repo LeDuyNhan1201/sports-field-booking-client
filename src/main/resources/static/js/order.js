@@ -6,37 +6,42 @@ function convertDateFormat(isoString) {
     return `${day}-${month}-${year}`;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const data = JSON.parse(localStorage.getItem("data"));
     const currentUserID = JSON.parse(localStorage.getItem('current-user')).id;
 
     if (data && data.length > 0) {
         const filteredData = data.filter(order => order.userID === currentUserID);
-
         const orderContainer = document.querySelector('.order-list');
         let lastSportFieldID = null;
         let totalPrice = 0;
         let total = 0;
 
         if (filteredData.length > 0) {
-            filteredData.forEach((order) => {
+            for (const order of filteredData) {
                 total += parseFloat(order.total);
-                console.log(total);
 
                 if (order.sportFieldID !== lastSportFieldID) {
+                    let sportFieldData;
+                    try {
+                        const response = await fetch(`${SERVER_DOMAIN}/sports-field/${order.sportFieldID}`);
+                        sportFieldData = await response.json();
+                    } catch (error) {
+                        console.error("Error fetching sports field data:", error);
+                        continue;
+                    }
+
                     const orderElement = document.createElement("div");
                     orderElement.classList.add("flex", "items-center", "border-b", "pb-4", "mb-4");
 
                     orderElement.innerHTML = `
-                        <img src="${order.image}" alt="${order.name}" class="w-28 h-28 rounded-md mr-4">
+                        <img src="${sportFieldData.image}" alt="${sportFieldData.name}" class="w-28 h-28 rounded-md mr-4">
                         <div class="flex w-full">
-                            <!-- Left Section -->
                             <div class="flex-grow">
-                                <h4 class="text-2xl font-bold">${order.name}</h4>
-                                <p class="text-lg text-green-500">${order.location}</p>
-                                <p class="text-lg text-gray-500">${order.openingTime} - ${order.closingTime}</p>
+                                <h4 class="text-2xl font-bold">${sportFieldData.name}</h4>
+                                <p class="text-lg text-green-500">${sportFieldData.location}</p>
+                                <p class="text-lg text-gray-500">${formatTime(sportFieldData.openingTime)} - ${formatTime(sportFieldData.closingTime)}</p>
 
-                                <!-- Toggle Time Slots Button -->
                                 <button class="toggle-schedule-btn flex items-center text-blue-500 mt-2">
                                     <span class="mr-2">See Available Times</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -44,16 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                     </svg>
                                 </button>
 
-                                <!-- Hidden Schedule Times -->
-                                <div class="schedule-list hidden mt-2" style="width: 110%;">
-                                </div>
+                                <div class="schedule-list hidden mt-2" style="width: 110%;"></div>
                             </div>
-
-                            <!-- Right Section -->
                             <div class="ml-auto text-right">
-                                <p class="text-2xl font-semibold total-amount">$${order.total.toFixed(2)}</p>
+                                <p class="text-2xl font-semibold total-amount"></p>
                                 <div class="flex items-center justify-end space-x-2 mt-6">
-                                    <span class="text-yellow-500 text-lg">⭐ ${order.rating}/5</span>
+                                    <span class="text-yellow-500 text-lg">⭐ ${sportFieldData.rating}/5</span>
                                 </div>
                             </div>
                         </div>
@@ -62,29 +63,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     lastSportFieldID = order.sportFieldID;
                 }
 
+                let fieldAvailabilityData;
+                try {
+                    const response = await fetch(`${SERVER_DOMAIN}/field-availability/${order.fieldAvailabilityID}`);
+                    fieldAvailabilityData = await response.json();
+                } catch (error) {
+                    console.error("Error fetching field availability data:", error);
+                    continue;
+                }
+
                 const currentOrderElement = document.querySelector('.order-list').lastChild;
                 const scheduleList = currentOrderElement.querySelector('.schedule-list');
-                order.scheduleTimes.forEach(timeSlot => {
-                    scheduleList.innerHTML += `
-                        <div class="flex justify-between w-full">
-                            <div class="flex w-full items-end">
-                                <p class="text-lg pl-4">${timeSlot.startTime} - ${timeSlot.endTime}</p>
-                                <p class="text-base pl-8 italic text-gray-400">${convertDateFormat(timeSlot.currentDate)}</p>
-                            </div>
-                            <p class="text-lg font-semibold text-right">$${timeSlot.price}</p>
-                        </div>
-                    `;
-                    totalPrice += parseFloat(timeSlot.price);
-                });
                 
-            });
+                scheduleList.innerHTML += `
+                    <div class="flex justify-between w-full">
+                        <div class="flex w-full items-end">
+                            <p class="text-lg pl-4">${formatTime(fieldAvailabilityData.startTime)} - ${formatTime(fieldAvailabilityData.endTime)}</p>
+                            <p class="text-base pl-8 italic text-gray-400">${convertDateFormat(order.currentDate)}</p>
+                        </div>
+                        <p class="text-lg font-semibold text-right">$${fieldAvailabilityData.price}</p>
+                    </div>
+                `;
+                totalPrice += parseFloat(fieldAvailabilityData.price);
+            }
 
-            const totalPriceElement = document.getElementById('totalPrice');
-            totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
-
-            const totalAmountElements = document.querySelectorAll('.total-amount');
-            totalAmountElements.forEach(totalElement => {
-                totalElement.textContent = `$${total.toFixed(2)}`;
+            document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+            document.querySelectorAll('.total-amount').forEach(totalElement => {
+                totalElement.textContent = `$${totalPrice.toFixed(2)}`;
             });
 
             document.querySelectorAll('.toggle-schedule-btn').forEach(button => {
@@ -94,13 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         } else {
-            const noDataMessage = document.createElement("p");
-            noDataMessage.textContent = "No orders found.";
-            orderContainer.appendChild(noDataMessage);
+            orderContainer.innerHTML = "<p>No orders found.</p>";
         }
     } else {
-        const noDataMessage = document.createElement("p");
-        noDataMessage.textContent = "No orders found.";
-        document.querySelector('.order-list').appendChild(noDataMessage);
+        document.querySelector('.order-list').innerHTML = "<p>No orders found.</p>";
     }
 });
+
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
