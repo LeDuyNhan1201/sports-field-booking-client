@@ -9,14 +9,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         const ratingSection = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
         ratingSection.innerHTML = '';
         data.items.forEach(field => {
+            const prices = field.fieldAvailabilities.map(availability => availability.price);
+            const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+            const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
+
+            let priceText;
+            if (minPrice !== null && maxPrice !== null) {
+                priceText = minPrice === maxPrice ? `${minPrice}$` : `${minPrice}$ - ${maxPrice}$`;
+            } else {
+                priceText = "Chưa có giá";
+            }
+            const fallbackImageUrl = '/sports-field-booking/image/manxanh.png';
+
+            const imageUrl = field.imageUrl || fallbackImageUrl;
+
             const fieldElement = document.createElement('a');
             fieldElement.href = `/sports-field/${field.id}/details`;
             fieldElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block';
             fieldElement.innerHTML = `
-                <img src="${field.imageUrl}" alt="Sport field image" class="w-400 h-300 object-cover" />
+                <img src="${imageUrl}" alt="Sport field image" class="w-400 h-300 object-cover" />
                 <div class="p-4">
                     <h4 class="font-bold text-xl">${field.name}</h4>
-                    <p class="text-gray-600">${field.price}</p>
+                    <p class="text-gray-600">${priceText}</p>
                     <p class="text-gray-500">${field.description}</p>
                     <div class="mt-2 flex space-x-2">
                         <span>⭐ ${field.rating}/5</span>
