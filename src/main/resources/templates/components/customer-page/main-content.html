@@ -29,6 +29,10 @@
         <div th:replace="~{/components/customer-page/my-booking :: bookingHistory}"></div>
     </div>
 
+    <div th:case="'orderHistory'">
+        <div th:replace="~{/components/customer-page/order :: orderHistory}"></div>
+    </div>
+
     <div id="loading"></div>
 
 </div>

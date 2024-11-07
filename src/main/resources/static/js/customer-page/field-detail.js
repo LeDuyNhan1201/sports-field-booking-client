@@ -24,7 +24,9 @@ function displayDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    currentDateElement.textContent = `${day}-${month}-${year}`;
+    if (currentDateElement) {
+        currentDateElement.textContent = `${day}-${month}-${year}`;
+    }
 }
 
 function convertDateFormat(isoString) {
@@ -37,31 +39,33 @@ function convertDateFormat(isoString) {
 
 displayDate(currentDate)
 
-prevDateButton.addEventListener('click', async () => {
-    currentDate.setDate(currentDate.getDate() - 1);
-    displayDate(currentDate);
+if (prevDateButton && nextDateButton) {
+    prevDateButton.addEventListener('click', async () => {
+        currentDate.setDate(currentDate.getDate() - 1);
+        displayDate(currentDate);
 
-    try {
-        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-        const field = await fieldRes.json();
-        await appendBookingDetail(field);
-    } catch (error) {
-        console.error("Error fetching field data:", error);
-    }
-});
+        try {
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const field = await fieldRes.json();
+            await appendBookingDetail(field);
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+        }
+    });
 
-nextDateButton.addEventListener('click', async () => {
-    currentDate.setDate(currentDate.getDate() + 1);
-    displayDate(currentDate);
+    nextDateButton.addEventListener('click', async () => {
+        currentDate.setDate(currentDate.getDate() + 1);
+        displayDate(currentDate);
 
-    try {
-        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-        const field = await fieldRes.json();
-        await appendBookingDetail(field);
-    } catch (error) {
-        console.error("Error fetching field data:", error);
-    }
-});
+        try {
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const field = await fieldRes.json();
+            await appendBookingDetail(field);
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+        }
+    });
+}
 
 
 async function loadDetail() {
@@ -87,8 +91,10 @@ async function appendDetail(field) {
     document.getElementById("field_detail.ownerName").textContent = field.owner.firstName + " " + field.owner.lastName;
     document.getElementById("field_detail.ownerImage").src = field.owner.avatar;
     document.getElementById("field_detail.rating").textContent = field.rating;
-    document.getElementById("field_detail.openingTime").textContent = extractTime(field.openingTime);
-    document.getElementById("field_detail.closingTime").textContent = extractTime(field.closingTime);
+    if (document.getElementById("field_detail.openingTime") && document.getElementById("field_detail.closingTime")) {
+        document.getElementById("field_detail.openingTime").textContent = extractTime(field.openingTime);
+        document.getElementById("field_detail.closingTime").textContent = extractTime(field.closingTime);
+    }
     document.getElementById("field_detail.image").src = field.images[0];
 
     // ảnh nhỏ phía dưới
@@ -152,8 +158,6 @@ async function tab_detail(field) {
 }
 
 async function appendBookingDetail(field) {
-    console.log(field);
-
     document.getElementById("booking_detail.status").textContent = field.status;
     document.getElementById("booking_detail.field_name").textContent = field.name;
     document.getElementById("booking_detail.field_category").textContent = field.category;
@@ -175,8 +179,8 @@ async function appendBookingDetail(field) {
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price} $</span>
-                        </div>
+                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                    </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400" th:text="#{booking_detail.ordered.title}">Ordered</span>
             `;
                 } else {
@@ -184,7 +188,7 @@ async function appendBookingDetail(field) {
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price} $</span>
+                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
                     </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400" th:text="#{booking_detail.available.title}">Available</span>
             `;
@@ -214,3 +218,83 @@ async function appendBookingDetail(field) {
         }
     });
 }
+
+function getSportFieldIdFromPath() {
+    const path = window.location.pathname;
+    const segments = path.split('/');
+    return segments[segments.length - 2]; // Assuming sportFieldId is the last part of the path
+}
+
+function handleOrder() {
+    const data = [];
+
+    document.querySelectorAll('.field_availability').forEach((element) => {
+        if (element.style.borderLeft === "5px solid red") {
+            const startTime = element.querySelector('.flex-1:first-child').textContent.trim();
+            let formattedStartTime = startTime.split('\n')[0];
+
+            const endTime = element.querySelector('.flex-1:nth-child(2)').textContent.trim();
+            const price = element.querySelector('.flex-1:nth-child(3)').textContent.trim();
+
+            data.push({
+                // sport field info
+                sportFieldID: getSportFieldIdFromPath(),
+                image: document.getElementById("booking_detail.field_image").src,
+                name: document.getElementById("booking_detail.field_name").textContent,
+                location: document.getElementById("booking_detail.field_address").textContent,
+                openingTime: document.getElementById("field_detail.openingTime").textContent,
+                closingTime: document.getElementById("field_detail.closingTime").textContent,
+                rating: document.getElementById("field_detail.rating").textContent,
+                userID: JSON.parse(localStorage.getItem('current-user')).id,
+
+                total: parseFloat(document.getElementById('booking_detail.select_price_availabilities').textContent),
+                // field availability info
+                scheduleTimes: [
+                    {
+                        startTime: formattedStartTime,
+                        endTime: endTime,
+                        price: price,
+                        currentDate: currentDate
+                    }
+                ]
+            })
+        }
+    })
+
+    if (data.length > 0) {
+        const existingData = JSON.parse(localStorage.getItem("data")) || [];
+
+        const newData = data.filter(item => 
+            !existingData.some(existingItem => JSON.stringify(existingItem) === JSON.stringify(item))
+        );
+
+        if (existingData.length > 0) {
+            if (newData.length > 0) {
+                existingData.push(...newData);
+                localStorage.setItem("data", JSON.stringify(existingData));
+            }else {
+                alert("You have ordered this field availability");
+                return;
+            }
+        } else {
+            if (confirm("Are you sure you want to place the order for these time slots")) {
+                localStorage.setItem("data", JSON.stringify(data));
+            }
+        }
+    }
+}
+
+document.getElementById('orderButton').addEventListener('click', (e) => {
+
+    const selectedElements = Array.from(document.querySelectorAll('.field_availability'))
+        .filter(element => element.style.borderLeft === "5px solid red"); console.log(selectedElements);
+
+    if (selectedElements.length === 0) {
+        e.preventDefault();
+        alert("You haven't chosen the time slots yet!!");
+        return;
+    } else {
+        handleOrder();
+    }
+});
+
