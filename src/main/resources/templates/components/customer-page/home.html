@@ -1,6 +1,7 @@
 <div th:fragment="home" xmlns:th="http://www.w3.org/1999/xhtml">
     <!-- Search section -->
-    <section class="bg-cover bg-center py-20" th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
+    <section class="bg-cover bg-center py-20"
+        th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
         <div class="container mx-auto text-center text-white">
             <h2 class="text-5xl font-bold mb-4 text-black" th:text="#{homepage.background_header.title}"></h2>
             <p class="mb-8 text-black" th:text="#{homepage.background_content.title}"></p>
@@ -20,7 +21,8 @@
                     <option value="">51$ - 100$</option>
                     <option value="">Above 100$</option>
                 </select>
-                <button class="bg-green-600 text-white px-6 py-2 rounded-lg" th:text="#{homepage.search.title}"></button>
+                <button class="bg-green-600 text-white px-6 py-2 rounded-lg"
+                    th:text="#{homepage.search.title}"></button>
             </div>
         </div>
     </section>
@@ -30,11 +32,9 @@
         <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}"></h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Card -->
-            <a
-                th:href="@{/sports-field/1/details}"
+            <a th:href="@{/sports-field/1/details}"
                 th:class="${content == 'fieldDetail'} ? 'bg-white shadow-lg rounded-lg overflow-hidden block' : 'bg-white shadow-lg rounded-lg overflow-hidden block'"
-                xmlns:th="http://www.w3.org/1999/xhtml"
-            >
+                xmlns:th="http://www.w3.org/1999/xhtml">
                 <img th:src="@{/image/manxanh.png}" alt="Sport field image" class="w-400 h-300 object-cover" />
                 <div class="p-4">
                     <h4 class="font-bold text-xl">Manchester City Academy</h4>
@@ -80,20 +80,26 @@
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
                 <img th:src="@{/image/category/ball.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.football_category.title}">Football</span>
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
+                    th:text="#{homepage.football_category.title}">Football</span>
             </a>
             <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/badminton.png}" alt="Badminton" class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.badminton_category.title}">Badminton</span> </a
-            ><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
+                <img th:src="@{/image/category/badminton.png}" alt="Badminton"
+                    class="w-16 h-16 mt-8 ml-4 relative z-10" />
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
+                    th:text="#{homepage.badminton_category.title}">Badminton</span>
+            </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/basketball.png}" alt="Basketball" class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.basketball_category.title}">Basketball</span> </a
-            ><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
+                <img th:src="@{/image/category/basketball.png}" alt="Basketball"
+                    class="w-16 h-16 mt-8 ml-4 relative z-10" />
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
+                    th:text="#{homepage.basketball_category.title}">Basketball</span>
+            </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
                 <img th:src="@{/image/category/tennis.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10" th:text="#{homepage.tennis_category.title}">Tennis</span>
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
+                    th:text="#{homepage.tennis_category.title}">Tennis</span>
             </a>
         </div>
     </section>
