@@ -1,3 +1,11 @@
+function convertDateFormat(isoString) {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const data = JSON.parse(localStorage.getItem("data"));
     const currentUserID = JSON.parse(localStorage.getItem('current-user')).id;
@@ -8,9 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderContainer = document.querySelector('.order-list');
         let lastSportFieldID = null;
         let totalPrice = 0;
+        let total = 0;
 
         if (filteredData.length > 0) {
             filteredData.forEach((order) => {
+                total += parseFloat(order.total);
+                console.log(total);
+
                 if (order.sportFieldID !== lastSportFieldID) {
                     const orderElement = document.createElement("div");
                     orderElement.classList.add("flex", "items-center", "border-b", "pb-4", "mb-4");
@@ -21,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <!-- Left Section -->
                             <div class="flex-grow">
                                 <h4 class="text-2xl font-bold">${order.name}</h4>
-                                <p class="text-lg text-gray-500">${order.location}</p>
+                                <p class="text-lg text-green-500">${order.location}</p>
                                 <p class="text-lg text-gray-500">${order.openingTime} - ${order.closingTime}</p>
 
                                 <!-- Toggle Time Slots Button -->
@@ -39,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             <!-- Right Section -->
                             <div class="ml-auto text-right">
-                                <p class="text-2xl font-semibold">$${order.total}/m</p>
+                                <p class="text-2xl font-semibold total-amount">$${order.total.toFixed(2)}</p>
                                 <div class="flex items-center justify-end space-x-2 mt-6">
                                     <span class="text-yellow-500 text-lg">⭐ ${order.rating}/5</span>
                                 </div>
@@ -55,16 +67,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 order.scheduleTimes.forEach(timeSlot => {
                     scheduleList.innerHTML += `
                         <div class="flex justify-between w-full">
-                            <p class="text-lg pl-4">${timeSlot.startTime} - ${timeSlot.endTime}</p>
+                            <div class="flex w-full items-end">
+                                <p class="text-lg pl-4">${timeSlot.startTime} - ${timeSlot.endTime}</p>
+                                <p class="text-base pl-8 italic text-gray-400">${convertDateFormat(timeSlot.currentDate)}</p>
+                            </div>
                             <p class="text-lg font-semibold text-right">$${timeSlot.price}</p>
                         </div>
                     `;
                     totalPrice += parseFloat(timeSlot.price);
                 });
+                
             });
 
             const totalPriceElement = document.getElementById('totalPrice');
             totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
+
+            const totalAmountElements = document.querySelectorAll('.total-amount');
+            totalAmountElements.forEach(totalElement => {
+                totalElement.textContent = `$${total.toFixed(2)}`;
+            });
 
             document.querySelectorAll('.toggle-schedule-btn').forEach(button => {
                 button.addEventListener('click', (event) => {

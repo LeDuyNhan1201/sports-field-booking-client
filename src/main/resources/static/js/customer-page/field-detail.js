@@ -158,8 +158,6 @@ async function tab_detail(field) {
 }
 
 async function appendBookingDetail(field) {
-    console.log(field);
-
     document.getElementById("booking_detail.status").textContent = field.status;
     document.getElementById("booking_detail.field_name").textContent = field.name;
     document.getElementById("booking_detail.field_category").textContent = field.category;
@@ -230,9 +228,6 @@ function getSportFieldIdFromPath() {
 function handleOrder() {
     const data = [];
 
-    console.log("test: "+localStorage.getItem);
-    
-
     document.querySelectorAll('.field_availability').forEach((element) => {
         if (element.style.borderLeft === "5px solid red") {
             const startTime = element.querySelector('.flex-1:first-child').textContent.trim();
@@ -258,7 +253,8 @@ function handleOrder() {
                     {
                         startTime: formattedStartTime,
                         endTime: endTime,
-                        price: price
+                        price: price,
+                        currentDate: currentDate
                     }
                 ]
             })
@@ -268,9 +264,18 @@ function handleOrder() {
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];
 
+        const newData = data.filter(item => 
+            !existingData.some(existingItem => JSON.stringify(existingItem) === JSON.stringify(item))
+        );
+
         if (existingData.length > 0) {
-            existingData.push(...data);
-            localStorage.setItem("data", JSON.stringify(existingData));
+            if (newData.length > 0) {
+                existingData.push(...newData);
+                localStorage.setItem("data", JSON.stringify(existingData));
+            }else {
+                alert("You have ordered this field availability");
+                return;
+            }
         } else {
             if (confirm("Are you sure you want to place the order for these time slots")) {
                 localStorage.setItem("data", JSON.stringify(data));
