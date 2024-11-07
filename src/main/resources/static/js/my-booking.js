@@ -60,7 +60,7 @@ async function fetchBookingHistory() {
                     const startTime = new Date(item.startTime);
                     const endTime = new Date(item.endTime);
                     const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
-                    return sum + (durationInHours * item.pricePerHour);
+                    return sum + (durationInHours * item.price);
                 }, 0);
 
                 const row = document.createElement('tr');
@@ -166,7 +166,7 @@ function viewBookingDetails(bookingId) {
         });
 
         const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
-        const itemTotalPrice = durationInHours * item.pricePerHour;
+        const itemTotalPrice = durationInHours * item.price;
         totalPrice += itemTotalPrice;
 
         const itemElement = document.createElement('div');
