@@ -12,11 +12,9 @@ loadReviews();
 
 async function loadReviews() {
     try {
-        //        showLoading(true);
         const response = await fetch(`${SERVER_DOMAIN}/reviews/${fieldReviewId}?offset=${offset}&limit=${limit}`);
         const data = await response.json();
 
-        // Append reviews to the container
         await appendReviews(data.items);
 
         // Update the next offset
@@ -26,10 +24,8 @@ async function loadReviews() {
         if (!nextOffset) {
             document.getElementById('loadMoreButton').style.display = 'none';
         }
-        //        showLoading(false);
 
     } catch (error) {
-        //        showLoading(false);
         console.error('Error fetching reviews:', error);
     }
 }
@@ -39,7 +35,7 @@ async function loadReplies(reviewId) {
         const response = await fetch(`${SERVER_DOMAIN}/reviews/replies/${reviewId}`);
         const data = await response.json();
 
-        return data.items; // Return the replies for a specific review
+        return data.items;
     } catch (error) {
         console.error('Error fetching replies:', error);
         return [];
@@ -50,46 +46,29 @@ async function appendReviews(reviews) {
     const container = document.getElementById('reviews');
     container.innerHTML = '';
 
-    function createNewReviewBox() {
-        const newReviewElement = document.createElement('div');
-        newReviewElement.classList.add('new-review');
-        newReviewElement.innerHTML = `
-            <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
-                <div class="flex flex-col">
-                    <div class="flex flex-row items-center">
-                        <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
-                        <div class="flex flex-col">
-                            <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
-                            <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 new-review-input" placeholder="Write a review..." />
-                        </div>
-                    </div>
-                    <div class="ml-3">
-                        <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer new-review-submit"></i>
-                    </div>
-                </div>
-            </div>
-        `;
+    const reviewElement = appendNewComment()
+    container.appendChild(reviewElement)
+    // thêm vào form các comment cũ
+    for (const review of reviews) {
+        if (!review.parentReview) {
+            const repliesValue = await loadReplies(review.id)
+            const reviewElement = createReviewElement(review, repliesValue.length);
+            container.appendChild(reviewElement);
 
-        const reviewInput = newReviewElement.querySelector('.new-review-input');
-        reviewInput.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                await submitNewReview(reviewInput);
-            }
-        });
+            const parentReviewElement = document.getElementById('replyInputContainer-'+review.id);
 
-        return newReviewElement;
-    }
+            //ô thêm reply mới
+            const newReplyElement = appendNewReply(review.id)
+            
+            parentReviewElement.appendChild(newReplyElement)
 
-    async function submitNewReview(inputElement) {
-        const reviewInput = inputElement.value.trim();
-        if (reviewInput) {
-            await sendReview(reviewInput);
-            inputElement.value = '';
-            loadReviews();
+
+            // các comment con trong các cmt cũ
+            appendReplies(review.id, parentReviewElement)
         }
     }
-
-    function createReviewElement(review) {
+    
+    function createReviewElement(review, repliesValue) {
         const reviewElement = document.createElement('div');
         reviewElement.classList.add('review');
         reviewElement.innerHTML = `
@@ -98,72 +77,153 @@ async function appendReviews(reviews) {
                     <div class="flex flex-row items-center">
                         <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
                         <div class="flex flex-col">
-                            <span class="text-green-600 italic">${review.user.firstName} ${review.user.lastName}</span>
-                            <span class="text-gray-700">${review.comment}</span>
+                            <div class="flex items-center">
+                                <span class="text-green-600 italic">${review.user.firstName} ${review.user.lastName}</span>
+                                <i class="fa-solid fa-code-commit fa-xs ml-5 mr-1 text-gray-500"></i>
+                                <span class="text-xs text-gray-500 italic">${formatDate(review.createdAt)}</span>
+                            </div>
+                            <span class="text-gray-700 text-md">${review.comment}</span>
                         </div>
                     </div>
-                    <div class="ml-3">
-                        <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer buttonNewChildCmt"></i>
+                    <div class=" ml-5">
+                        <i class="fa-solid fa-l text-gray-400"></i>
+                        <span class="text-sm text-gray-500 select-none buttonNewChildCmt cursor-pointer">Xem ${repliesValue} phản hồi</span>
                     </div>
                 </div>
-                <div class="ml-10 mt-2 hidden reply-input-container" id="replyInputContainer-${review.id}">
+                <div class="mt-2 reply-input-container hidden" id="repliesContainer-${review.id}">
                     <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
-                        <div class="flex flex-col">
-                            <div class="flex flex-row items-center">
-                                <img src="${userComment.avatar}" class="h-10 w-10 m-2" alt="" />
-                                <div class="flex flex-col">
-                                    <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
-                                    <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 reply-input" placeholder="Write a reply..." />
-                                </div>
-                            </div>
-                            <div class="ml-3">
-                                <i class="fa-solid fa-cloud-arrow-up text-blue-400 cursor-pointer"></i>
-                            </div>
+                        <div class="ml-4" id="replyInputContainer-${review.id}">
+                            
                         </div>
                     </div>
                 </div>
-                <div class="ml-12" id="repliesContainer-${review.id}"></div> <!-- Container for replies -->
             </div>
         `;
 
+        // mở các comment con và chỗ trả lời bình luận
         const replyButton = reviewElement.querySelector('.buttonNewChildCmt');
-        replyButton.addEventListener('click', () => {
-            const replyInputContainer = reviewElement.querySelector(`#replyInputContainer-${review.id}`);
-            replyInputContainer.classList.toggle('hidden');
-        });
+        replyButton.addEventListener('click', async () => {           
+            const repliesElement = document.getElementById(`repliesContainer-${review.id}`)    
+            repliesElement.classList.toggle('hidden');
 
-        const replyInput = reviewElement.querySelector('.reply-input');
-        replyInput.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                await handleReply(review.id, replyInput);
-            }
         });
 
         return reviewElement;
     }
+    
+}
 
-    async function handleReply(reviewId, inputElement) {
-        const replyText = inputElement.value.trim();
-        if (replyText) {
-            await sendReply(reviewId, replyText);
-            inputElement.value = '';
-            const replyInputContainer = document.getElementById(`replyInputContainer-${reviewId}`);
-            replyInputContainer.classList.add('hidden');
-            const newReplies = await loadReplies(reviewId);
-            appendReplies(newReplies, `repliesContainer-${reviewId}`);
+// element new comment
+function appendNewComment() {
+    const reviewElement = document.createElement('div');
+        reviewElement.classList.add('review');
+        reviewElement.innerHTML = `
+            <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
+                <div class="flex flex-col">
+                    <div class="flex flex-row items-center">
+                        <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
+                        <div class="flex flex-col">
+                            <div class="flex flex-col">
+                                <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
+                                <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 new-review-input" id="newReviewValue" placeholder="Write a review..." />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-14">
+                        <i class="fa-solid fa-cloud-arrow-up text-green-400 cursor-pointer new-review-submit"></i>
+                    </div>
+                </div>
+            </div>
+        `
+
+        //chức năng thêm comment mới
+        const reviewInput = reviewElement.querySelector('.new-review-input');
+        reviewInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                await submitNewReview(reviewInput);
+            }
+        });
+        
+        async function submitNewReview(inputElement) {
+            const reviewInput = inputElement.value;
+            if (reviewInput) {
+                await sendReview(reviewInput);
+                loadReviews();
+            }
         }
-    }
 
-    container.appendChild(createNewReviewBox());
+    return reviewElement
+}
 
-    for (const review of reviews) {
-        if (!review.parentReview) {
-            const reviewElement = createReviewElement(review);
-            container.appendChild(reviewElement);
-            const replies = await loadReplies(review.id);
-            appendReplies(replies, `repliesContainer-${review.id}`);
-        }
+
+// form new reply
+function appendNewReply(reviewId) {
+    const element = document.createElement('div')
+    element.innerHTML = `
+        <div class="flex flex-col">
+            <div class="flex flex-row items-center">
+                <img src="${userComment.avatar}" class="h-10 w-10 m-1 rounded-full" alt="" />
+                <div class="flex flex-col">
+                    <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
+                    <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 reply-input" placeholder="Write a review..." />
+                </div>
+            </div>
+            <div class="ml-14">
+                <i class="fa-solid fa-cloud-arrow-up text-green-400 cursor-pointer new-review-submit"></i>
+            </div>
+        </div>
+    `
+    //thêm reply mới
+
+     const replyInput = element.querySelector('.reply-input');
+     replyInput.addEventListener('keypress', async (e) => {
+         if (e.key === 'Enter') {
+             await handleReply(reviewId, replyInput);
+         }
+     });
+    return element
+}
+
+//hàm thực hiện thêm reply
+async function handleReply(reviewId, inputElement) {
+    const replyText = inputElement.value.trim();
+    if (replyText) {
+        await sendReply(reviewId, replyText);
+
+        //sau khi thêm sử lý lại UI
+        const parentReviewElement = document.getElementById('replyInputContainer-'+reviewId);
+        parentReviewElement.innerHTML ='';
+
+        //ô thêm reply mới
+        const newReplyElement = appendNewReply(reviewId)
+        //thêm các comment con
+        parentReviewElement.appendChild(newReplyElement)
+        appendReplies(reviewId, parentReviewElement)
     }
+}
+
+// append replies
+async function appendReplies(reviewId, container) {
+    const data = await loadReplies(reviewId);
+    
+    data.forEach(reply => {
+        const replyElement = document.createElement('div');
+        replyElement.classList.add('reply');
+        replyElement.innerHTML = `
+            <div class="flex flex-row items-center">
+                <img src="${userComment.avatar}" class="h-10 w-10 m-1 rounded-full mt-5" alt="Avatar" />
+                <div class="flex flex-col">
+                    <div class="flex items-center">
+                        <span class="text-green-600 italic">${reply.user.firstName} ${reply.user.lastName}</span>
+                        <i class="fa-solid fa-code-commit fa-xs ml-5 mr-1 text-gray-500"></i>
+                        <span class="text-xs text-gray-500 italic">${formatDate(reply.createdAt)}</span>
+                    </div>
+                    <span class="text-gray-700">${reply.comment}</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(replyElement);
+    });
 }
 
 // new comment
@@ -220,28 +280,6 @@ async function sendReply(parentID, content) {
     }
 }
 
-// append replies
-function appendReplies(replies, containerId) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-
-    replies.forEach(reply => {
-        const replyElement = document.createElement('div');
-        replyElement.classList.add('reply');
-        replyElement.innerHTML = `
-            <div class="flex flex-row items-center">
-                <img src="${userComment.avatar}" class="h-10 w-10 m-1 rounded-full mt-5" alt="Avatar" />
-                <div class="flex flex-col">
-                    <span class="text-green-600 italic">${reply.user.firstName} ${reply.user.lastName}</span>
-                    <span class="text-gray-700">${reply.comment}</span>
-                </div>
-            </div>
-        `;
-        container.appendChild(replyElement);
-    });
-}
-
-
 
 function getSportFieldIdFromPath() {
     const path = window.location.pathname;
@@ -252,8 +290,6 @@ function getSportFieldIdFromPath() {
 
 // Handle load more button click
 document.getElementById('loadMoreButton').addEventListener('click', () => {
-    if (nextOffset !== null) {
-        offset = nextOffset;
-        loadReviews();
-    }
+    offset = offset + 1;
+    loadReviews();
 });
