@@ -1,3 +1,15 @@
+const data = JSON.parse(localStorage.getItem("data"));
+const currentUserID = JSON.parse(localStorage.getItem('current-user')).id;
+const payButton = document.querySelector('.pay-button');
+
+const validSportField = [];
+let fieldAvailabilityIDs = [];
+
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 function convertDateFormat(isoString) {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -7,20 +19,14 @@ function convertDateFormat(isoString) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const data = JSON.parse(localStorage.getItem("data"));
-    const currentUserID = JSON.parse(localStorage.getItem('current-user')).id;
-
     if (data && data.length > 0) {
         const filteredData = data.filter(order => order.userID === currentUserID);
         const orderContainer = document.querySelector('.order-list');
         let lastSportFieldID = null;
         let totalPrice = 0;
-        let total = 0;
 
         if (filteredData.length > 0) {
             for (const order of filteredData) {
-                total += parseFloat(order.total);
-
                 if (order.sportFieldID !== lastSportFieldID) {
                     let sportFieldData;
                     try {
@@ -74,17 +80,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const currentOrderElement = document.querySelector('.order-list').lastChild;
                 const scheduleList = currentOrderElement.querySelector('.schedule-list');
-                
+
                 scheduleList.innerHTML += `
-                    <div class="flex justify-between w-full">
-                        <div class="flex w-full items-end">
-                            <p class="text-lg pl-4">${formatTime(fieldAvailabilityData.startTime)} - ${formatTime(fieldAvailabilityData.endTime)}</p>
-                            <p class="text-base pl-8 italic text-gray-400">${convertDateFormat(order.currentDate)}</p>
+                    <div class="flex justify-between w-full field-availability-item">
+                        <div class="flex w-full items-end container-${fieldAvailabilityData.id}" data-id="${fieldAvailabilityData.id}">
+                            <p class="text-lg pl-4 start-time" data-original="${fieldAvailabilityData.startTime}">
+                                ${formatTime(fieldAvailabilityData.startTime)}
+                            </p>
+                            <span class="text-lg"> - </span>
+                            <p class="text-lg end-time" data-original="${fieldAvailabilityData.endTime}">
+                                ${formatTime(fieldAvailabilityData.endTime)}
+                            </p>
+                            <p class="text-base pl-8 italic text-gray-400 available-date" data-original="${order.currentDate}">
+                                ${convertDateFormat(order.currentDate)}
+                            </p>                        
                         </div>
-                        <p class="text-lg font-semibold text-right">$${fieldAvailabilityData.price}</p>
+                        <p class="text-lg font-semibold text-right price">$${fieldAvailabilityData.price}</p>
                     </div>
                 `;
                 totalPrice += parseFloat(fieldAvailabilityData.price);
+                fieldAvailabilityIDs.push({
+                    fieldAvailabilityID: fieldAvailabilityData.id,
+                    sportFieldID: order.sportFieldID
+                })
             }
 
             document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`;
@@ -106,8 +124,125 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-function formatTime(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+document.getElementById('paymentButton').addEventListener('click', async function () {
+    const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
+    if (!selectedPaymentMethod) {
+        alert("Vui lòng chọn phương thức thanh toán.");
+        return;
+    }
+
+    const paymentMethod = selectedPaymentMethod.id;
+
+    try {
+        const bookingID = await createBooking();
+        if (bookingID) {
+            await createBookingItems(bookingID);
+            await processPayment(bookingID, paymentMethod);
+        }
+    } catch (error) {
+        console.error("Lỗi khi thực hiện thanh toán:", error);
+        alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
+});
+
+async function createBooking() {
+    for (const item of fieldAvailabilityIDs) {
+        const { fieldAvailabilityID, sportFieldID } = item;
+
+        if (!validSportField.includes(sportFieldID)) {
+            validSportField.push(sportFieldID);
+
+            const response = await fetch(`${SERVER_DOMAIN}/booking/${fieldAvailabilityID}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                },
+                body: JSON.stringify({ userID: currentUserID })
+            });
+
+            const data = await response.json();
+            if (data && data.id) {
+                return data.id;
+            } else {
+                alert(`Không thể tạo đơn đặt chỗ cho sân với ID ${fieldAvailabilityID}. Vui lòng thử lại.`);
+            }
+        }
+    }
 }
+
+async function createBookingItems(bookingID) {
+    const fieldAvailabilityElements = document.querySelectorAll('.field-availability-item');
+    console.log(fieldAvailabilityElements);
+    
+    
+    for (const item of fieldAvailabilityElements) {        
+        const container = item.querySelector('[data-id]');
+        const fieldAvailabilityID = container ? container.getAttribute('data-id') : null;
+        const startTime = item.querySelector('.start-time').getAttribute('data-original');
+        const endTime = item.querySelector('.end-time').getAttribute('data-original');
+        const availableDate = item.querySelector('.available-date').getAttribute('data-original');
+        const price = item.querySelector('.price').textContent.replace('$', '');
+
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                },
+                body: JSON.stringify({
+                    orderId: bookingID,
+                    fieldAvailabilityId: fieldAvailabilityID,
+                    startTime: startTime,
+                    endTime: endTime,
+                    availableDate: availableDate,
+                    price: parseFloat(price)
+                })
+            });     
+        } catch (error) {
+            alert("Có lỗi xảy ra khi tạo đơn đặt chỗ. Vui lòng thử lại.");
+            break;
+        }
+    }
+}
+
+
+async function processPayment(bookingID, paymentMethod) {
+    const amount = parseFloat(document.getElementById('totalPrice').textContent.replace('$', '')) * 25000;
+    const paymentUrl = paymentMethod === "vnpay" ? `${SERVER_DOMAIN}/payment/vnpay` : `${SERVER_DOMAIN}/payment`;
+
+    const response = await fetch(paymentUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': paymentMethod === "vnpay" ? 'Bearer ' + getAccessTokenFromCookie() : undefined
+        },
+        body: JSON.stringify({ orderId: bookingID, amount: amount })
+    });
+
+    const paymentData = await response.json();
+
+    if (paymentMethod === "vnpay") {
+        if (paymentData.code === 'ok' && paymentData.paymentUrl) {
+            window.location.href = paymentData.paymentUrl;
+        } else {
+            alert("Không tìm thấy URL thanh toán. Vui lòng thử lại.");
+        }
+    } else if (paymentData) {
+        alert("Thanh toán tiền mặt thành công!");
+        localStorage.removeItem("data");
+        window.location.reload();
+    } else {
+        alert("Có lỗi xảy ra trong quá trình thanh toán tiền mặt. Vui lòng thử lại.");
+    }
+}
+
+
+
+
+
+
+
+
 

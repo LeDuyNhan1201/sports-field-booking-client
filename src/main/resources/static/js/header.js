@@ -10,8 +10,8 @@ if (localStorage.getItem('current-user') !== null) {
 
     if (currentUser) {
         const user = JSON.parse(currentUser)
-        console.log('test: '+user.birthdate);
-        
+        console.log('test: ' + user.birthdate);
+
 
         loginSection.classList.add('hidden')
         userInfoSection.classList.remove('hidden')
@@ -19,19 +19,19 @@ if (localStorage.getItem('current-user') !== null) {
         usernameElement.textContent = user.username
 
         if (user.roles && user.roles.includes('FIELD_OWNER')) {
-           fieldManagement.classList.remove('hidden')
-        }else {
-           fieldManagement.classList.add('hidden')
+            fieldManagement.classList.remove('hidden')
+        } else {
+            fieldManagement.classList.add('hidden')
         }
 
         if (user.roles && user.roles.includes('ADMIN')) {
             window.location.href = CLIENT_DOMAIN + '/dashboard';
         }
 
-   } else {
+    } else {
         loginSection.classList.remove('hidden')
         userInfoSection.classList.add('hidden')
-   }
+    }
 }
 
 function switchLanguage(lang) {
@@ -48,8 +48,8 @@ document.getElementById('btn-sign-out').addEventListener('click', async (event) 
             url: SERVER_DOMAIN + '/auth/sign-out',
             method: 'POST',
             body: {
-                "accessToken" : getAccessTokenFromCookie(),
-                "refreshToken" : getRefreshTokenFromCookie()
+                "accessToken": getAccessTokenFromCookie(),
+                "refreshToken": getRefreshTokenFromCookie()
             }
         });
 
@@ -59,7 +59,27 @@ document.getElementById('btn-sign-out').addEventListener('click', async (event) 
     } catch (error) {
         console.error('Error refreshing token:', error);
     }
-   finally {
-       showLoading(false);
-   }
+    finally {
+        showLoading(false);
+    }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('paymentStatus');
+
+    if (paymentStatus) {
+        sessionStorage.setItem('paymentStatus', paymentStatus);
+
+        if (paymentStatus === 'success') {
+            alert("Thanh toán thành công");
+            history.replaceState(null, '', window.location.pathname);
+
+            localStorage.removeItem('data');
+    
+            sessionStorage.removeItem('paymentStatus');
+        } else {
+            alert("Thanh toán thất bại. Vui lòng thử lại.");
+        }
+    }
 });

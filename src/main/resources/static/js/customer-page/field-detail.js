@@ -203,7 +203,6 @@ async function appendBookingDetail(field) {
                         element.style.borderLeft = 'none'
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
                         selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
-                        fieldAvailabilityList.splice(fieldAvailabilityList.indexOf(fieldAvailability.id), 1);
                     } else {
                         element.style.borderLeft = "5px solid red"
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
@@ -229,12 +228,6 @@ function handleOrder() {
 
     document.querySelectorAll('.field_availability').forEach((element, index) => {
         if (element.style.borderLeft === "5px solid red") {
-            const startTime = element.querySelector('.flex-1:first-child').textContent.trim();
-            let formattedStartTime = startTime.split('\n')[0];
-
-            const endTime = element.querySelector('.flex-1:nth-child(2)').textContent.trim();
-            const price = element.querySelector('.flex-1:nth-child(3)').textContent.trim();
-
             const availabilityId = element.dataset.availabilityId;
 
             data.push({
