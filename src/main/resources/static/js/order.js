@@ -3,6 +3,8 @@ const currentUserID = JSON.parse(localStorage.getItem('current-user')).id;
 const payButton = document.querySelector('.pay-button');
 
 const validSportField = [];
+const totalPriceMap = {};
+
 let fieldAvailabilityIDs = [];
 
 function formatTime(dateString) {
@@ -58,10 +60,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <div class="schedule-list hidden mt-2" style="width: 110%;"></div>
                             </div>
                             <div class="ml-auto text-right">
-                                <p class="text-2xl font-semibold total-amount"></p>
-                                <div class="flex items-center justify-end space-x-2 mt-6">
-                                    <span class="text-yellow-500 text-lg">⭐ ${sportFieldData.rating}/5</span>
-                                </div>
+                                <p class="text-2xl font-semibold total-amount" data-sport-field-id="${order.sportFieldID}"></p>
+                                <button class="text-red-500 delete-order-btn" data-sport-field-id="${order.sportFieldID}">
+                                    🗑️
+                                </button>
                             </div>
                         </div>
                     `;
@@ -82,8 +84,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const scheduleList = currentOrderElement.querySelector('.schedule-list');
 
                 scheduleList.innerHTML += `
-                    <div class="flex justify-between w-full field-availability-item">
-                        <div class="flex w-full items-end container-${fieldAvailabilityData.id}" data-id="${fieldAvailabilityData.id}">
+                    <div class="flex justify-between w-full field-availability-item" data-sports-field=${order.sportFieldID}>
+                        <div class="flex w-full items-end>
                             <p class="text-lg pl-4 start-time" data-original="${fieldAvailabilityData.startTime}">
                                 ${formatTime(fieldAvailabilityData.startTime)}
                             </p>
@@ -96,19 +98,37 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </p>                        
                         </div>
                         <p class="text-lg font-semibold text-right price">$${fieldAvailabilityData.price}</p>
+                        <button class="delete-field-availability-btn text-red-500 ml-2 cursor-pointer" data-id="${fieldAvailabilityData.id}">
+                            🗑️
+                        </button>
                     </div>
                 `;
-                totalPrice += parseFloat(fieldAvailabilityData.price);
+                totalPrice += fieldAvailabilityData.price;
+
+                const price = parseFloat(fieldAvailabilityData.price);
+
+                if (totalPriceMap[order.sportFieldID]) {
+                    totalPriceMap[order.sportFieldID] += price;
+                } else {
+                    totalPriceMap[order.sportFieldID] = price;
+                }
+
                 fieldAvailabilityIDs.push({
                     fieldAvailabilityID: fieldAvailabilityData.id,
                     sportFieldID: order.sportFieldID
                 })
+
             }
 
-            document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`;
-            document.querySelectorAll('.total-amount').forEach(totalElement => {
-                totalElement.textContent = `$${totalPrice.toFixed(2)}`;
-            });
+            document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`
+
+            for (const sportFieldID in totalPriceMap) {
+                document.querySelectorAll(`.total-amount[data-sport-field-id="${sportFieldID}"]`).forEach(totalElement => {
+                    totalElement.textContent = `$${totalPriceMap[sportFieldID].toFixed(2)}`;
+                });
+
+                totalPriceMap[sportFieldID] = 0;
+            }
 
             document.querySelectorAll('.toggle-schedule-btn').forEach(button => {
                 button.addEventListener('click', (event) => {
@@ -122,6 +142,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         document.querySelector('.order-list').innerHTML = "<p>No orders found.</p>";
     }
+
+
+    document.querySelectorAll('.delete-order-btn').forEach(orderDeleteButton => {
+        orderDeleteButton.addEventListener('click', () => {
+            const sportFieldID = orderDeleteButton.getAttribute('data-sport-field-id');
+            removeDataFromLocalStorage(sportFieldID, 'sportFieldID');
+            alert('Xóa thành công');
+            location.reload();
+        });
+    });
+
+    document.querySelectorAll('.delete-field-availability-btn').forEach(fieldDeleteButton => {
+        fieldDeleteButton.addEventListener('click', () => {
+            const fieldAvailabilityID = fieldDeleteButton.getAttribute('data-id');
+            removeDataFromLocalStorage(fieldAvailabilityID, 'fieldAvailabilityID');
+            alert('Xóa thành công');
+            location.reload();
+        });
+    });
+
 });
 
 document.getElementById('paymentButton').addEventListener('click', async function () {
@@ -174,9 +214,9 @@ async function createBooking() {
 async function createBookingItems(bookingID) {
     const fieldAvailabilityElements = document.querySelectorAll('.field-availability-item');
     console.log(fieldAvailabilityElements);
-    
-    
-    for (const item of fieldAvailabilityElements) {        
+
+
+    for (const item of fieldAvailabilityElements) {
         const container = item.querySelector('[data-id]');
         const fieldAvailabilityID = container ? container.getAttribute('data-id') : null;
         const startTime = item.querySelector('.start-time').getAttribute('data-original');
@@ -199,7 +239,7 @@ async function createBookingItems(bookingID) {
                     availableDate: availableDate,
                     price: parseFloat(price)
                 })
-            });     
+            });
         } catch (error) {
             alert("Có lỗi xảy ra khi tạo đơn đặt chỗ. Vui lòng thử lại.");
             break;
@@ -238,6 +278,18 @@ async function processPayment(bookingID, paymentMethod) {
     }
 }
 
+
+function removeDataFromLocalStorage(id, key) {
+    const storedData = JSON.parse(localStorage.getItem("data")) || [];
+
+    console.log();
+    
+    const updatedData = storedData.filter(item => item[key] !== id);
+    console.log(updatedData);
+    
+
+    localStorage.setItem("data", JSON.stringify(updatedData));
+}
 
 
 

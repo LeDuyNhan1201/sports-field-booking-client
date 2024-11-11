@@ -12,6 +12,8 @@ const prevDateButton = document.getElementById("booking_detail.previousDate");
 const nextDateButton = document.getElementById("booking_detail.nextDate");
 const currentDateElement = document.getElementById("booking_detail.currentDate");
 
+let selectedAvailabilities = [];
+
 // có nên đẩy hàm này vô ultils luôn k
 function extractTime(isoString) {
     const date = new Date(isoString);
@@ -157,7 +159,7 @@ async function tab_detail(field) {
     }
 }
 
-async function appendBookingDetail(field) {    
+async function appendBookingDetail(field) {
     document.getElementById("booking_detail.status").textContent = field.status;
     document.getElementById("booking_detail.field_name").textContent = field.name;
     document.getElementById("booking_detail.field_category").textContent = field.category;
@@ -168,14 +170,13 @@ async function appendBookingDetail(field) {
     fieldAvailabilitiesElement.innerHTML = "";
 
     field.fieldAvailabilities.forEach((fieldAvailability) => {
-        if (convertDateFormat(fieldAvailability.startTime) === convertDateFormat(currentDate)) {
-            let element = document.createElement("a");
-            element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
-            element.dataset.availabilityId = fieldAvailability.id;
+        let element = document.createElement("a");
+        element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
+        element.dataset.availabilityId = fieldAvailability.id;
 
-            if (extractTime(fieldAvailability.startTime) >= extractTime(field.openingTime) && extractTime(fieldAvailability.endTime) <= extractTime(field.closingTime)) {
-                if (!fieldAvailability.is_available) {
-                    element.innerHTML = `
+        if (extractTime(fieldAvailability.startTime) >= extractTime(field.openingTime) && extractTime(fieldAvailability.endTime) <= extractTime(field.closingTime)) {
+            if (!fieldAvailability.is_available) {
+                element.innerHTML = `
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
@@ -183,8 +184,8 @@ async function appendBookingDetail(field) {
                     </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
                     `;
-                } else {
-                    element.innerHTML = `
+            } else {
+                element.innerHTML = `
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
@@ -192,28 +193,38 @@ async function appendBookingDetail(field) {
                     </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
                     `;
-                }
-
-                element.addEventListener("click", () => {
-                    if (!fieldAvailability.is_available) {
-                        alert("This sport field has already been ordered");
-                        return;
-                    }
-                    if (element.style.borderLeft == '5px solid red') {
-                        element.style.borderLeft = 'none'
-                        selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
-                        selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
-                    } else {
-                        element.style.borderLeft = "5px solid red"
-                        selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
-                        selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
-                    }
-                });
-
-                fieldAvailabilitiesElement.appendChild(element);
             }
+
+            const selectedItem = selectedAvailabilities.find(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
+            
+            if (selectedItem) {
+                element.style.borderLeft = "5px solid red";
+            }
+
+            element.addEventListener("click", () => {
+                if (!fieldAvailability.is_available) {
+                    alert("This sport field has already been ordered");
+                    return;
+                }
+                
+                const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
+
+                if (element.style.borderLeft == '5px solid red') {
+                    element.style.borderLeft = 'none'
+                    selectedAvailabilities.splice(itemIndex, 1);
+                    selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
+                    selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
+                } else {
+                    element.style.borderLeft = "5px solid red"
+                    selectedAvailabilities.push({ id: fieldAvailability.id, date: currentDate.toDateString() });
+                    selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
+                    selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
+                }
+            });
+
+            fieldAvailabilitiesElement.appendChild(element);
         }
-    }); 
+    });
 }
 
 function getSportFieldIdFromPath() {
@@ -227,43 +238,42 @@ function handleOrder() {
     const data = [];
 
     document.querySelectorAll('.field_availability').forEach((element, index) => {
-        if (element.style.borderLeft === "5px solid red") {
-            const availabilityId = element.dataset.availabilityId;
-
-            data.push({
-                sportFieldID: getSportFieldIdFromPath(),
-                userID: JSON.parse(localStorage.getItem('current-user')).id,
-                currentDate: currentDate,
-                fieldAvailabilityID: availabilityId,
+        if (element.style.borderLeft === "5px solid red") {            
+            selectedAvailabilities.forEach(item => {                
+                data.push({
+                    sportFieldID: getSportFieldIdFromPath(),
+                    userID: JSON.parse(localStorage.getItem('current-user')).id,
+                    currentDate: item.date,
+                    fieldAvailabilityID: item.id,
+                });
             });
         }
-    });
+    });    
 
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];
 
-        const newData = data.filter(item => 
-            !existingData.some(existingItem => JSON.stringify(existingItem) === JSON.stringify(item))
+        const newData = data.filter(item =>
+            !existingData.some(existingItem =>
+                existingItem.sportFieldID === item.sportFieldID &&
+                existingItem.fieldAvailabilityID === item.fieldAvailabilityID &&
+                existingItem.currentDate === item.currentDate
+            )
         );
 
-        if (existingData.length > 0) {
-            if (newData.length > 0) {
-                existingData.push(...newData);
-                localStorage.setItem("data", JSON.stringify(existingData));
-            } else {
-                alert("You have ordered this field availability");
-                return;
-            }
-        } else {
-            if (confirm("Are you sure you want to place the order for these time slots")) {
-                localStorage.setItem("data", JSON.stringify(data));
-            }
-        }
-    }
+        if (newData.length === 0) {
+            alert("You have ordered this field availability");
+            return;
+        } 
+        if (confirm("Are you sure you want to place the order for these time slots")) {
+            existingData.push(...newData);
+            localStorage.setItem("data", JSON.stringify(existingData));
+        }   
+   }
 }
 
-document.getElementById('orderButton').addEventListener('click', (e) => {
 
+document.getElementById('orderButton').addEventListener('click', (e) => {
     const selectedElements = Array.from(document.querySelectorAll('.field_availability'))
         .filter(element => element.style.borderLeft === "5px solid red"); console.log(selectedElements);
 
