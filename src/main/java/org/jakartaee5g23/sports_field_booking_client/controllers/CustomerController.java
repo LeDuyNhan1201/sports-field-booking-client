@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -25,6 +26,13 @@ public class CustomerController {
     @GetMapping("/sports-field")
     public String sportFieldPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("customer.sports_field.title"));
+        model.addAttribute("content", "sportsField");
+        return "pages/customer";
+    }
+
+    @GetMapping("/my-sports-field")
+    public String mySportsFieldPage(Model model) {
+        model.addAttribute("title", getLocalizedMessage("customer.my_field.title"));
         model.addAttribute("content", "sportsField");
         return "pages/customer";
     }
