@@ -72,12 +72,14 @@
                     </div>
 
                     <!-- Notification dropdown -->
-                    <div class="absolute right-0 w-96 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"
-                        style="z-index: 10;">
-                        <div class="px-4 py-2 font-bold border-b border-gray-300"
-                            th:text="#{homepage.notification.header}"></div>
-                        <div class="flex flex-col">
-                            <a href="#" class="flex items-center p-2 hover:bg-gray-100 border-b border-gray-300">
+                    <div
+                        class="absolute right-0 w-96 bg-white text-black rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-10">
+                        <div class="px-4 py-2 font-bold border-b border-gray-300">
+                            <span th:text="#{homepage.notification.header}"></span>
+                        </div>
+                        <div class="flex flex-col max-h-80 overflow-y-auto p-2">
+                            <a href="#"
+                                class="notification-item flex items-center p-2 hover:bg-gray-100 border-b border-gray-300">
                                 <img th:src="@{/image/order.png}" class="w-8 h-8 mr-2" alt="order-notification">
                                 <div class="flex-1 text-sm">
                                     <span th:text="#{homepage.notification_order.title}"></span>
@@ -85,7 +87,7 @@
                                 </div>
                             </a>
                             <a href="#"
-                                class="flex items-center p-2 hover:bg-gray-100 bg-gray-200 border-b border-gray-300">
+                                class="notification-item flex items-center p-2 hover:bg-gray-100 bg-gray-200 border-b border-gray-300">
                                 <img th:src="@{/image/message.png}" class="w-8 h-8 mr-2" alt="message-notification">
                                 <div class="flex-1 text-sm">
                                     <span th:text="#{homepage.notification_message.title}"></span>
@@ -93,7 +95,7 @@
                                 </div>
                             </a>
                             <!-- View all notifications -->
-                            <a href="#" class="text-center p-2 hover:bg-gray-100 text-sm"
+                            <a href="#" id="view-all-notification" class="text-center p-2 hover:bg-gray-100 text-sm"
                                 th:text="#{homepage.notification_more.title}"></a>
                         </div>
                     </div>
@@ -103,8 +105,7 @@
                 <!-- User Info -->
                 <li id="user-info" class="hidden relative group">
                     <div class="relative flex items-center space-x-2 cursor-pointer group-hover:visible">
-                        <img id="avatar" class="w-8 h-8 rounded-full"
-                            alt="user-info" />
+                        <img id="avatar" class="w-8 h-8 rounded-full" alt="user-info" />
                         <span id="username" class="font-bold">Username</span>
                     </div>
 

@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             noNotificationsMessage.className = 'text-center p-2 text-sm';
             noNotificationsMessage.textContent = 'No notifications available';
             notificationContainer.appendChild(noNotificationsMessage);
-            updateNotificationCount(0); // Update count to 0
+            updateNotificationCount(0);
             return;
         }
 
@@ -45,40 +45,67 @@ document.addEventListener('DOMContentLoaded', async () => {
             notificationContainer.appendChild(notificationElement);
         });
 
-        if (data.items.length > 3) {
-            const viewAllLink = document.createElement('a');
+        let viewAllLink;
+        if (data.items.length > 2) {
+            viewAllLink = document.createElement('a');
             viewAllLink.href = '#';
+            viewAllLink.id = 'view-all-notification';
             viewAllLink.className = 'text-center p-2 hover:bg-gray-100 text-sm';
             viewAllLink.textContent = 'View All Notifications';
-            viewAllLink.addEventListener('click', async () => {
-                await displayAllNotifications(token, notificationContainer);
-            });
+            viewAllLink.addEventListener('click', () => toggleViewAllNotifications(token, notificationContainer, viewAllLink));
             notificationContainer.appendChild(viewAllLink);
         }
+
     } catch (error) {
         console.error('Error fetching notifications:', error);
     }
 });
 
-async function displayAllNotifications(token, notificationContainer) {
-    const allResponse = await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification?offset=0&limit=1000`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    });
+let isViewAllOpen = false;
 
-    if (!allResponse.ok) {
-        throw new Error('Network response was not ok');
+async function toggleViewAllNotifications(token, notificationContainer, viewAllLink) {
+    if (isViewAllOpen) {
+        notificationContainer.innerHTML = '';
+        const notificationElements = document.querySelectorAll('.notification-item');
+        notificationElements.forEach(el => notificationContainer.appendChild(el));
+        viewAllLink.textContent = 'View All Notifications';
+    } else {
+        await displayAllNotifications(token, notificationContainer);
+        viewAllLink.textContent = 'Hide Notifications';
     }
+    isViewAllOpen = !isViewAllOpen;
+}
 
-    const allData = await allResponse.json();
+async function displayAllNotifications(token, notificationContainer) {
+    let offset = 0;
+    const limit = 20;
+    let hasMore = true;
+
     notificationContainer.innerHTML = '';
-    allData.items.forEach(notification => {
-        const notificationElement = createNotificationElement(notification, token);
-        notificationContainer.appendChild(notificationElement);
-    });
+
+    while (hasMore) {
+        const allResponse = await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification?offset=${offset}&limit=${limit}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!allResponse.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const allData = await allResponse.json();
+        allData.items.forEach(notification => {
+            const notificationElement = createNotificationElement(notification, token);
+            notificationElement.classList.add('notification-item');
+            notificationContainer.appendChild(notificationElement);
+        });
+
+        hasMore = allData.items.length === limit;
+        offset += limit;
+    }
 
     await markAllNotificationsAsRead(token);
     updateNotificationCount(0);
@@ -167,8 +194,8 @@ function getNotificationDetails(notification) {
             break;
         case 'ORDER_STATUS_UPDATE':
             iconUrl = '/sports-field-booking/image/order.png';
-            iconAlt = 'order-status-update';
-            message = `Order Status Update: ${notification.message}`;
+            iconAlt = 'order-notification';
+            message = `New Order: ${notification.message}`;
             break;
         case 'PAYMENT_STATUS_UPDATE':
             iconUrl = '/sports-field-booking/image/payment-status-update.png';
