@@ -237,18 +237,14 @@ function getSportFieldIdFromPath() {
 function handleOrder() {
     const data = [];
 
-    document.querySelectorAll('.field_availability').forEach((element, index) => {
-        if (element.style.borderLeft === "5px solid red") {            
-            selectedAvailabilities.forEach(item => {                
-                data.push({
-                    sportFieldID: getSportFieldIdFromPath(),
-                    userID: JSON.parse(localStorage.getItem('current-user')).id,
-                    currentDate: item.date,
-                    fieldAvailabilityID: item.id,
-                });
-            });
-        }
-    });    
+    selectedAvailabilities.forEach(item => {
+        data.push({
+            sportFieldID: getSportFieldIdFromPath(),
+            userID: JSON.parse(localStorage.getItem('current-user')).id,
+            currentDate: item.date,
+            fieldAvailabilityID: item.id,
+        });
+    });   
 
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];

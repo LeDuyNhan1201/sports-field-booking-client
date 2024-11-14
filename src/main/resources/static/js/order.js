@@ -17,7 +17,7 @@ function convertDateFormat(isoString) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -84,8 +84,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const scheduleList = currentOrderElement.querySelector('.schedule-list');
 
                 scheduleList.innerHTML += `
-                    <div class="flex justify-between w-full field-availability-item" data-sports-field=${order.sportFieldID}>
-                        <div class="flex w-full items-end>
+                    <div class="flex justify-between w-full field-availability-item" data-sports-field="${order.sportFieldID}">
+                        <div class="flex w-full items-end">
                             <p class="text-lg pl-4 start-time" data-original="${fieldAvailabilityData.startTime}">
                                 ${formatTime(fieldAvailabilityData.startTime)}
                             </p>
@@ -215,17 +215,17 @@ async function createBookingItems(bookingID) {
     const fieldAvailabilityElements = document.querySelectorAll('.field-availability-item');
     console.log(fieldAvailabilityElements);
 
-
     for (const item of fieldAvailabilityElements) {
         const container = item.querySelector('[data-id]');
         const fieldAvailabilityID = container ? container.getAttribute('data-id') : null;
         const startTime = item.querySelector('.start-time').getAttribute('data-original');
         const endTime = item.querySelector('.end-time').getAttribute('data-original');
+
         const availableDate = item.querySelector('.available-date').getAttribute('data-original');
         const price = item.querySelector('.price').textContent.replace('$', '');
 
         try {
-            const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
+            const response = await fetch(`${SERVER_DOMAIN}/booking-items`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -236,10 +236,10 @@ async function createBookingItems(bookingID) {
                     fieldAvailabilityId: fieldAvailabilityID,
                     startTime: startTime,
                     endTime: endTime,
-                    availableDate: availableDate,
+                    availableDate: convertDateFormat(availableDate),
                     price: parseFloat(price)
                 })
-            });
+            });            
         } catch (error) {
             alert("Có lỗi xảy ra khi tạo đơn đặt chỗ. Vui lòng thử lại.");
             break;
@@ -278,15 +278,14 @@ async function processPayment(bookingID, paymentMethod) {
     }
 }
 
-
 function removeDataFromLocalStorage(id, key) {
     const storedData = JSON.parse(localStorage.getItem("data")) || [];
 
     console.log();
-    
+
     const updatedData = storedData.filter(item => item[key] !== id);
     console.log(updatedData);
-    
+
 
     localStorage.setItem("data", JSON.stringify(updatedData));
 }
