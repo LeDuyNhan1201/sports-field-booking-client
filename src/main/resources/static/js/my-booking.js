@@ -67,7 +67,6 @@ async function fetchBookingHistory() {
                 row.innerHTML = `
                     <td class="border px-4 py-2 text-center">${index + 1}</td>
                     <td class="border px-4 py-2 text-center">${booking.user.username}</td>
-                    <td class="border px-4 py-2 text-center">${booking.sportField.name}</td>
                     <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)} đ</td>
                     <td class="border px-4 py-2 text-center">${booking.status}</td>
                     <td class="border px-4 py-2 text-center">
@@ -136,14 +135,14 @@ function viewBookingDetails(bookingId) {
     const modal = document.getElementById('booking-detail-modal');
     const detailNo = document.getElementById('detail-no');
     const detailUser = document.getElementById('detail-user');
-    const detailSportField = document.getElementById('detail-sport-field');
+    // const detailSportField = document.getElementById('detail-sport-field');
     const bookingItemsContainer = document.getElementById('booking-items-container');
     const detailTotalPrice = document.getElementById('detail-total-price');
     const detailStatus = document.getElementById('detail-status');
 
     detailNo.textContent = bookings.findIndex(b => b.id === bookingId) + 1;
     detailUser.textContent = booking.user.username;
-    detailSportField.textContent = booking.sportField.name;
+    // detailSportField.textContent = "sport field name";
     detailStatus.textContent = booking.status;
 
     bookingItemsContainer.innerHTML = '';
@@ -174,6 +173,10 @@ function viewBookingDetails(bookingId) {
         itemElement.innerHTML = `
             <div class="flex justify-between">
                 <span class="font-semibold">Item ${index + 1}:</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-semibold">Sport Field:</span>
+                <span class="text-gray-700">${item.fieldAvailability.sportsField.name}</span>
             </div>
             <div class="flex justify-between">
                 <span class="font-semibold">Date:</span>
