@@ -7,6 +7,7 @@ const genderMaleText = document.getElementById('gender_male').textContent;
 const genderFemaleText = document.getElementById('gender_female').textContent;
 const genderOtherText = document.getElementById('gender_other').textContent;
 const profilePicture = document.getElementById('profilePicture');
+const changePictureInput = document.getElementById('changePictureInput');
 
 let profilePictureData = null; 
 
@@ -21,21 +22,91 @@ editBtn.addEventListener('click', () => {
     displayFields.forEach(display => display.classList.add('hidden'));
     saveBtn.classList.remove('hidden');
 
-    document.getElementById('changePictureInput').classList.add('hidden');
+    changePictureInput.classList.add('hidden');
 });
 
-// changePictureInput.addEventListener('change', async (event) => {
-//     const file = event.target.files[0];
-//     if (file) {
-//         const reader = new FileReader();
-//         reader.onload = () => {
-//             profilePictureData = reader.result;
-//             profilePicture.src = profilePictureData;
-//         };
-//         reader.readAsDataURL(file);
-//     }
-// });
+async function deleteExistingAvatar(userID) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/file/delete-file/${userID}`, {
+            method: 'DELETE',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        });
 
+        console.log(response);
+        
+    } catch (error) {
+        console.error('Error deleting existing avatar:', error);
+    }
+}
+
+changePictureInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const CHUNK_SIZE = 2 * 1024 * 1024;
+        let chunkStartByte = 0;
+        const fileMetadataId = crypto.randomUUID();
+        
+        while (chunkStartByte < file.size) {
+            const chunk = file.slice(chunkStartByte, chunkStartByte + CHUNK_SIZE);
+            const chunkHash = await calculateFileHash(chunk);
+            
+            const formData = new FormData();
+            formData.append('file', chunk);
+            const request = {
+                "fileMetadataId": fileMetadataId,
+                "chunkHash": chunkHash,
+                "startByte": chunkStartByte,
+                "totalSize": file.size,
+                "contentType": file.type,
+                "userId": JSON.parse(currentUser).id
+            };
+            await deleteExistingAvatar(JSON.parse(currentUser).id)
+            
+            formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+
+            try {
+                const response = await fetch(`${SERVER_DOMAIN}/file/upload-chunk`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    chunkStartByte = data.results;
+
+                    if (chunkStartByte >= file.size) {
+                        alert("File uploaded successfully!");
+                    }
+                } else {
+                    throw new Error('Upload failed');
+                }
+            } catch (error) {
+                console.error('Error uploading chunk:', error);
+                break;
+            }
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            profilePictureData = reader.result;
+            profilePicture.src = profilePictureData;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+async function calculateFileHash(fileChunk) {
+    const buffer = await fileChunk.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+
+// user info
 saveBtn.addEventListener('click', async () => {
     const firstname = document.getElementById('firstname').value;
     const lastname = document.getElementById('lastname').value;
@@ -59,10 +130,13 @@ saveBtn.addEventListener('click', async () => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                // 'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
             },
             body: JSON.stringify(userData), 
         });
+
+        console.log(response);
+                
 
         if (response.ok) {
             document.getElementById('firstnameDisplay').textContent = firstname;
@@ -148,22 +222,22 @@ document.getElementById('deleteAccountBtn').addEventListener('click', async () =
 
 
 async function loadUserInfo(userID) {
-    console.log('ok')
     try {
         const response = await fetch(`${SERVER_DOMAIN}/users/${userID}`)
         const data = await response.json()
 
-        if (data.avatar) {
-            profilePicture.src = data.avatar;
-        } else {
-            profilePicture.src = "https://via.placeholder.com/100";
-        }
+        const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${userID}`);
+        const avatarData = await avatarResponse.json();
 
+        if (avatarData.results) {
+            profilePicture.src = avatarData.results;
+        }
         document.getElementById('firstnameDisplay').textContent = data.firstName;
         document.getElementById('lastnameDisplay').textContent = data.lastName;
         document.getElementById('phoneDisplay').textContent = data.mobileNumber;
         document.getElementById('emailDisplay').textContent = data.email;
         document.getElementById('birthdayDisplay').textContent = data.birthdate;
+        document.getElementById('usernameDisplay').textContent = data.username;
 
         let textGender;
         if (data.gender === 'Male') {
@@ -182,6 +256,7 @@ async function loadUserInfo(userID) {
         document.getElementById('email').value = data.email;
         document.getElementById('birthday').value = data.birthdate;
         document.getElementById('gender').value = data.gender;
+        document.getElementById('username').value = data.username;
     } catch (error) {
         console.error("Error loading user info:", error);
     }

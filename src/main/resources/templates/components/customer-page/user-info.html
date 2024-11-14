@@ -25,7 +25,7 @@
 
         <!-- Profile Picture Section -->
         <div class="flex items-center mb-8 border-t border-gray-300 pt-4">
-            <img id="profilePicture" src="https://via.placeholder.com/100" alt="Profile Picture" class="rounded-full w-24 h-24 object-cover mr-4">
+            <img id="profilePicture" th:src="@{/image/user-info/user-info.png}" alt="Profile Picture" class="rounded-full w-24 h-24 object-cover mr-4">
             <div>
                 <label for="changePictureInput" class="bg-blue-500 text-white px-4 py-2 rounded-md mr-2 cursor-pointer" th:text="#{user_info.change_picture.title}"></label>
                 <input id="changePictureInput" type="file" class="hidden" accept="image/*">
@@ -77,6 +77,12 @@
                         <option value="Female" th:text="#{user_info.gender_female.text}">Nữ</option>
                         <option value="Other" th:text="#{user_info.gender_other.text}">Khác</option>
                     </select>
+                </div>
+
+                <div>
+                    <label for="username" class="block text-gray-700 text-xl mb-4" th:text="#{user_info.username.label}"></label>
+                    <span id="usernameDisplay" class="text-gray-700 text-xl mt-4 block"></span>
+                    <input id="username" type="date" class="border border-gray-300 rounded-md w-full p-2 hidden">
                 </div>
             </div>
         </div>
