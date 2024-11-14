@@ -27,18 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const notificationContainer = document.querySelector('.flex.flex-col');
         notificationContainer.innerHTML = '';
 
-        const unreadCount = data.items.filter(notification => !notification.isRead).length;
-
-        const notificationCountElement = document.querySelector('#notification-count');
-        if (unreadCount > 0) {
-            notificationCountElement.textContent = unreadCount;
-            notificationCountElement.classList.remove('hidden');
-        } else {
-            notificationCountElement.classList.add('hidden');
-        }
+        const unreadNotifications = data.items.filter(notification => !notification.read);
+        const unreadCount = unreadNotifications.length;
+        updateNotificationCount(unreadCount);
 
         data.items.slice(0, 3).forEach(notification => {
-            const notificationElement = createNotificationElement(notification);
+            const notificationElement = createNotificationElement(notification, token);
             notificationContainer.appendChild(notificationElement);
         });
 
@@ -48,37 +42,43 @@ document.addEventListener('DOMContentLoaded', async () => {
             viewAllLink.className = 'text-center p-2 hover:bg-gray-100 text-sm';
             viewAllLink.textContent = 'View All Notifications';
             viewAllLink.addEventListener('click', async () => {
-                const allResponse = await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification?offset=0&limit=1000`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!allResponse.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const allData = await allResponse.json();
-                notificationContainer.innerHTML = '';
-                allData.items.forEach(notification => {
-                    const notificationElement = createNotificationElement(notification);
-                    notificationContainer.appendChild(notificationElement);
-                });
+                await displayAllNotifications(token, notificationContainer);
             });
             notificationContainer.appendChild(viewAllLink);
         }
-
     } catch (error) {
         console.error('Error fetching notifications:', error);
     }
 });
 
-function createNotificationElement(notification) {
+async function displayAllNotifications(token, notificationContainer) {
+    const allResponse = await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification?offset=0&limit=1000`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!allResponse.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    const allData = await allResponse.json();
+    notificationContainer.innerHTML = '';
+    allData.items.forEach(notification => {
+        const notificationElement = createNotificationElement(notification, token);
+        notificationContainer.appendChild(notificationElement);
+    });
+
+    await markAllNotificationsAsRead(token);
+    updateNotificationCount(0);
+}
+
+function createNotificationElement(notification, token) {
     const notificationElement = document.createElement('a');
     notificationElement.href = '#';
-    notificationElement.className = 'flex items-center p-2 hover:bg-gray-100 border-b border-gray-300';
+    notificationElement.className = `flex items-center p-2 hover:bg-gray-100 border-b border-gray-300 ${!notification.read ? 'bg-gray-200' : ''}`;
 
     const { iconUrl, iconAlt, message } = getNotificationDetails(notification);
 
@@ -89,7 +89,50 @@ function createNotificationElement(notification) {
             <span class="font-bold">${notification.id}</span>
         </div>
     `;
+
+    notificationElement.addEventListener('click', async () => {
+        if (!notification.read) {
+            await markNotificationAsRead(notification.id, token);
+            notification.read = true;
+
+            const currentUnreadCount = parseInt(document.querySelector('#notification-count').textContent, 10);
+            updateNotificationCount(Math.max(0, currentUnreadCount - 1));
+            notificationElement.classList.remove('bg-gray-200');
+            notificationElement.classList.add('read');
+        }
+    });
+
     return notificationElement;
+}
+
+async function markNotificationAsRead(notificationId, token) {
+    await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification/${notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
+async function markAllNotificationsAsRead(token) {
+    await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification/read-all`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+}
+
+function updateNotificationCount(count) {
+    const notificationCountElement = document.querySelector('#notification-count');
+    if (count > 0) {
+        notificationCountElement.textContent = count;
+        notificationCountElement.classList.remove('hidden');
+    } else {
+        notificationCountElement.classList.add('hidden');
+    }
 }
 
 function getNotificationDetails(notification) {
