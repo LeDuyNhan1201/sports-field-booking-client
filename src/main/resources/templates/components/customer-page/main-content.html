@@ -33,6 +33,10 @@
         <div th:replace="~{/components/customer-page/order :: orderHistory}"></div>
     </div>
 
+    <div th:case="'changePassword'">
+        <div th:replace="~{/components/customer-page/reset-password :: changePassword}"></div>
+    </div>
+
     <div id="loading"></div>
 
 </div>

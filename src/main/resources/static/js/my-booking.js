@@ -208,17 +208,21 @@ function viewBookingDetails(bookingId) {
 function setupBookingTypeSelector() {
     const selectElement = document.getElementById('booking-type-select');
 
-    const savedBookingType = localStorage.getItem('bookingType');
-    if (savedBookingType) {
-        selectElement.value = savedBookingType;
-    }
+    if (selectElement) {
+        const savedBookingType = localStorage.getItem('bookingType');
+        if (savedBookingType) {
+            selectElement.value = savedBookingType;
+        }
 
-    selectElement.addEventListener('change', () => {
-        localStorage.setItem('bookingType', selectElement.value);
+        selectElement.addEventListener('change', () => {
+            localStorage.setItem('bookingType', selectElement.value);
+            fetchBookingHistory();
+        });
+
         fetchBookingHistory();
-    });
-
-    fetchBookingHistory();
+    } else {
+        console.warn("Element with id 'booking-type-select' not found.");
+    }
 }
 
 window.onload = setupBookingTypeSelector;

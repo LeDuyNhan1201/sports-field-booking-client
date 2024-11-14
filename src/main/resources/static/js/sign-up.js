@@ -24,10 +24,7 @@
             } else if (radio.value === 'owner') {
                 document.getElementById('ownerLabel').classList.remove('border-gray-300');
                 document.getElementById('ownerLabel').classList.add('border-green-500');
-            } else if (radio.value === 'admin') {
-                document.getElementById('adminLabel').classList.remove('border-gray-300');
-                document.getElementById('adminLabel').classList.add('border-green-500');
-            }
+            } 
         });
     });
 

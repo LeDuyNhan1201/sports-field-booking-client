@@ -94,4 +94,11 @@ public class CustomerController {
         model.addAttribute("content", "orderHistory");
         return "pages/customer";
     }
+
+    @GetMapping("/reset-password")
+    public String resetPassword(Model model) {
+        model.addAttribute("title", getLocalizedMessage("change_password.header.title"));
+        model.addAttribute("content", "changePassword");
+        return "pages/customer";
+    }
 }

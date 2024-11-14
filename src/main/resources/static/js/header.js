@@ -40,8 +40,6 @@ if (localStorage.getItem('current-user') !== null) {
     }
 }
 
-loadUserAvatar()
-
 function switchLanguage(lang) {
     console.log('Switching language to ' + lang);
     window.location.href = CLIENT_DOMAIN + '/settings/switch-language?lang=' + lang + '&returnUrl=' + window.location.pathname.replace('/sports-field-booking', '');
@@ -90,4 +88,6 @@ window.addEventListener('DOMContentLoaded', () => {
             alert("Thanh toán thất bại. Vui lòng thử lại.");
         }
     }
+
+    loadUserAvatar();
 });

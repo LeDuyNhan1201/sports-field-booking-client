@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
 
         const ratingSection = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
-        ratingSection.innerHTML = '';
+        if(ratingSection) {
+            ratingSection.innerHTML = '';
         data.items.forEach(field => {
             const prices = field.fieldAvailabilities.map(availability => availability.price);
             const minPrice = prices.length > 0 ? Math.min(...prices) : null;
@@ -39,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             ratingSection.appendChild(fieldElement);
         });
+        }
 
     } catch (error) {
         console.error('Error fetching sports fields data:', error);

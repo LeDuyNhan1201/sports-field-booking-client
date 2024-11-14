@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Error fetching notifications:', error);
     }
+
 });
 
 let isViewAllOpen = false;
@@ -163,6 +164,7 @@ async function markAllNotificationsAsRead(token) {
 
 function updateNotificationCount(count) {
     const notificationCountElement = document.querySelector('#notification-count');
+    
     if (count > 0) {
         notificationCountElement.textContent = count;
         notificationCountElement.classList.remove('hidden');
