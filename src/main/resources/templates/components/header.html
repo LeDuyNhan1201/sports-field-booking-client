@@ -12,10 +12,6 @@
             <li class="relative group flex items-center">
                 <select id="languageSelect" class="bg-transparent border-none text-white p-0 appearance-none"
                     onchange="switchLanguage(this.value)">
-                    <option value="" disabled selected class="text-white">
-                        <img th:src="@{/image/language/vietnamese.png}" alt="">
-                        <span th:text="#{homepage.language.label}"></span>
-                    </option>
                     <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
                     <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
                 </select>
@@ -119,11 +115,15 @@
                             <a th:href="@{/user-info}"
                                 th:class="${content == 'userInfo'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
                                 th:text="#{homepage.personal_info.title}" class="w-full block text-left"></a>
+
                             <a th:href="@{/my-booking}" class="block w-full px-4 py-2 hover:bg-gray-100 text-left"
                                 th:class="${content == 'bookingHistory'} ? 'nav active w-full px-4 py-2 hover:bg-gray-100' : 'nav inactive w-full px-4 py-2 hover:bg-gray-100'"
                                 th:text="#{homepage.my_booking.title}"></a>
-                            <a href="#" class="block w-full px-4 py-2 hover:bg-gray-100 text-left hidden"
-                                id="field-management" th:text="#{homepage.field_owner.title}"></a>
+
+                            <a th:href="@{/my-sports-field}"
+                                th:class="${content == 'sportsField'} ? 'block w-full px-4 py-2 hover:bg-gray-100 text-left hidden' : 'block w-full px-4 py-2 hover:bg-gray-100 text-left hidden'"
+                                th:text="#{homepage.field_owner.title}" id="field-management"></a>
+
                             <a href="#" id="btn-sign-out"
                                 class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
                                 th:text="#{homepage.logout.title}"></a>
