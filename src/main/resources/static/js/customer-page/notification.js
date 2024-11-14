@@ -207,6 +207,11 @@ function getNotificationDetails(notification) {
             iconAlt = 'yard-status-update';
             message = `Yard Status Update: ${notification.message}`;
             break;
+        case 'COMMENT_FEEDBACK ':
+            iconUrl = '/sports-field-booking/image/comment-icon.png';
+            iconAlt = 'reply';
+            message = `Reply: ${notification.message}`;
+            break;
         default:
             iconUrl = '/sports-field-booking/image/default.png';
             iconAlt = 'notification';
