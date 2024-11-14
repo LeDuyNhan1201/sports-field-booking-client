@@ -5,17 +5,23 @@ const userAvatar = document.getElementById('avatar');
 const usernameElement = document.getElementById('username');
 const fieldManagement = document.getElementById('field-management');
 
-if (localStorage.getItem('current-user') !== null) {
-    console.log('Current user:', JSON.parse(localStorage.getItem('current-user')));
+async function loadUserAvatar() {
+    const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${JSON.parse(currentUser).id}`);
+    const avatarData = await avatarResponse.json();
 
+    console.log(userAvatar);
+    
+    userAvatar.src = avatarData.results ? avatarData.results : 'image/user-info/user-info.png';
+}
+
+if (localStorage.getItem('current-user') !== null) {
     if (currentUser) {
         const user = JSON.parse(currentUser)
         console.log('test: ' + user.birthdate);
 
-
         loginSection.classList.add('hidden')
         userInfoSection.classList.remove('hidden')
-        userAvatar.src = user.avatar || 'image/user-info/user-info.png'
+        
         usernameElement.textContent = user.username
 
         if (user.roles && user.roles.includes('FIELD_OWNER')) {
@@ -33,6 +39,8 @@ if (localStorage.getItem('current-user') !== null) {
         userInfoSection.classList.add('hidden')
     }
 }
+
+loadUserAvatar()
 
 function switchLanguage(lang) {
     console.log('Switching language to ' + lang);
