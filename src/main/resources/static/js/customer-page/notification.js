@@ -27,6 +27,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const notificationContainer = document.querySelector('.flex.flex-col');
         notificationContainer.innerHTML = '';
 
+        if (data.items.length === 0) {
+            const noNotificationsMessage = document.createElement('p');
+            noNotificationsMessage.className = 'text-center p-2 text-sm';
+            noNotificationsMessage.textContent = 'No notifications available';
+            notificationContainer.appendChild(noNotificationsMessage);
+            updateNotificationCount(0); // Update count to 0
+            return;
+        }
+
         const unreadNotifications = data.items.filter(notification => !notification.read);
         const unreadCount = unreadNotifications.length;
         updateNotificationCount(unreadCount);
