@@ -57,4 +57,11 @@ public class DashboardController {
         return "pages/dashboard";
     }
 
+    @GetMapping("/user")
+    public String userPage(Model model){
+        model.addAttribute("title", getLocalizedMessage("dashboard.user_heading.title"));
+        model.addAttribute("content", "user");
+        return "pages/dashboard";
+    }
+
 }

@@ -1,3 +1,202 @@
-<div th:fragment="promotion" xmlns:th="http://www.w3.org/1999/xhtml">
-    <h1 th:text="#{dashboard.promotion.title}"></h1>
+<div class="w-full p-6 bg-white rounded-lg shadow h-[100vh] overflow-y-auto" th:fragment="promotion"
+    xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold" th:text="#{dashboard.promotion_heading.title}">Promotion</h1>
+        <select id="languageSelect" class="bg-transparent border-none text-black p-0 appearance-none"
+            onchange="switchLanguage(this.value)">
+            <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}"></option>
+            <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
+            <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
+        </select>
+    </div>
+
+    <!-- Promotions Found -->
+    <div class="flex justify-between items-center mb-6">
+        <span class="flex text-gray-500">
+            <p class="mr-1">20</p>
+            <span th:text="#{dashboard.promotion_found.title}"> promotions found</span>
+        </span>
+    </div>
+
+    <!-- Search Section -->
+    <div class="mb-6 flex justify-between">
+        <!-- Search and Status Select -->
+        <div class="flex items-center space-x-4 w-2/3">
+            <!-- Search Input -->
+            <div class="flex w-full">
+                <input type="text" id="search"
+                    class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    th:placeholder="#{dashboard.promotion_search.placeholder}" placeholder="Search promotions...">
+            </div>
+
+            <!-- Status Select -->
+            <div>
+                <select id="status"
+                    class="block w-64 bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <option value="" th:text="#{dashboard.promotion_searchStatus.title}" class="w-full">All statuses
+                    </option>
+                    <option value="active" th:text="#{dashboard.promotion_status.active}" class="w-full">Active</option>
+                    <option value="inactive" th:text="#{dashboard.promotion_status.inactive}" class="w-full">Inactive
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="flex items-center space-x-4">
+            <!-- From Date -->
+            <div>
+                <label for="from-date" class="block text-sm font-medium text-gray-700"
+                    th:text="#{dashboard.promotion_fromDate.title}">From Date</label>
+                <input type="date" id="from-date"
+                    class="mt-1 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <!-- To Date -->
+            <div>
+                <label for="to-date" class="block text-sm font-medium text-gray-700"
+                    th:text="#{dashboard.promotion_toDate.title}">To Date</label>
+                <input type="date" id="to-date"
+                    class="mt-1 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <!-- Search Button -->
+            <div class="flex items-end">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    th:text="#{dashboard.promotion_searchButton.title}">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotions Table -->
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="text-gray-600 bg-gray-100">
+                <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.promotion_id.title}">ID</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(1)"
+                    th:text="#{dashboard.promotion_description.title}">Description</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(2)"
+                    th:text="#{dashboard.promotion_discountPercentage.title}">Discount</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.promotion_startDate.title}">
+                    Start Date</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.promotion_endDate.title}">End
+                    Date</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.promotion_status.title}">
+                    Status</th>
+                <th class="p-4" th:text="#{dashboard.promotion_action.title}">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example Row -->
+            <tr class="border-b">
+                <td class="p-4">#101</td>
+                <td class="p-4">Holiday Sale</td>
+                <td class="p-4">50%</td>
+                <td class="p-4">2024-12-01</td>
+                <td class="p-4">2024-12-31</td>
+                <td class="p-4">
+                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.promotion_status.active}">Active</span>
+                </td>
+                <td class="p-4">
+                    <button class="edit-button text-blue-500 hover:text-blue-700">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+
+            <tr class="border-b">
+                <td class="p-4">#102</td>
+                <td class="p-4">Holy moly</td>
+                <td class="p-4">30%</td>
+                <td class="p-4">2024-12-01</td>
+                <td class="p-4">2024-12-31</td>
+                <td class="p-4">
+                    <span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs"
+                        th:text="#{dashboard.promotion_status.active}">Inactive</span>
+                </td>
+                <td class="p-4">
+                    <button class="edit-button text-blue-500 hover:text-blue-700">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div th:replace="~{/components/dashboard-page/pagination}"></div>
+
+    <!-- Modal to Add Promotion -->
+    <div id="promotionModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div id="promotionOverlay" class="fixed inset-0 bg-black opacity-50"></div>
+
+        <div class="bg-white p-8 rounded-lg shadow-lg relative w-3/4">
+            <button id="closePromotionModalBtn" class="absolute top-4 right-4 text-gray-700 text-lg font-bold">
+                &times;
+            </button>
+
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold" th:text="#{dashboard.promotion_modal.title}">Add Promotion</h2>
+                </div>
+
+                <form>
+                    <div class="mb-4">
+                        <label for="promotionDescription" class="block text-sm font-medium text-gray-700"
+                            th:text="#{dashboard.description.title}">Description</label>
+                        <input type="text" id="promotionDescription"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="discountPercentage" class="block text-sm font-medium text-gray-700"
+                            th:text="#{dashboard.discount_percentage.title}">Discount Percentage</label>
+                        <input type="number" id="discountPercentage" step="0.01" min="0" max="100"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="startDate" class="block text-sm font-medium text-gray-700"
+                            th:text="#{dashboard.start_date.title}">Start Date</label>
+                        <input type="date" id="startDate"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="endDate" class="block text-sm font-medium text-gray-700"
+                            th:text="#{dashboard.end_date.title}">End Date</label>
+                        <input type="date" id="endDate"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="promotionStatus" class="block text-sm font-medium text-gray-700"
+                            th:text="#{dashboard.status.title}">Status</label>
+                        <select id="promotionStatus"
+                            class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="active" th:text="#{dashboard.status.active}">Active</option>
+                            <option value="inactive" th:text="#{dashboard.status.inactive}">Inactive</option>
+                        </select>
+                    </div>
+                </form>
+
+                <div class="text-right">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        th:text="#{dashboard.save_button.title}">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script th:src="@{/js/dashboard-page/utils.js}"></script>
+    <script th:src="@{/js/dashboard-page/promotion.js}"></script>
 </div>
