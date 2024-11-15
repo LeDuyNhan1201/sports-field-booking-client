@@ -43,11 +43,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
+        // Fetch and display categories
         const categories = await fetchCategories();
         const categorySection = document.querySelector('.flex.justify-center.space-x-6');
         if (categorySection) {
             categorySection.innerHTML = '';
-            categories.forEach(category => {
+            categories.slice(0, 4).forEach(category => {
                 const categoryElement = document.createElement('a');
                 const imageUrl = category.imageUrl || '/sports-field-booking/image/category/ball.png';
                 categoryElement.href = `#`;
@@ -58,6 +59,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10">${category.name}</span>
             `;
                 categorySection.appendChild(categoryElement);
+            });
+        }
+
+        const categorySelect = document.querySelector('select.p-2.border.border-gray-300.rounded-lg');
+        if (categorySelect) {
+            categorySelect.innerHTML = '';
+            categories.forEach(category => {
+                const optionElement = document.createElement('option');
+                optionElement.value = category.id;
+                optionElement.textContent = category.name;
+                categorySelect.appendChild(optionElement);
             });
         }
 
