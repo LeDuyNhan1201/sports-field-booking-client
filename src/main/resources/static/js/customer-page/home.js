@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     priceText = "No price available";
                 }
-                const fallbackImageUrl = '/sports-field-booking/image/default-sport-field..png';
+                const fallbackImageUrl = '/sports-field-booking/image/default-sport-field.png';
 
                 const imageUrl = field.images[0] || fallbackImageUrl;
 
@@ -40,6 +40,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
                 ratingSection.appendChild(fieldElement);
+            });
+        }
+
+        const categories = await fetchCategories();
+        const categorySection = document.querySelector('.flex.justify-center.space-x-6');
+        if (categorySection) {
+            categorySection.innerHTML = '';
+            categories.forEach(category => {
+                const categoryElement = document.createElement('a');
+                const imageUrl = category.imageUrl || '/sports-field-booking/image/category/ball.png';
+                categoryElement.href = `#`;
+                categoryElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40';
+                categoryElement.innerHTML = `
+                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
+                <img src="${imageUrl}" alt="${category.name}" class="w-16 h-16 mt-8 ml-4 relative z-10" />
+                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10">${category.name}</span>
+            `;
+                categorySection.appendChild(categoryElement);
             });
         }
 
