@@ -8,10 +8,6 @@
             <!-- Search -->
             <div class="bg-white text-black rounded-lg p-6 space-x-6 inline-flex">
                 <select class="p-2 border border-gray-300 rounded-lg">
-                    <option value="football" th:text="#{homepage.football_category.title}"></option>
-                    <option value="basketball" th:text="#{homepage.badminton_category.title}"></option>
-                    <option value="tennis" th:text="#{homepage.basketball_category.title}"></option>
-                    <option value="badminton" th:text="#{homepage.tennis_category.title}"></option>
                 </select>
 
                 <input type="text" placeholder="Location" class="p-2 border border-gray-300 rounded-lg" />
@@ -79,31 +75,7 @@
     <section class="container mx-auto py-12">
         <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.category.title}">Fields Category</h3>
         <div class="flex justify-center space-x-6">
-            <!-- Football Card -->
-            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
-                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/ball.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
-                    th:text="#{homepage.football_category.title}">Football</span>
-            </a>
-            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
-                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/badminton.png}" alt="Badminton"
-                    class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
-                    th:text="#{homepage.badminton_category.title}">Badminton</span>
-            </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
-                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/basketball.png}" alt="Basketball"
-                    class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
-                    th:text="#{homepage.basketball_category.title}">Basketball</span>
-            </a><a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40">
-                <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
-                <img th:src="@{/image/category/tennis.png}" alt="Football" class="w-16 h-16 mt-8 ml-4 relative z-10" />
-                <span class="pd-4 block mt-4 text-lg font-bold ml-4 relative z-10"
-                    th:text="#{homepage.tennis_category.title}">Tennis</span>
-            </a>
+            <!-- Categories will be populated by JavaScript -->
         </div>
     </section>
 
