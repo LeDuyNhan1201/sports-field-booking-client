@@ -17,36 +17,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const response = await fetch(`${SERVER_DOMAIN}/users/${userId}`, {
-                method: "GET",
+            // veriry passwordencoder of current password is correct or not
+            const verifyResponse = await fetch(`${SERVER_DOMAIN}/users/${JSON.parse(currentUser).id}/verify-password`, {
+                method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
-                }
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + getAccessTokenFromCookie()
+                },
+                body: JSON.stringify(currentPassword)
             });
 
-            if (!response.ok) {
-                alert("Lỗi khi tải thông tin người dùng.");
+            if (!verifyResponse.ok) {
+                alert("Mật khẩu cũ hiện tại không đúng.");
                 return;
             }
 
-            const data = await response.json();
-
-            if (data.password !== currentPassword) {
-                alert("Mật khẩu hiện tại không đúng.");
-                return;
-            }
-
-            const updateResponse = await fetch(`${SERVER_DOMAIN}/users/${userId}`, {
+            const updateResponse = await fetch(`${SERVER_DOMAIN}/users/${JSON.parse(currentUser).id}/change-password`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
                 },
-                body: JSON.stringify({
-                    userId: userId,
-                    password: newPassword
-                })
+                body: JSON.stringify(newPassword)
             });
-
+            console.log(updateResponse);
+            
             if (updateResponse.ok) {
                 alert("Mật khẩu đã được cập nhật thành công.");
                 window.location.reload();
