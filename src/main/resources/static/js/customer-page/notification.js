@@ -114,9 +114,16 @@ async function displayAllNotifications(token, notificationContainer) {
 
 function createNotificationElement(notification, token) {
     const notificationElement = document.createElement('a');
-    notificationElement.href = '#';
+    if (notification.type === 'COMMENT_FEEDBACK') {
+        notificationElement.href = `http://localhost:3333/sports-field-booking/sports-field/${notification.review.sportField.id}/reviews`;
+    }
+    if (notification.type === 'ORDER_STATUS_UPDATE') {
+        // notificationElement.href = `http://localhost:3333/sports-field-booking/booking/${notification.booking.id}/details`;
+    }
+    else {
+        notificationElement.href = `http://localhost:3333/sports-field-booking/sports-field/${notification.review.sportField.id}/details`;
+    }
     notificationElement.className = `flex items-center p-2 hover:bg-gray-100 border-b border-gray-300 ${!notification.read ? 'bg-gray-200' : ''}`;
-
     const { iconUrl, iconAlt, message } = getNotificationDetails(notification);
 
     notificationElement.innerHTML = `
@@ -127,8 +134,9 @@ function createNotificationElement(notification, token) {
         </div>
     `;
 
-    notificationElement.addEventListener('click', async () => {
+    notificationElement.addEventListener('click', async (event) => {
         if (!notification.read) {
+            event.preventDefault();
             await markNotificationAsRead(notification.id, token);
             notification.read = true;
 
@@ -164,7 +172,7 @@ async function markAllNotificationsAsRead(token) {
 
 function updateNotificationCount(count) {
     const notificationCountElement = document.querySelector('#notification-count');
-    
+
     if (count > 0) {
         notificationCountElement.textContent = count;
         notificationCountElement.classList.remove('hidden');
@@ -179,16 +187,6 @@ function getNotificationDetails(notification) {
     let message = notification.message;
 
     switch (notification.type) {
-        case 'BOOKING_REMINDER':
-            iconUrl = '/sports-field-booking/image/sport-field-icon.png';
-            iconAlt = 'booking-reminder';
-            message = `Booking Reminder: ${notification.message}`;
-            break;
-        case 'PAYMENT_REMINDER':
-            iconUrl = '/sports-field-booking/image/message.png';
-            iconAlt = 'payment-reminder';
-            message = `Payment Reminder: ${notification.message}`;
-            break;
         case 'PROMOTION':
             iconUrl = '/sports-field-booking/image/promotion.jpg';
             iconAlt = 'promotion';
@@ -198,11 +196,6 @@ function getNotificationDetails(notification) {
             iconUrl = '/sports-field-booking/image/order.png';
             iconAlt = 'order-notification';
             message = `New Order: ${notification.message}`;
-            break;
-        case 'PAYMENT_STATUS_UPDATE':
-            iconUrl = '/sports-field-booking/image/payment-status-update.png';
-            iconAlt = 'payment-status-update';
-            message = `Payment Status Update: ${notification.message}`;
             break;
         case 'YARD_STATUS_UPDATE':
             iconUrl = '/sports-field-booking/image/sport-field-status-update.png';
