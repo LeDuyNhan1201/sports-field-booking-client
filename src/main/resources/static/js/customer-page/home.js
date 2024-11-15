@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const imageUrl = field.images[0] || fallbackImageUrl;
 
                 const fieldElement = document.createElement('a');
-                fieldElement.href = `/sports-field/${field.id}/details`;
+                fieldElement.href = `/sports-field-booking/sports-field/${field.id}/details`;
                 fieldElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block';
                 fieldElement.innerHTML = `
                 <img src="${imageUrl}" alt="Sport field image" class="w-300 h-64 object-cover" />
