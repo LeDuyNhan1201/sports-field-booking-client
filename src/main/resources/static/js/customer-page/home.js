@@ -22,17 +22,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 const fallbackImageUrl = '/sports-field-booking/image/manxanh.png';
 
-                const imageUrl = field.imageUrl || fallbackImageUrl;
+                const imageUrl = field.images[0] || fallbackImageUrl;
 
                 const fieldElement = document.createElement('a');
                 fieldElement.href = `/sports-field/${field.id}/details`;
                 fieldElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block';
                 fieldElement.innerHTML = `
-                <img src="${imageUrl}" alt="Sport field image" class="w-400 h-300 object-cover" />
+                <img src="${imageUrl}" alt="Sport field image" class="w-300 h-64 object-cover" />
                 <div class="p-4">
                     <h4 class="font-bold text-xl">${field.name}</h4>
                     <p class="text-gray-600">${priceText}</p>
-                    <p class="text-gray-500">${field.location}</p>
+                    <p class="text-gray-500 h-12">${field.location}</p>
                     <div class="mt-2 flex space-x-2">
                         <span>⭐ ${field.rating}/5</span>
                     </div>
