@@ -45,7 +45,7 @@ async function deleteExistingAvatar(userID) {
 changePictureInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (file) {
-        const CHUNK_SIZE = 2 * 1024 * 1024;
+        const CHUNK_SIZE = 1024 * 1024;
         let chunkStartByte = 0;
         const fileMetadataId = crypto.randomUUID();
         
@@ -61,14 +61,15 @@ changePictureInput.addEventListener('change', async (e) => {
                 "startByte": chunkStartByte,
                 "totalSize": file.size,
                 "contentType": file.type,
-                "userId": JSON.parse(currentUser).id
+                "ownerId": JSON.parse(currentUser).id,
+                "fileMetadataType": "USER_AVATAR"
             };
-            await deleteExistingAvatar(JSON.parse(currentUser).id)
+            //await deleteExistingAvatar(JSON.parse(currentUser).id)
             
             formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
 
             try {
-                const response = await fetch(`${SERVER_DOMAIN}/file/upload-chunk`, {
+                const response = await fetch(`${SERVER_DOMAIN}/users/avatar`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -77,10 +78,11 @@ changePictureInput.addEventListener('change', async (e) => {
                     const data = await response.json();
                     chunkStartByte = data.results;
 
-                    if (chunkStartByte >= file.size) {
-                        alert("File uploaded successfully!");
-                    }
+                    if (chunkStartByte >= file.size)
+                        alert("Avatar uploaded successfully!");
+
                 } else {
+                    console.error('Error uploading chunk:', response);
                     throw new Error('Upload failed');
                 }
             } catch (error) {

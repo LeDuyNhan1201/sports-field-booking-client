@@ -153,6 +153,7 @@ function scheduleTokenRefresh(token) {
     const refreshTime = Math.max(timeLeft - 60000, 0);
 
     setTimeout(async () => {
+        console.log('Refreshing token...');
         await refreshToken();
     }, refreshTime);
 }
@@ -163,9 +164,6 @@ function triggerRefreshToken() {
         if (accessToken) scheduleTokenRefresh(accessToken);
     };
 }
-
-triggerRefreshToken();
-
 
 function formatDate(dateString) {
     const date = new Date(dateString);

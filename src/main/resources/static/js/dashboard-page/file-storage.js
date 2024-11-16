@@ -240,12 +240,24 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+window.onload = function() {
+    getSportsFieldImages();
+};
+
 const MAX_FILES = 10; // Tối đa 10 file
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const selectedFiles = [];
 
 document.getElementById('fileInput').addEventListener('change', handleFileSelection);
 document.getElementById('submitFilesBtn').addEventListener('click', handleSubmitFiles);
+
+function getSportsFieldImages() {
+    const url = new URL(window.location.href); // Lấy URL hiện tại
+    const pathname = url.pathname; // "/users/123/posts/456"
+    const parts = pathname.split('/').filter(Boolean); // ['users', '123', 'posts', '456']
+    const sportsFieldId = parts[2];
+    console.log('Sports Field ID:', sportsFieldId);
+}
 
 function handleFileSelection(event) {
     const files = Array.from(event.target.files); // Lấy danh sách file

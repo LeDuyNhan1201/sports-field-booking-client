@@ -90,4 +90,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     loadUserAvatar();
+
+    triggerRefreshToken();
 });
