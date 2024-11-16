@@ -12,7 +12,7 @@ let sportFieldGrid = document.getElementById("sportsField.grid");
 
 let buttonNewField = document.getElementById('sportsField.button_new_sportField');
 
-async function loadSportFieldList(type, currentOffset, searchValue) {
+async function loadSportFieldList(tab, currentOffset, searchValue) {
     const endPath = window.location.pathname.split("/")[2];   
      
     try {
@@ -45,7 +45,7 @@ async function loadSportFieldList(type, currentOffset, searchValue) {
         const data = await response.json();
         
         if (data.items.length) {
-            if (type === "grid") await appendFieldGrid(data.items);
+            if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
             loadPage(currentOffset);
         }
