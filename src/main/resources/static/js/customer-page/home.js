@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const data = await response.json();
 
-        const ratingSection = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+        const ratingSection = document.getElementById('ratingSection');
         if (ratingSection) {
             ratingSection.innerHTML = '';
-            const openFields = data.items.filter(field => field.status === 'OPEN').slice(0, 3);
+            const openFields = data.items.filter(field => field.status !== 'INACTIVE').slice(0, 3);
             openFields.forEach(field => {
                 const prices = field.fieldAvailabilities.map(availability => availability.price);
                 const minPrice = prices.length > 0 ? Math.min(...prices) : null;
@@ -43,15 +43,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // Fetch and display categories
         const categories = await fetchCategories();
-        const categorySection = document.querySelector('.flex.justify-center.space-x-6');
+        const categorySection = document.querySelector('#categorySection');
         if (categorySection) {
             categorySection.innerHTML = '';
             categories.slice(0, 4).forEach(category => {
                 const categoryElement = document.createElement('a');
-                const imageUrl = category.imageUrl || '/sports-field-booking/image/category/ball.png';
                 categoryElement.href = `#`;
+                const imageUrl = category.imageUrl || '/sports-field-booking/image/category/ball.png';
                 categoryElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40';
                 categoryElement.innerHTML = `
                 <div class="absolute top-0 left-0 bg-green-500 w-3/5 h-full rounded-r-full"></div>
@@ -62,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        const categorySelect = document.querySelector('select.p-2.border.border-gray-300.rounded-lg');
+        const categorySelect = document.querySelector('#categorySelect');
         if (categorySelect) {
             categorySelect.innerHTML = '';
             categories.forEach(category => {
@@ -72,6 +71,52 @@ document.addEventListener('DOMContentLoaded', async () => {
                 categorySelect.appendChild(optionElement);
             });
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchButton = document.querySelector('#searchButton');
+            const categorySelect = document.querySelector('#categorySelect');
+            const locationInput = document.querySelector('#locationInput');
+            const minPriceInput = document.querySelector('#minPriceInput');
+            const maxPriceInput = document.querySelector('#maxPriceInput');
+
+            if (!searchButton || !categorySelect || !locationInput || !minPriceInput || !maxPriceInput) {
+                console.error('Some required elements are missing from the DOM.');
+                return;
+            }
+
+            searchButton.addEventListener('click', () => {
+                const selectedCategory = categorySelect.value;
+                const location = locationInput.value.trim();
+                const minPrice = parseFloat(minPriceInput.value.trim());
+                const maxPrice = parseFloat(maxPriceInput.value.trim());
+
+                // Validate prices
+                if (isNaN(minPrice) || minPrice <= 0 || isNaN(maxPrice) || maxPrice <= 0) {
+                    alert('Please enter valid values for both minimum and maximum price!');
+                    return;
+                }
+
+                if (maxPrice < minPrice) {
+                    alert('Maximum price cannot be less than minimum price!');
+                    return;
+                }
+
+                // Build search parameters
+                const searchParams = new URLSearchParams({
+                    categoryId: selectedCategory,
+                    location: location,
+                    minPrice: minPrice,
+                    maxPrice: maxPrice,
+                    colSort: 'rating',
+                    sortDirection: '-1',
+                    offset: '0',
+                    limit: '100',
+                });
+
+                // Redirect to search URL
+                window.location.href = `http://localhost:3333/sports-field-booking/sports-field?${searchParams.toString()}`;
+            });
+        });
 
     } catch (error) {
         console.error('Error fetching sports fields data:', error);
