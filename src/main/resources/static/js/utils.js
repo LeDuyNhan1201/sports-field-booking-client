@@ -179,3 +179,11 @@ function formatDate(dateString) {
 
     return `${hours}:${minutes} ${day}-${month}-${year}`;
 }
+
+function formatHourToDate(time) {
+    let [hours, minutes] = time.split(":").map(Number);
+
+    let date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date
+}
