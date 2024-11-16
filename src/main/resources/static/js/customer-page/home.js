@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch(`http://localhost:8888/sports-field-booking/api/v1/sports-field?colSort=rating&sortDirection=-1&offset=0&limit=100`);
+        const response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=rating&sortDirection=-1&offset=0&limit=100`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -72,50 +72,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchButton = document.querySelector('#searchButton');
-            const categorySelect = document.querySelector('#categorySelect');
-            const locationInput = document.querySelector('#locationInput');
-            const minPriceInput = document.querySelector('#minPriceInput');
-            const maxPriceInput = document.querySelector('#maxPriceInput');
+        const searchButton = document.querySelector('#searchButton');
+        searchButton.addEventListener('click', () => {
+            const selectedCategory = categorySelect.value;
+            const location = document.querySelector('#locationInput').value.trim();
+            const minPrice = document.querySelector('#minPriceInput').value.trim();
+            const maxPrice = document.querySelector('#maxPriceInput').value.trim();
 
-            if (!searchButton || !categorySelect || !locationInput || !minPriceInput || !maxPriceInput) {
-                console.error('Some required elements are missing from the DOM.');
+            if ((!minPrice || parseFloat(minPrice) <= 0) || (!maxPrice || parseFloat(maxPrice) <= 0)) {
+                alert('Please enter valid values for both minimum and maximum price!');
                 return;
             }
 
-            searchButton.addEventListener('click', () => {
-                const selectedCategory = categorySelect.value;
-                const location = locationInput.value.trim();
-                const minPrice = parseFloat(minPriceInput.value.trim());
-                const maxPrice = parseFloat(maxPriceInput.value.trim());
+            if (parseFloat(maxPrice) < parseFloat(minPrice)) {
+                alert('Maximum price cannot be less than minimum price!');
+                return;
+            }
 
-                // Validate prices
-                if (isNaN(minPrice) || minPrice <= 0 || isNaN(maxPrice) || maxPrice <= 0) {
-                    alert('Please enter valid values for both minimum and maximum price!');
-                    return;
-                }
-
-                if (maxPrice < minPrice) {
-                    alert('Maximum price cannot be less than minimum price!');
-                    return;
-                }
-
-                // Build search parameters
-                const searchParams = new URLSearchParams({
-                    categoryId: selectedCategory,
-                    location: location,
-                    minPrice: minPrice,
-                    maxPrice: maxPrice,
-                    colSort: 'rating',
-                    sortDirection: '-1',
-                    offset: '0',
-                    limit: '100',
-                });
-
-                // Redirect to search URL
-                window.location.href = `http://localhost:3333/sports-field-booking/sports-field?${searchParams.toString()}`;
+            const searchParams = new URLSearchParams({
+                categoryId: selectedCategory,
+                location: location,
+                minPrice: minPrice,
+                maxPrice: maxPrice,
+                colSort: 'rating',
+                sortDirection: '-1',
+                offset: '0',
+                limit: '100'
             });
+            console.log(searchParams.toString());
+            window.location.href = `${CLIENT_DOMAIN}/sports-field?${searchParams.toString()}`;
         });
 
     } catch (error) {
