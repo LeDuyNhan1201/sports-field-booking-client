@@ -216,14 +216,15 @@ async function createBookingItems(bookingID) {
     console.log(fieldAvailabilityElements);
 
     for (const item of fieldAvailabilityElements) {
-        const container = item.querySelector('[data-id]');
-        const fieldAvailabilityID = container ? container.getAttribute('data-id') : null;
+        const sportFieldID = item.getAttribute('data-sports-field');
         const startTime = item.querySelector('.start-time').getAttribute('data-original');
         const endTime = item.querySelector('.end-time').getAttribute('data-original');
 
         const availableDate = item.querySelector('.available-date').getAttribute('data-original');
         const price = item.querySelector('.price').textContent.replace('$', '');
 
+        console.log(sportFieldID);
+        
         try {
             const response = await fetch(`${SERVER_DOMAIN}/booking-items`, { 
                 method: 'POST',
@@ -233,7 +234,7 @@ async function createBookingItems(bookingID) {
                 },
                 body: JSON.stringify({
                     orderId: bookingID,
-                    fieldAvailabilityId: fieldAvailabilityID,
+                    sportFieldID: sportFieldID,
                     startTime: startTime,
                     endTime: endTime,
                     availableDate: convertDateFormat(availableDate),

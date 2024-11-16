@@ -197,17 +197,7 @@ async function appendBookingDetail(field) {
         element.dataset.availabilityId = fieldAvailability.id;
 
         if (isTimeWithinRange(extractTime(fieldAvailability.startTime),extractTime(fieldAvailability.endTime),extractTime(field.openingTime),extractTime(field.closingTime))) {
-            if (!fieldAvailability.is_available) {
-                element.innerHTML = `
-                    <div class="flex flex-1 justify-between">
-                        <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
-                        <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
-                    </div>
-                    <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
-                    `;
-            } else {
-                element.innerHTML = `
+            element.innerHTML = `
                     <div class="flex flex-1 justify-between">
                         <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
                         <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
@@ -215,7 +205,6 @@ async function appendBookingDetail(field) {
                     </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
                     `;
-            }
 
             const selectedItem = selectedAvailabilities.find(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
             
@@ -224,10 +213,10 @@ async function appendBookingDetail(field) {
             }
 
             element.addEventListener("click", () => {
-                if (!fieldAvailability.is_available) {
-                    alert("This sport field has already been ordered");
-                    return;
-                }
+                // if (!fieldAvailability.is_available) {
+                //     alert("This sport field has already been ordered");
+                //     return;
+                // }
                 
                 const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
 
