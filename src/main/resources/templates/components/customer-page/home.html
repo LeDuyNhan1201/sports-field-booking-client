@@ -7,17 +7,16 @@
             <p class="mb-8 text-black" th:text="#{homepage.background_content.title}"></p>
             <!-- Search -->
             <div class="bg-white text-black rounded-lg p-6 space-x-6 inline-flex">
-                <select class="p-2 border border-gray-300 rounded-lg">
+                <select id="categorySelect" class="p-2 border border-gray-300 rounded-lg">
+                    <!-- Options will be populated by JavaScript -->
                 </select>
-
-                <input type="text" placeholder="Location" class="p-2 border border-gray-300 rounded-lg" />
-                <input type="date" class="p-2 border border-gray-300 rounded-lg" />
-                <select class="p-2 border border-gray-300 rounded-lg">
-                    <option value="">20$ - 50$</option>
-                    <option value="">51$ - 100$</option>
-                    <option value="">Above 100$</option>
-                </select>
-                <button class="bg-green-600 text-white px-6 py-2 rounded-lg"
+                <input type="text" id="locationInput" placeholder="Location"
+                    class="p-2 border border-gray-300 rounded-lg" />
+                <input type="number" id="minPriceInput" placeholder="Min Price"
+                    class="p-2 border border-gray-300 rounded-lg" />
+                <input type="number" id="maxPriceInput" placeholder="Max Price"
+                    class="p-2 border border-gray-300 rounded-lg" />
+                <button id="searchButton" class="bg-green-600 text-white px-6 py-2 rounded-lg"
                     th:text="#{homepage.search.title}"></button>
             </div>
         </div>
@@ -26,55 +25,15 @@
     <!-- Highest rating sports field (booking)-->
     <section class="container max-w-5xl mx-auto py-6">
         <h3 class="text-3xl font-bold text-center mb-8" th:text="#{homepage.rating.title}"></h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Card -->
-            <a th:href="@{/sports-field/1/details}"
-                th:class="${content == 'fieldDetail'} ? 'bg-white shadow-lg rounded-lg overflow-hidden block' : 'bg-white shadow-lg rounded-lg overflow-hidden block'"
-                xmlns:th="http://www.w3.org/1999/xhtml">
-                <img th:src="@{/image/default-sport-field.png}" alt="Sport field image"
-                    class="w-400 h-300 object-cover" />
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
-                    <p class="text-gray-600">24.000/đ</p>
-                    <p class="text-gray-500">Best fields in the world</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ 4.2/5</span>
-                    </div>
-                </div>
-            </a>
-
-            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
-                <img th:src="@{/image/default-sport-field.png}" alt="Sport field image"
-                    class="w-400 h-300 object-cover" />
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
-                    <p class="text-gray-600">24.000/đ</p>
-                    <p class="text-gray-500">Best fields in the world</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ 4.2/5</span>
-                    </div>
-                </div>
-            </a>
-
-            <a href="#" class="bg-white shadow-lg rounded-lg overflow-hidden block">
-                <img th:src="@{/image/default-sport-field.png}" alt="Sport field image"
-                    class="w-400 h-300 object-cover" />
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">Manchester City Academy</h4>
-                    <p class="text-gray-600">24.000/đ</p>
-                    <p class="text-gray-500">Best fields in the world</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ 4.2/5</span>
-                    </div>
-                </div>
-            </a>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="ratingSection">
+            <!-- Cards will be populated by JavaScript -->
         </div>
     </section>
 
     <!-- Category -->
     <section class="container mx-auto py-12">
         <h3 class="text-2xl font-bold text-center mb-8" th:text="#{homepage.category.title}">Fields Category</h3>
-        <div class="flex justify-center space-x-6">
+        <div class="flex justify-center space-x-6" id="categorySection">
             <!-- Categories will be populated by JavaScript -->
         </div>
     </section>
