@@ -73,35 +73,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const searchButton = document.querySelector('#searchButton');
-        searchButton.addEventListener('click', () => {
-            const selectedCategory = categorySelect.value;
-            const location = document.querySelector('#locationInput').value.trim();
-            const minPrice = document.querySelector('#minPriceInput').value.trim();
-            const maxPrice = document.querySelector('#maxPriceInput').value.trim();
+        if (searchButton) {
+            searchButton.addEventListener('click', () => {
+                const selectedCategory = categorySelect.value;
+                const location = document.querySelector('#locationInput').value.trim();
+                const minPrice = document.querySelector('#minPriceInput').value.trim();
+                const maxPrice = document.querySelector('#maxPriceInput').value.trim();
 
-            if ((!minPrice || parseFloat(minPrice) <= 0) || (!maxPrice || parseFloat(maxPrice) <= 0)) {
-                alert('Please enter valid values for both minimum and maximum price!');
-                return;
-            }
+                if ((!minPrice || parseFloat(minPrice) <= 0) || (!maxPrice || parseFloat(maxPrice) <= 0)) {
+                    alert('Please enter valid values for both minimum and maximum price!');
+                    return;
+                }
 
-            if (parseFloat(maxPrice) < parseFloat(minPrice)) {
-                alert('Maximum price cannot be less than minimum price!');
-                return;
-            }
+                if (parseFloat(maxPrice) < parseFloat(minPrice)) {
+                    alert('Maximum price cannot be less than minimum price!');
+                    return;
+                }
 
-            const searchParams = new URLSearchParams({
-                categoryId: selectedCategory,
-                location: location,
-                minPrice: minPrice,
-                maxPrice: maxPrice,
-                colSort: 'rating',
-                sortDirection: '-1',
-                offset: '0',
-                limit: '100'
+                const searchParams = new URLSearchParams({
+                    categoryId: selectedCategory,
+                    location: location,
+                    minPrice: minPrice,
+                    maxPrice: maxPrice,
+                    colSort: 'rating',
+                    sortDirection: '-1',
+                    offset: '0',
+                    limit: '100'
+                });
+                console.log(searchParams.toString());
+                window.location.href = `${CLIENT_DOMAIN}/sports-field?${searchParams.toString()}`;
             });
-            console.log(searchParams.toString());
-            window.location.href = `${CLIENT_DOMAIN}/sports-field?${searchParams.toString()}`;
-        });
+        }
 
     } catch (error) {
         console.error('Error fetching sports fields data:', error);
