@@ -118,7 +118,7 @@ function createNotificationElement(notification, token) {
         notificationElement.href = `http://localhost:3333/sports-field-booking/sports-field/${notification.review.sportField.id}/reviews`;
     }
     if (notification.type === 'ORDER_STATUS_UPDATE') {
-        // notificationElement.href = `http://localhost:3333/sports-field-booking/booking/${notification.booking.id}/details`;
+        notificationElement.href = `http://localhost:3333/sports-field-booking/my-booking?bookingId=${notification.booking.id}`;
     }
     else {
         notificationElement.href = `http://localhost:3333/sports-field-booking/sports-field/${notification.review.sportField.id}/details`;
