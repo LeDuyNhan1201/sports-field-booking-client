@@ -27,18 +27,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const fieldElement = document.createElement('a');
                 fieldElement.href = `/sports-field-booking/sports-field/${field.id}/details`;
-                fieldElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block';
+                fieldElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block transform transition-transform duration-300 hover:scale-105';
                 fieldElement.innerHTML = `
-                <img src="${imageUrl}" alt="Sport field image" class="w-full h-64 object-cover" />
-                <div class="p-4">
-                    <h4 class="font-bold text-xl">${field.name}</h4>
-                    <p class="text-gray-600">${priceText}</p>
-                    <p class="text-gray-500 h-12">${field.location}</p>
-                    <div class="mt-2 flex space-x-2">
-                        <span>⭐ ${field.rating}/5</span>
-                    </div>
-                </div>
-            `;
+                                       <img src="${imageUrl}" alt="Sport field image" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-95" />
+                                                <div class="p-4 transition-colors duration-300 hover:bg-gray-100">
+                                                    <h4 class="font-bold text-xl hover:text-gray-800">${field.name}</h4>
+                                                    <p class="text-gray-600 hover:text-gray-700">${priceText}</p>
+                                                    <p class="text-gray-500 h-12 hover:text-gray-600">${field.location}</p>
+                                                    <div class="mt-2 flex space-x-2">
+                                                        <span class="hover:text-gray-700">⭐ ${field.rating}/5</span>
+                                                    </div>
+                                                </div>
+                `;
                 ratingSection.appendChild(fieldElement);
             });
         }
