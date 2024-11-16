@@ -39,19 +39,41 @@ function convertDateFormat(isoString) {
     return `${day}-${month}-${year}`;
 }
 
+function isTimeWithinRange(startTime, endTime, rangeStart, rangeEnd) {
+    const toMinutes = (time) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const start = toMinutes(startTime);
+    const end = toMinutes(endTime);
+    const startMinutes = toMinutes(rangeStart);
+    const endMinutes = toMinutes(rangeEnd);
+
+    if (startMinutes <= endMinutes) {
+        return start >= startMinutes && end <= endMinutes;
+    }
+}
+
 displayDate(currentDate)
 
 if (prevDateButton && nextDateButton) {
     prevDateButton.addEventListener('click', async () => {
+        const now = new Date();
         currentDate.setDate(currentDate.getDate() - 1);
         displayDate(currentDate);
-
-        try {
-            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-            const field = await fieldRes.json();
-            await appendBookingDetail(field);
-        } catch (error) {
-            console.error("Error fetching field data:", error);
+        
+        if(currentDate < now) {
+            currentDate = now;
+            displayDate(currentDate);
+        }else {
+            try {
+                const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+                const field = await fieldRes.json();
+                await appendBookingDetail(field);
+            } catch (error) {
+                console.error("Error fetching field data:", error);
+            }
         }
     });
 
@@ -174,7 +196,7 @@ async function appendBookingDetail(field) {
         element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
         element.dataset.availabilityId = fieldAvailability.id;
 
-        if (extractTime(fieldAvailability.startTime) >= extractTime(field.openingTime) && extractTime(fieldAvailability.endTime) <= extractTime(field.closingTime)) {
+        if (isTimeWithinRange(extractTime(fieldAvailability.startTime),extractTime(fieldAvailability.endTime),extractTime(field.openingTime),extractTime(field.closingTime))) {
             if (!fieldAvailability.is_available) {
                 element.innerHTML = `
                     <div class="flex flex-1 justify-between">
