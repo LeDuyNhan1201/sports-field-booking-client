@@ -1,9 +1,3 @@
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
 let bookings = [];
 
 async function fetchBookingHistory() {
@@ -66,7 +60,7 @@ async function fetchBookingHistory() {
                     <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)} đ</td>
                     <td class="border px-4 py-2 text-center">${booking.status}</td>
                     <td class="border px-4 py-2 text-center">
-                        <button class="view-details-button bg-blue-500 text-white px-2 py-1 rounded" data-booking-id="${booking.id}">View Details</button>
+                        <button class="view-details-button bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700" data-booking-id="${booking.id}">View Detail</button>
                         ${bookingType === 'my-upcoming' && booking.status === 'PENDING' ? `<button class="cancel-button bg-red-500 text-white px-2 py-1 rounded" data-booking-id="${booking.id}">Cancel</button>` : ''}
                     </td>
                 `;
@@ -200,6 +194,7 @@ function viewBookingDetails(bookingId) {
     modal.classList.remove('hidden');
 
     const closeModalButton = document.getElementById('close-modal-button');
+    closeModalButton.classList.add('hover:bg-red-500', 'hover:text-white', 'transition', 'duration-200');
     closeModalButton.addEventListener('click', () => {
         modal.classList.add('hidden');
         const newUrl = `${window.location.origin}${window.location.pathname}`;
