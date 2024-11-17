@@ -10,6 +10,13 @@ const userComment = JSON.parse(user);
 
 loadReviews();
 
+async function loadImage(id) {
+    const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${id}`);
+    const avatarData = await avatarResponse.json();  
+
+    return avatarData.results;
+}
+
 async function loadReviews() {
     try {
         const response = await fetch(`${SERVER_DOMAIN}/reviews/${fieldReviewId}?offset=${offset}&limit=${limit}`);
@@ -46,36 +53,39 @@ async function appendReviews(reviews) {
     const container = document.getElementById('reviews');
     container.innerHTML = '';
 
-    const reviewElement = appendNewComment()
+    const reviewElement = await appendNewComment()
     container.appendChild(reviewElement)
     // thêm vào form các comment cũ
     for (const review of reviews) {
         if (!review.parentReview) {
             const repliesValue = await loadReplies(review.id)
-            const reviewElement = createReviewElement(review, repliesValue.length);
+            const reviewElement = await createReviewElement(review, repliesValue.length);
             container.appendChild(reviewElement);
 
             const parentReviewElement = document.getElementById('replyInputContainer-'+review.id);
 
             //ô thêm reply mới
-            const newReplyElement = appendNewReply(review.id)
+            const newReplyElement = await appendNewReply(review.id)
             
             parentReviewElement.appendChild(newReplyElement)
 
 
             // các comment con trong các cmt cũ
-            appendReplies(review.id, parentReviewElement)
+            await appendReplies(review.id, parentReviewElement)
         }
     }
     
-    function createReviewElement(review, repliesValue) {
+    async function createReviewElement(review, repliesValue) {
         const reviewElement = document.createElement('div');
-        reviewElement.classList.add('review');
+        reviewElement.classList.add('review');     
+        
+        const image = await loadImage(review.user.id)      
+
         reviewElement.innerHTML = `
             <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
                 <div class="flex flex-col">
                     <div class="flex flex-row items-center">
-                        <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
+                        <img src="${image}" class="h-10 w-10 m-2 rounded-full" alt="" />
                         <div class="flex flex-col">
                             <div class="flex items-center">
                                 <span class="text-green-600 italic">${review.user.firstName} ${review.user.lastName}</span>
@@ -114,14 +124,16 @@ async function appendReviews(reviews) {
 }
 
 // element new comment
-function appendNewComment() {
+async function appendNewComment() {
     const reviewElement = document.createElement('div');
+    const image = await loadImage(userComment.id)
+
         reviewElement.classList.add('review');
         reviewElement.innerHTML = `
             <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
                 <div class="flex flex-col">
                     <div class="flex flex-row items-center">
-                        <img src="${userComment.avatar}" class="h-10 w-10 m-2 rounded-full" alt="" />
+                        <img src="${image}" class="h-10 w-10 m-2 rounded-full" alt="" />
                         <div class="flex flex-col">
                             <div class="flex flex-col">
                                 <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
@@ -155,14 +167,15 @@ function appendNewComment() {
     return reviewElement
 }
 
-
 // form new reply
-function appendNewReply(reviewId) {
+async function appendNewReply(reviewId) {
     const element = document.createElement('div')
+    const image = await loadImage(JSON.parse(currentUser).id);
+
     element.innerHTML = `
         <div class="flex flex-col">
             <div class="flex flex-row items-center">
-                <img src="${userComment.avatar}" class="h-10 w-10 m-1 rounded-full" alt="" />
+                <img src="${image}" class="h-10 w-10 m-1 rounded-full" alt="" />
                 <div class="flex flex-col">
                     <span class="text-red-600 italic">${userComment.firstName} ${userComment.lastName}</span>
                     <input type="text" class="border-0 outline-none rounded-md p-1 text-gray-700 reply-input" placeholder="Write a review..." />
@@ -195,10 +208,10 @@ async function handleReply(reviewId, inputElement) {
         parentReviewElement.innerHTML ='';
 
         //ô thêm reply mới
-        const newReplyElement = appendNewReply(reviewId)
+        const newReplyElement = await appendNewReply(reviewId)
         //thêm các comment con
         parentReviewElement.appendChild(newReplyElement)
-        appendReplies(reviewId, parentReviewElement)
+        await appendReplies(reviewId, parentReviewElement)
     }
 }
 
@@ -206,33 +219,41 @@ async function handleReply(reviewId, inputElement) {
 async function appendReplies(reviewId, container) {
     const data = await loadReplies(reviewId);
     
-    data.forEach(reply => {
-        const replyElement = document.createElement('div');
-        replyElement.classList.add('reply');
-        replyElement.innerHTML = `
-            <div class="flex flex-row items-center">
-                <img src="${userComment.avatar}" class="h-10 w-10 m-1 rounded-full mt-5" alt="Avatar" />
-                <div class="flex flex-col">
-                    <div class="flex items-center">
-                        <span class="text-green-600 italic">${reply.user.firstName} ${reply.user.lastName}</span>
-                        <i class="fa-solid fa-code-commit fa-xs ml-5 mr-1 text-gray-500"></i>
-                        <span class="text-xs text-gray-500 italic">${formatDate(reply.createdAt)}</span>
+    for (const reply of data) {
+        try {
+            const replyElement = document.createElement('div');
+            replyElement.classList.add('reply');     
+            
+            const image = await loadImage(reply.user.id);
+            
+            replyElement.innerHTML = `
+                <div class="flex flex-row items-center">
+                    <img src="${image}" class="h-10 w-10 m-1 rounded-full mt-5" alt="Avatar" />
+                    <div class="flex flex-col">
+                        <div class="flex items-center">
+                            <span class="text-green-600 italic">${reply.user.firstName} ${reply.user.lastName}</span>
+                            <i class="fa-solid fa-code-commit fa-xs ml-5 mr-1 text-gray-500"></i>
+                            <span class="text-xs text-gray-500 italic">${formatDate(reply.updatedAt)}</span>
+                        </div>
+                        <span class="text-gray-700">${reply.comment}</span>
                     </div>
-                    <span class="text-gray-700">${reply.comment}</span>
                 </div>
-            </div>
-        `;
-        container.appendChild(replyElement);
-    });
+            `;
+            container.appendChild(replyElement);
+        } catch (error) {
+            console.error('Error loading reply:', error);
+        }
+    }
 }
 
 // new comment
 async function sendReview(content) {
-    try {
+    try {                
         const response = await fetch(`${SERVER_DOMAIN}/reviews`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + getAccessTokenFromCookie()
             },
             body: JSON.stringify({
                 comment: content,
@@ -240,7 +261,7 @@ async function sendReview(content) {
                 sportFieldId: getSportFieldIdFromPath()
             }),
         });
-
+        
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Failed to send review:', response.status, errorText);
@@ -262,7 +283,7 @@ async function sendReply(parentID, content) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                parentId: parentID,
+                parentReviewID: parentID,
                 comment: content,
                 userID: userComment.id,
                 sportFieldId: getSportFieldIdFromPath()
