@@ -140,7 +140,7 @@ if (buttonOrder) {
             const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
             const field = await response.json();
 
-            if (field.status === "OPEN" || field.status === "CLOSE") {
+            if (field.status === "OPEN" || field.status === "CLOSED") {
                 window.scrollTo({
                     top: 0,
                     behavior: "smooth",
