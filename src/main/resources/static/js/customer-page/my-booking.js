@@ -53,12 +53,28 @@ async function fetchBookingHistory() {
                     return sum + (durationInHours * item.price);
                 }, 0);
 
+                let statusClass = 'font-bold ';
+                switch (booking.status) {
+                    case 'PENDING':
+                        statusClass += 'text-orange-500';
+                        break;
+                    case 'REJECTED':
+                        statusClass += 'text-red-500';
+                        break;
+                    case 'CANCELED':
+                        statusClass += 'text-gray-500';
+                        break;
+                    case 'ACCEPTED':
+                        statusClass += 'text-green-500';
+                        break;
+                }
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="border px-4 py-2 text-center">${index + 1}</td>
                     <td class="border px-4 py-2 text-center">${booking.user.username}</td>
                     <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)} đ</td>
-                    <td class="border px-4 py-2 text-center">${booking.status}</td>
+                    <td class="border px-4 py-2 text-center ${statusClass}">${booking.status}</td>
                     <td class="border px-4 py-2 text-center">
                         <button class="view-details-button bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700" data-booking-id="${booking.id}">View Detail</button>
                         ${bookingType === 'my-upcoming' && booking.status === 'PENDING' ? `<button class="cancel-button bg-red-500 text-white px-2 py-1 rounded" data-booking-id="${booking.id}">Cancel</button>` : ''}
@@ -167,7 +183,7 @@ function viewBookingDetails(bookingId) {
             </div>
             <div class="flex justify-between">
                 <span class="font-semibold">Sport Field:</span>
-                <span class="text-gray-700">${item.fieldAvailability.sportsField.name}</span>
+                <span class="text-gray-700">${item.sportField.name}</span>
             </div>
             <div class="flex justify-between">
                 <span class="font-semibold">Date:</span>
@@ -265,4 +281,4 @@ function setupBookingTypeSelector() {
     }
 }
 
-window.onload = setupBookingTypeSelector;
+setupBookingTypeSelector();
