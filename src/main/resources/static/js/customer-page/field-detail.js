@@ -36,7 +36,7 @@ function convertDateFormat(isoString) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
 }
 
 function isTimeWithinRange(startTime, endTime, rangeStart, rangeEnd) {
@@ -66,14 +66,13 @@ if (prevDateButton && nextDateButton) {
         if(currentDate < now) {
             currentDate = now;
             displayDate(currentDate);
-        }else {
-            try {
-                const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-                const field = await fieldRes.json();
-                await appendBookingDetail(field);
-            } catch (error) {
-                console.error("Error fetching field data:", error);
-            }
+        }
+        try {
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const field = await fieldRes.json();
+            await appendBookingDetail(field);
+        } catch (error) {
+            console.error("Error fetching field data:", error);
         }
     });
 
@@ -136,16 +135,29 @@ async function appendDetail(field) {
 }
 loadDetail();
 if (buttonOrder) {
-    buttonOrder.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-        bookingDetail.style.display = "block";
-        window.document.body.style.overflow = "hidden";
-        bookingDetail.style.overflow = "auto";
+    buttonOrder.addEventListener("click", async () => {
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
+            const field = await response.json();
+
+            if (field.status === "OPEN" || field.status === "CLOSED") {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                });
+                bookingDetail.style.display = "block";
+                window.document.body.style.overflow = "hidden";
+                bookingDetail.style.overflow = "auto";
+            } else {
+                alert("Sân hiện không khả dụng");
+            }
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+            alert("Có lỗi xảy ra khi tải thông tin sân.");
+        }
     });
 }
+
 
 if (buttonCloseBookingDetail) {
     buttonCloseBookingDetail.addEventListener("click", () => {
@@ -165,7 +177,7 @@ async function tab_detail(field) {
                 statusElements[0].classList.add("bg-yellow-100");
                 statusElements[0].querySelector("span").classList.add("text-green-800");
                 break;
-            case "CLOSE":
+            case "CLOSED":
                 statusElements[1].classList.add("bg-yellow-100");
                 statusElements[1].querySelector("span").classList.add("text-green-800");
                 break;
@@ -191,42 +203,67 @@ async function appendBookingDetail(field) {
     let fieldAvailabilitiesElement = document.getElementById("booking_detail.field_availabilities");
     fieldAvailabilitiesElement.innerHTML = "";
 
-    field.fieldAvailabilities.forEach((fieldAvailability) => {
-        let element = document.createElement("a");
-        element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
-        element.dataset.availabilityId = fieldAvailability.id;
+    const sportFieldID = getSportFieldIdFromPath();
 
-        if (isTimeWithinRange(extractTime(fieldAvailability.startTime),extractTime(fieldAvailability.endTime),extractTime(field.openingTime),extractTime(field.closingTime))) {
-            element.innerHTML = `
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking-items/sports-field/${sportFieldID}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch booking items");
+        }
+
+        const bookingItems = await response.json();
+
+        console.log(bookingItems);
+        
+        field.fieldAvailabilities.forEach((fieldAvailability) => {
+            let element = document.createElement("a");
+            element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
+            element.dataset.availabilityId = fieldAvailability.id;
+
+            const startTime = extractTime(fieldAvailability.startTime);
+            const endTime = extractTime(fieldAvailability.endTime);
+ 
+            const isOrdered = bookingItems.some(item => {
+                return extractTime(item.startTime) === startTime &&
+                       extractTime(item.endTime) === endTime &&
+                       convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
+            });
+
+            if (isOrdered) {
+                element.innerHTML = `
                     <div class="flex flex-1 justify-between">
-                        <span class="text-lg flex-1">${extractTime(fieldAvailability.startTime)}</span>
-                        <span class="text-lg flex-1 text-center">${extractTime(fieldAvailability.endTime)}</span>
+                        <span class="text-lg flex-1">${startTime}</span>
+                        <span class="text-lg flex-1 text-center">${endTime}</span>
+                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                    </div>
+                    <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
+                `;
+            } else {
+                element.innerHTML = `
+                    <div class="flex flex-1 justify-between">
+                        <span class="text-lg flex-1">${startTime}</span>
+                        <span class="text-lg flex-1 text-center">${endTime}</span>
                         <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
                     </div>
                     <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
-                    `;
-
-            const selectedItem = selectedAvailabilities.find(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
-            
-            if (selectedItem) {
-                element.style.borderLeft = "5px solid red";
+                `;
             }
 
             element.addEventListener("click", () => {
-                // if (!fieldAvailability.is_available) {
-                //     alert("This sport field has already been ordered");
-                //     return;
-                // }
-                
+                if (isOrdered) {
+                    alert('This field availability is not available');
+                    return;
+                }
+
                 const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
 
-                if (element.style.borderLeft == '5px solid red') {
-                    element.style.borderLeft = 'none'
+                if (element.style.borderLeft === "5px solid red") {
+                    element.style.borderLeft = "none";
                     selectedAvailabilities.splice(itemIndex, 1);
                     selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
                     selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
                 } else {
-                    element.style.borderLeft = "5px solid red"
+                    element.style.borderLeft = "5px solid red";
                     selectedAvailabilities.push({ id: fieldAvailability.id, date: currentDate.toDateString() });
                     selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
                     selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
@@ -234,9 +271,12 @@ async function appendBookingDetail(field) {
             });
 
             fieldAvailabilitiesElement.appendChild(element);
-        }
-    });
+        });
+    } catch (error) {
+        console.error("Error fetching booking items:", error);
+    }
 }
+
 
 function getSportFieldIdFromPath() {
     const path = window.location.pathname;
