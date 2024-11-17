@@ -135,16 +135,29 @@ async function appendDetail(field) {
 }
 loadDetail();
 if (buttonOrder) {
-    buttonOrder.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-        bookingDetail.style.display = "block";
-        window.document.body.style.overflow = "hidden";
-        bookingDetail.style.overflow = "auto";
+    buttonOrder.addEventListener("click", async () => {
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
+            const field = await response.json();
+
+            if (field.status === "OPEN" || field.status === "CLOSE") {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                });
+                bookingDetail.style.display = "block";
+                window.document.body.style.overflow = "hidden";
+                bookingDetail.style.overflow = "auto";
+            } else {
+                alert("Sân hiện không khả dụng");
+            }
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+            alert("Có lỗi xảy ra khi tải thông tin sân.");
+        }
     });
 }
+
 
 if (buttonCloseBookingDetail) {
     buttonCloseBookingDetail.addEventListener("click", () => {
@@ -164,7 +177,7 @@ async function tab_detail(field) {
                 statusElements[0].classList.add("bg-yellow-100");
                 statusElements[0].querySelector("span").classList.add("text-green-800");
                 break;
-            case "CLOSE":
+            case "CLOSED":
                 statusElements[1].classList.add("bg-yellow-100");
                 statusElements[1].querySelector("span").classList.add("text-green-800");
                 break;
@@ -237,6 +250,11 @@ async function appendBookingDetail(field) {
             }
 
             element.addEventListener("click", () => {
+                if (isOrdered) {
+                    alert('This field availability is not available');
+                    return;
+                }
+
                 const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
 
                 if (element.style.borderLeft === "5px solid red") {
