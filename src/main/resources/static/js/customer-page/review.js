@@ -11,11 +11,17 @@ const userComment = JSON.parse(user);
 loadReviews();
 
 async function loadImage(id) {
-    const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${id}`);
-    const avatarData = await avatarResponse.json();  
+    try {
+        const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${id}`);
+        const avatarData = await avatarResponse.json();
 
-    return avatarData.results;
+        return avatarData.results || "/sports-field-booking/image/user-info/user-info.png";
+    } catch (error) {
+
+        return "/sports-field-booking/image/user-info/user-info.png";
+    }
 }
+
 
 async function loadReviews() {
     try {
@@ -62,11 +68,11 @@ async function appendReviews(reviews) {
             const reviewElement = await createReviewElement(review, repliesValue.length);
             container.appendChild(reviewElement);
 
-            const parentReviewElement = document.getElementById('replyInputContainer-'+review.id);
+            const parentReviewElement = document.getElementById('replyInputContainer-' + review.id);
 
             //ô thêm reply mới
             const newReplyElement = await appendNewReply(review.id)
-            
+
             parentReviewElement.appendChild(newReplyElement)
 
 
@@ -74,12 +80,12 @@ async function appendReviews(reviews) {
             await appendReplies(review.id, parentReviewElement)
         }
     }
-    
+
     async function createReviewElement(review, repliesValue) {
         const reviewElement = document.createElement('div');
-        reviewElement.classList.add('review');     
-        
-        const image = await loadImage(review.user.id)      
+        reviewElement.classList.add('review');
+
+        const image = await loadImage(review.user.id)
 
         reviewElement.innerHTML = `
             <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
@@ -112,15 +118,15 @@ async function appendReviews(reviews) {
 
         // mở các comment con và chỗ trả lời bình luận
         const replyButton = reviewElement.querySelector('.buttonNewChildCmt');
-        replyButton.addEventListener('click', async () => {           
-            const repliesElement = document.getElementById(`repliesContainer-${review.id}`)    
+        replyButton.addEventListener('click', async () => {
+            const repliesElement = document.getElementById(`repliesContainer-${review.id}`)
             repliesElement.classList.toggle('hidden');
 
         });
 
         return reviewElement;
     }
-    
+
 }
 
 // element new comment
@@ -128,8 +134,8 @@ async function appendNewComment() {
     const reviewElement = document.createElement('div');
     const image = await loadImage(userComment.id)
 
-        reviewElement.classList.add('review');
-        reviewElement.innerHTML = `
+    reviewElement.classList.add('review');
+    reviewElement.innerHTML = `
             <div class="border-l-2 rounded-xl p-2 my-4 ml-12">
                 <div class="flex flex-col">
                     <div class="flex flex-row items-center">
@@ -148,21 +154,21 @@ async function appendNewComment() {
             </div>
         `
 
-        //chức năng thêm comment mới
-        const reviewInput = reviewElement.querySelector('.new-review-input');
-        reviewInput.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                await submitNewReview(reviewInput);
-            }
-        });
-        
-        async function submitNewReview(inputElement) {
-            const reviewInput = inputElement.value;
-            if (reviewInput) {
-                await sendReview(reviewInput);
-                loadReviews();
-            }
+    //chức năng thêm comment mới
+    const reviewInput = reviewElement.querySelector('.new-review-input');
+    reviewInput.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter') {
+            await submitNewReview(reviewInput);
         }
+    });
+
+    async function submitNewReview(inputElement) {
+        const reviewInput = inputElement.value;
+        if (reviewInput) {
+            await sendReview(reviewInput);
+            loadReviews();
+        }
+    }
 
     return reviewElement
 }
@@ -188,12 +194,12 @@ async function appendNewReply(reviewId) {
     `
     //thêm reply mới
 
-     const replyInput = element.querySelector('.reply-input');
-     replyInput.addEventListener('keypress', async (e) => {
-         if (e.key === 'Enter') {
-             await handleReply(reviewId, replyInput);
-         }
-     });
+    const replyInput = element.querySelector('.reply-input');
+    replyInput.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter') {
+            await handleReply(reviewId, replyInput);
+        }
+    });
     return element
 }
 
@@ -204,8 +210,8 @@ async function handleReply(reviewId, inputElement) {
         await sendReply(reviewId, replyText);
 
         //sau khi thêm sử lý lại UI
-        const parentReviewElement = document.getElementById('replyInputContainer-'+reviewId);
-        parentReviewElement.innerHTML ='';
+        const parentReviewElement = document.getElementById('replyInputContainer-' + reviewId);
+        parentReviewElement.innerHTML = '';
 
         //ô thêm reply mới
         const newReplyElement = await appendNewReply(reviewId)
@@ -218,14 +224,14 @@ async function handleReply(reviewId, inputElement) {
 // append replies
 async function appendReplies(reviewId, container) {
     const data = await loadReplies(reviewId);
-    
+
     for (const reply of data) {
         try {
             const replyElement = document.createElement('div');
-            replyElement.classList.add('reply');     
-            
+            replyElement.classList.add('reply');
+
             const image = await loadImage(reply.user.id);
-            
+
             replyElement.innerHTML = `
                 <div class="flex flex-row items-center">
                     <img src="${image}" class="h-10 w-10 m-1 rounded-full mt-5" alt="Avatar" />
@@ -248,7 +254,7 @@ async function appendReplies(reviewId, container) {
 
 // new comment
 async function sendReview(content) {
-    try {                
+    try {
         const response = await fetch(`${SERVER_DOMAIN}/reviews`, {
             method: 'POST',
             headers: {
@@ -261,7 +267,7 @@ async function sendReview(content) {
                 sportFieldId: getSportFieldIdFromPath()
             }),
         });
-        
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error('Failed to send review:', response.status, errorText);
