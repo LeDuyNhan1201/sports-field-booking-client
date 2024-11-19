@@ -7,34 +7,39 @@ let searchValue = " ";
 let colSort = document.getElementById("sportsField.select_colSort").value;
 let sortDirection = -1;
 
+let sportsFieldContainer = document.getElementById('sportsField.container')
+
 let sportFieldList = document.getElementById("sportsField.list");
 let sportFieldGrid = document.getElementById("sportsField.grid");
 
-let buttonNewField = document.getElementById('sportsField.button_new_sportField');
+let buttonNewField = sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField");
 
 async function loadSportFieldList(tab, currentOffset, searchValue) {
-    const endPath = window.location.pathname.split("/")[2];   
-     
+    const endPath = window.location.pathname.split("/")[2];
+
     try {
         let response;
+        
         if (endPath.localeCompare("my-sports-field") === 0) {
             // xử lý do quản lý sân
             let user = JSON.parse(localStorage.getItem("current-user"));
-            if (user.roles[0] === "FIELD_OWNER") {
-
-                if (searchValue === "") {
+            if (user.roles[1] === "FIELD_OWNER") {
+                
+                if (searchValue === "" || searchValue) {
                     response = await fetch(`${SERVER_DOMAIN}/sports-field/management/${user.id}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+                    
                 } else {
-                    response = await fetch(`${SERVER_DOMAIN}/sports-field/management/${user.id}/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);                    
+                    response = await fetch(
+                        `${SERVER_DOMAIN}/sports-field/management/${user.id}/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`
+                    );
                 }
 
-            // xử lý khi user không có quyền
+                // xử lý khi user không có quyền
             } else {
-                console.log("bạn d có quyền");
+                console.log("bạn không có quyền");
                 return;
             }
         } else {
-
             // xử lý cho danh sách sân
             if (searchValue === "") {
                 response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
@@ -43,8 +48,8 @@ async function loadSportFieldList(tab, currentOffset, searchValue) {
             }
         }
         const data = await response.json();
-        
-        if (data.items.length) {
+
+        if (data.items.length) {            
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
             loadPage(currentOffset);
@@ -54,7 +59,7 @@ async function loadSportFieldList(tab, currentOffset, searchValue) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     loadSportFieldList(currentTab, 0, searchValue);
 });
 
@@ -63,7 +68,7 @@ async function appendFieldGrid(data) {
     sportFieldGrid.style.display = "grid";
 
     sportFieldGrid.innerHTML = "";
-    data.forEach((field) => {        
+    data.forEach((field) => {
         const fieldElement = document.createElement("div");
         fieldElement.innerHTML = `
             <a
@@ -103,10 +108,10 @@ async function appendFieldList(data) {
                     </td>
                     <td class="p-4">${field.location}</td>
                     <td class="p-4">${field.category}</td>
-                    <td class="p-4">5000</td>
+                    <td class="p-4">${field.opacity}</td>
                     <td class="p-4">${field.owner.firstName + " " + field.owner.lastName}</td>
-                    <td class="p-4">08:00 AM</td>
-                    <td class="p-4">10:00 PM</td>
+                    <td class="p-4">${formatHour(field.openingTime)}</td>
+                    <td class="p-4">${formatHour(field.closingTime)}</td>
                     <td class="p-4">
                         <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
@@ -163,7 +168,7 @@ document.getElementById("sportsField.search_value").addEventListener("keydown", 
 
 async function actionSearch() {
     searchValue = document.getElementById("sportsField.search_value").value;
-    currentOffset = 0
+    currentOffset = 0;
     loadSportFieldList(currentTab, currentOffset, searchValue);
 }
 
@@ -202,9 +207,14 @@ sportsFieldQuantityAll();
 
 //ẩn hiện nút thêm
 function appendButtonNew() {
-    if(endPath.localeCompare("my-sports-field") === 0)
-        buttonNewField.classList.remove('hidden')
-    else
-        buttonNewField.classList.add('hidden')
+    if (endPath.localeCompare("my-sports-field") === 0) buttonNewField.classList.remove("hidden");
+    else buttonNewField.classList.add("hidden");
 }
-appendButtonNew()
+
+// mở modal thêm sân mới
+
+buttonNewField.addEventListener("click", () => {
+    sportsFieldContainer.querySelector('#new_field\\.container').classList.remove('hidden')
+});
+
+appendButtonNew();

@@ -44,7 +44,7 @@ async function deleteExistingAvatar(userID) {
 
 changePictureInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file) {        
         const CHUNK_SIZE = 1024 * 1024;
         let chunkStartByte = 0;
         const fileMetadataId = crypto.randomUUID();
@@ -99,13 +99,6 @@ changePictureInput.addEventListener('change', async (e) => {
         reader.readAsDataURL(file);
     }
 });
-
-async function calculateFileHash(fileChunk) {
-    const buffer = await fileChunk.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-}
 
 
 // user info

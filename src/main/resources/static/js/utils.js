@@ -178,10 +178,30 @@ function formatDate(dateString) {
     return `${hours}:${minutes} ${day}-${month}-${year}`;
 }
 
+function formatHour(dateString) {
+    const date = new Date(dateString);
+
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${hours}:${minutes}`;
+}
+
 function formatHourToDate(time) {
     let [hours, minutes] = time.split(":").map(Number);
 
     let date = new Date();
     date.setHours(hours, minutes, 0, 0);
     return date
+}
+
+function isTimeBetween(targetTime, startTime, endTime) {
+    return targetTime >= startTime && targetTime <= endTime;
+}
+
+async function calculateFileHash(fileChunk) {
+    const buffer = await fileChunk.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }

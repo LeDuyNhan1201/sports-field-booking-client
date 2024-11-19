@@ -1,11 +1,11 @@
-<div id="new_field.container" class="fixed inset-0 z-50 flex items-center justify-center">
+<div id="new_field.container" class="hidden fixed inset-0 z-50 flex items-center justify-center">
     <!-- Overlay background -->
     <div id="overlay" class="fixed inset-0 bg-black opacity-50"></div>
 
     <div class="bg-white p-5 rounded-lg shadow-lg relative w-4/5 flex flex-col">
         <div class="flex justify-between around">
             <span class="text-xl font-bold" th:text="#{dashboard.add_sportfield.title}">New Sport Field</span>
-            <i class="fa-solid fa-xmark cursor-pointer"></i>
+            <i id="new_field.closeModal" class="fa-solid fa-xmark cursor-pointer"></i>
         </div>
         <div class="flex p-8">
             <div class="w-3/5">
@@ -92,13 +92,21 @@
                     <!-- Location -->
                     <div class="mb-4">
                         <label for="fieldLocation" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.field_location.title}">Location</label>
-                        <input type="text" id="new_field.location" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                        <input
+                            type="text"
+                            id="new_field.location"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
                     </div>
 
                     <!-- Opacity -->
                     <div class="mb-4">
                         <label for="Opacity" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.sportfield_opacity.title}">Opacity</label>
-                        <input type="number" id="new_field.opacity" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                        <input
+                            type="number"
+                            id="new_field.opacity"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
                     </div>
 
                     <!-- Field Category -->
@@ -119,31 +127,49 @@
                     <div class="mb-4 flex justify-center">
                         <div class="flex-1 mr-3">
                             <label for="openingTime" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.opening_time.title}">Opening Time</label>
-                            <input type="time" id="new_field.availability.openingTime" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            <input
+                                type="time"
+                                id="new_field.availability.openingTime"
+                                class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            />
                         </div>
                         <div class="flex-1 ml-3">
                             <label for="closingTime" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.closing_time.title}">Closing Time</label>
-                            <input type="time" id="new_field.availability.closingTime" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                            <input
+                                type="time"
+                                id="new_field.availability.closingTime"
+                                class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            />
                         </div>
+                    </div>
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <label for="fieldLocation" class="block text-sm font-medium text-gray-700">Price</label>
+                        <input
+                            type="number"
+                            min="0"
+                            id="new_field.availability.price"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
                     </div>
                 </form>
                 <div class="text-right">
-                    <button class="bg-red-500 hover:bg-red-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.clear_button.title}">Clear</button>
-                    <button id="new_field.button_add_time" class="bg-green-500 hover:bg-green-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.add_button.title}">Add</button>
+                    <button id="new_field.button_remove_all_availabilities" class="bg-red-500 hover:bg-red-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.clear_button.title}">
+                        Clear
+                    </button>
+                    <button id="new_field.button_add_availabilities" class="bg-green-500 hover:bg-green-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.add_button.title}">
+                        Add
+                    </button>
                 </div>
                 <div class="flex flex-col mt-4">
                     <div class="flex px-2 justify-between text-center bg-green-300 rounded-tr-md rounded-tl-md">
                         <span class="w-1"></span>
                         <span class="flex-1 font-semibold">Open</span>
                         <span class="flex-1 font-semibold">Close</span>
+                        <span class="flex-1 font-semibold">Price</span>
+                        <span class="w-1"></span>
                     </div>
-                    <div id="new_field.availability.container" class="shadow-lg h-60 overflow-y-auto custom-scrollbar pt-1">
-                        <div class="flex justify-between text-center pb-1 px-1">
-                            <span class="w-1">1</span>
-                            <span class="flex-1">10:20</span>
-                            <span class="flex-1">11:20</span>
-                        </div>
-                    </div>
+                    <div id="new_field.availability.container" class="shadow-lg h-60 overflow-y-auto custom-scrollbar pt-1"></div>
                 </div>
             </div>
         </div>

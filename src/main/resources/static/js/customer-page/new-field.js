@@ -2,6 +2,7 @@ let newImages = [];
 let newAvailabilities = [];
 
 let newFieldContainer = document.getElementById("new_field.container");
+let newAvailabilitiesElement = newFieldContainer.querySelector("#new_field\\.availability\\.container");
 
 function appendSelectImage() {
     let button_select_image = document.getElementsByClassName("new_field.select_image");
@@ -52,7 +53,7 @@ function handleFileUpload(file, element, index) {
                 img.classList = "new_field.image w-48";
                 img.src = e.target.result;
 
-                newImages[index] = e.target.result;
+                newImages[index] = file;
 
                 let form = element.parentElement.parentElement;
                 form.replaceWith(img); // Thay thế form bằng ảnh
@@ -93,7 +94,7 @@ document.getElementById("new_field.clear_image").addEventListener("click", () =>
 
 async function loadCategory() {
     try {
-        const data = await fetch(`${SERVER_DOMAIN}/category`);
+        const data = await fetch(`${SERVER_DOMAIN}/category/all?offset=0&limit=100`);
         const categories = await data.json();
         appendCategory(categories);
     } catch (error) {
@@ -113,42 +114,228 @@ async function appendCategory(data) {
 }
 
 //action chọn availability
+newFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEventListener("click", () => {
+    let openingTimeElementValue = newFieldContainer.querySelector("#new_field\\.availability\\.openingTime").value;
+    let closingTimeElementValue = newFieldContainer.querySelector("#new_field\\.availability\\.closingTime").value;
+    let priceElementValue = newFieldContainer.querySelector("#new_field\\.availability\\.price").value;
 
-newFieldContainer.querySelector("#new_field\\.button_add_time").addEventListener("click", () => {
-    let openingTime = newFieldContainer.querySelector("#new_field\\.availability\\.openingTime").value;
-    let closingTime = newFieldContainer.querySelector("#new_field\\.availability\\.closingTime").value;
-    if (openingTime == "" || closingTime == "") {
-        console.log("Vui lòng nhập giờ");
-        return
-    } else {
-        newAvailabilities.forEach((availability) => {
-            if(availability.openingTime.getTime() == formatHourToDate(openingTime).getTime()){
-                console.log("giờ mở cửa không thể trùng");
-                return 0;
-            }
-        });        
-        newAvailabilities.push({
-            openingTime: formatHourToDate(openingTime),
-            closingTime: formatHourToDate(closingTime),
-        });
+    if (openingTimeElementValue == "" || closingTimeElementValue == "") {
+        alert("Vui lòng nhập giờ");
+        return;
     }
-    console.log(newAvailabilities);
+    if (priceElementValue == "") {
+        alert("Vui lòng nhập giá");
+        return;
+    }
+
+    let openingTime = formatHourToDate(openingTimeElementValue);
+    let closingTime = formatHourToDate(closingTimeElementValue);
+
+    let duplicate = true;
+
+    if (closingTime.getTime() < openingTime.getTime()) {
+        console.log("Giờ mở cửa không thể lớn hơn giờ đóng cửa");
+        return;
+    }
+
+    if (closingTime.getTime() == openingTime.getTime()) {
+        console.log("Thời gian hoạt động phải lớn hơn không");
+        return;
+    }
+
+    if (newAvailabilities.length > 0) {
+        for (const availability of newAvailabilities) {
+            if (availability.openingTime.getTime() === openingTime.getTime()) {
+                console.log("Giờ mở cửa không thể trùng");
+                duplicate = false;
+                break;
+            }
+
+            if (availability.closingTime.getTime() === closingTime.getTime()) {
+                console.log("giờ đóng cửa không thể trùng");
+                duplicate = false;
+                break;
+            }
+
+            if (isTimeBetween(openingTime.getTime(), availability.openingTime.getTime(), availability.closingTime.getTime())) {
+                console.log("giờ mở cửa không hợp lệ");
+                duplicate = false;
+                break;
+            }
+
+            if (isTimeBetween(closingTime.getTime(), availability.openingTime.getTime(), availability.closingTime.getTime())) {
+                console.log("giờ đóng cửa không hợp lệ");
+                duplicate = false;
+                break;
+            }
+        }
+    }
+
+    if (duplicate) {
+        newAvailabilities.push({
+            index: newAvailabilities.length,
+            openingTime: openingTime,
+            closingTime: closingTime,
+            price: priceElementValue
+        });
+
+        let element = document.createElement("div");
+        element.className = "flex justify-between text-center items-center pb-1 px-1";
+        element.innerHTML = `
+            <span class="w-3">${newAvailabilities.length}</span>
+            <span class="flex-1">${openingTimeElementValue}</span>
+            <span class="flex-1">${closingTimeElementValue}</span>
+            <span class="flex-1">${priceElementValue}</span>
+            <i class="fa-solid fa-xmark w-3"></i>
+        `;
+        newAvailabilitiesElement.appendChild(element);
+    }
 });
 
-//Thêm giờ mới
+//xóa tất cả field availabilities
 
-function appendAvailability() {
-    let availabilityTimeContainer = newFieldContainer.querySelector('#new_field\\.availability\\.container')
-    let element = document.createElement
-}
+newFieldContainer.querySelector("#new_field\\.button_remove_all_availabilities").addEventListener("click", () => {
+    newAvailabilitiesElement.innerHTML = ``;
+    newAvailabilities = [];
+});
+
+// đóng modal
+
+newFieldContainer.querySelector("#new_field\\.closeModal").addEventListener("click", () => {
+    newFieldContainer.classList.add("hidden");
+});
 
 // action thêm
-document.getElementById("new_field.create_field").addEventListener("click", () => {
+
+document.getElementById("new_field.create_field").addEventListener("click", async () => {
     let name = newFieldContainer.querySelector("#new_field\\.name").value;
     let location = newFieldContainer.querySelector("#new_field\\.location").value;
+    let opacity = newFieldContainer.querySelector("#new_field\\.opacity").value;
     let category = newFieldContainer.querySelector("#new_field\\.category").value;
 
-    let data = [name, location, category, newImages];
+    const minOpeningTime = Math.min(...newAvailabilities.map((a) => a.openingTime));
+
+    const maxClosingTime = Math.max(...newAvailabilities.map((a) => a.closingTime));
+
+    let user = JSON.parse(localStorage.getItem("current-user"));
+
+    let newSportsField = null;
+
+    if (newImages.length == 3) {
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + getAccessTokenFromCookie(),
+                },
+                body: JSON.stringify({
+                    name: name,
+                    location: location,
+                    opacity: opacity,
+                    closingTime: maxClosingTime,
+                    openingTime: minOpeningTime,
+                    categoryId: category,
+                    rating: 0,
+                    userId: user.id,
+                    isConfirmed: true,
+                }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Failed to create sports field:", response.status, errorText);
+            } else {
+                newSportsField = await response.json();
+
+                newImages.forEach(async (image) => {
+                    await uploadPicture(image, newSportsField.id);
+                });
+
+                newAvailabilities.forEach((availability) => {
+                    createFieldAvailability(availability, newSportsField.id)
+                });
+
+                alert("Create sports field successfully");
+                document.location.reload(true)
+            }
+        } catch (error) {
+            console.error("Error create sports field:", error);
+        }
+    } else {
+        alert("Vui lòng chọn đủ 3 ảnh");
+    }
 });
 
+//upload ảnh
+async function uploadPicture(file, sportsFieldId) {
+    if (file) {
+        const CHUNK_SIZE = 1024 * 1024;
+        let chunkStartByte = 0;
+        const fileMetadataId = crypto.randomUUID();
 
+        while (chunkStartByte < file.size) {
+            const chunk = file.slice(chunkStartByte, chunkStartByte + CHUNK_SIZE);
+            const chunkHash = await calculateFileHash(chunk);
+
+            const formData = new FormData();
+            formData.append("file", chunk);
+            const request = {
+                fileMetadataId: fileMetadataId,
+                chunkHash: chunkHash,
+                startByte: chunkStartByte,
+                totalSize: file.size,
+                contentType: file.type,
+                ownerId: sportsFieldId,
+                fileMetadataType: "SPORTS_FIELD_IMAGE",
+            };
+
+            formData.append("request", new Blob([JSON.stringify(request)], { type: "application/json" }));
+
+            try {
+                const response = await fetch(`${SERVER_DOMAIN}/sports-field/images`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    chunkStartByte = data.results;
+                } else {
+                    console.error("Error uploading chunk:", response);
+                    throw new Error("Upload failed");
+                }
+            } catch (error) {
+                console.error("Error uploading chunk:", error);
+                break;
+            }
+        }
+    }
+}
+//thêm field availability
+async function createFieldAvailability(availabilityValue, sportsFieldId) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/field-availability/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getAccessTokenFromCookie(),
+            },
+            body: JSON.stringify({
+                price: availabilityValue.price,
+                endTime: availabilityValue.closingTime,
+                startTime: availabilityValue.openingTime,
+                sportsFieldId: sportsFieldId,
+                isConfirmed: true,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Failed to create field availability:", response.status, errorText);
+        } else {
+        }
+    } catch (error) {
+        console.error("Error create field availability:", error);
+    }
+}

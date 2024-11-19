@@ -1,4 +1,4 @@
-<div th:fragment="sportsField" xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="sportsField" id="sportsField.container" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="bg-[url('./image/breadcrumb-bg2.jpg')] bg-cover bg-center items-center px-16 py-16">
         <h1 class="text-3xl font-bold text-white-500" th:text="${title}"></h1>
     </div>
@@ -51,7 +51,7 @@
                     <th class="p-4" th:text="#{dashboard.sportfield_image.title}">Image</th>
                     <th class="p-4" th:text="#{dashboard.sportfield_location.title}">Location</th>
                     <th class="p-4" th:text="#{dashboard.sportfield_type.title}">Type</th>
-                    <th class="p-4" th:text="#{dashboard.sportfield_capacity.title}">Capacity</th>
+                    <th class="p-4" th:text="#{dashboard.sportfield_opacity.title}">Capacity</th>
                     <th class="p-4" th:text="#{dashboard.sportfield_owner.title}">Owner</th>
                     <th class="p-4" th:text="#{dashboard.sportfield_openingTime.title}">Opening Time</th>
                     <th class="p-4" th:text="#{dashboard.sportfield_closingTime.title}">Closing Time</th>
@@ -69,7 +69,9 @@
         </div>
     </div>
     <div th:replace="~{/components/customer-page/sports-field/new-field}"></div>
-    <script th:src="@{/js/customer-page/sport-field.js}"></script>
+
+
+    <script th:src="@{/js/customer-page/sports-field.js}"></script>
     <script th:src="@{/js/customer-page/new-field.js}"></script>
 
 </div>
