@@ -7,9 +7,9 @@
             <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
             <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
         </select>
-        <div>
+        <!-- <div>
             <input id="reportDate" type="date" class="border rounded-md p-2">
-        </div>
+        </div> -->
     </div>
 
     <!-- Main Content -->
@@ -19,41 +19,50 @@
             <h2 class="text-lg font-semibold mb-4" th:text="#{dashboard.revenue.title}">Revenue</h2>
             <canvas id="revenueChart" width="400" height="200"></canvas>
             <div class="flex justify-between items-center mt-4">
-                <span class="text-xl font-bold" id="revenueTotal">$823.76</span>
-                <span class="text-sm text-gray-500" th:text="#{dashboard.previous.title} + ' $676.90'">Previous:
-                    $676.90</span>
+                <span class="text-xl font-bold" id="currentRevenueTotal">$823.76</span>
+                <div>
+                    <span class="text-sm text-gray-500" th:text="#{dashboard.previous.title}">Previous:</span>
+                    <span class="text-sm text-gray-500" id="previousRevenueTotal">$676.90</span>
+                </div>
             </div>
         </div>
 
         <!-- Goals Section -->
         <div class="bg-white p-6 rounded-lg shadow">
-            <h2 class="text-lg font-semibold mb-4" th:text="#{dashboard.main_goal_progress}">Goals</h2>
+            <h2 class="text-lg font-semibold mb-4" th:text="#{dashboard.month_progress.header}">Goals</h2>
             <div class="text-center">
                 <div class="relative w-32 h-32 mx-auto">
                     <canvas id="goalsChart"></canvas>
                     <div class="absolute inset-0 flex items-center justify-center text-3xl font-semibold">
-                        72%
+                        <span id="percentageChange" class="text-xl"></span>
                     </div>
                 </div>
-                <span class="text-sm text-gray-500 mt-4 block" th:text="#{dashboard.this_week_change}">-16% this
-                    week</span>
+                <div class="flex items-center justify-center mt-24">
+                    <span class="text-lg text-gray-500 mr-2" id="comparisonChange"></span>
+                    <span class="text-lg text-gray-500" th:text="#{dashboard.this_month_percentage.title}"></span>
+                    <span class="text-lg text-gray-500">
+                        (
+                        <span class="text-lg text-gray-500" id="previousMonth"></span>
+                        )
+                    </span>
+                </div>
             </div>
 
             <!-- Goal Colors Description -->
             <div class="mt-32 pl-16">
                 <div class="flex items-center mb-2">
                     <div class="w-4 h-4 bg-purple-600 rounded-sm mr-2"></div>
-                    <span class="text-sm text-gray-700" th:text="#{dashboard.main_goal_progress}">Main Goal Progress
+                    <span class="text-sm text-gray-700" th:text="#{dashboard.main_month_goal.title}">Current Month Progress
                         (Purple)</span>
                 </div>
                 <div class="flex items-center mb-2">
                     <div class="w-4 h-4 bg-blue-400 rounded-sm mr-2"></div>
-                    <span class="text-sm text-gray-700" th:text="#{dashboard.secondary_goal_progress}">Secondary Goal
+                    <span class="text-sm text-gray-700" th:text="#{dashboard.secondary_month_goal.title}">Secondary Goal
                         Progress (Blue)</span>
                 </div>
                 <div class="flex items-center mb-2">
                     <div class="w-4 h-4 bg-gray-300 rounded-sm mr-2"></div>
-                    <span class="text-sm text-gray-700" th:text="#{dashboard.unachieved_progress}">Unachieved Progress
+                    <span class="text-sm text-gray-700" th:text="#{dashboard.unachieved_progress.title}">Unachieved Progress
                         (Gray)</span>
                 </div>
             </div>
@@ -67,32 +76,9 @@
                     oninput="updateTopBuyer()">
             </div>
             <ul id="topBuyerList">
-                <li class="mb-2 flex justify-between">
-                    <span>Andy Robertson</span><span>25 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Julie Estell</span><span>21 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Rony Suhendra</span><span>16 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Rony Suhendra</span><span>16 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Rony Suhendra</span><span>16 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Rony Suhendra</span><span>16 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Rony Suhendra</span><span>16 trns</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Rony Suhendra</span><span>16 trns</span>
-                </li>
+                
             </ul>
-            <button id="topBuyerListSeeMore" class="text-blue-500 mt-2" onclick="showMore('topBuyerList', 4)">Xem
+            <button id="topBuyerListSeeMore" class="text-blue-500 mt-2" onclick="showMore('topBuyerList')">Xem
                 thêm</button>
         </div>
 
@@ -104,38 +90,9 @@
                     oninput="updateTopProduct()">
             </div>
             <ul id="topProductList">
-                <li class="mb-2 flex justify-between">
-                    <span>Black Shoe</span><span>350 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>White Shoe</span><span>298 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
-                <li class="mb-2 flex justify-between">
-                    <span>Pink Hat</span><span>237 sold</span>
-                </li>
+
             </ul>
-            <button id="topProductListSeeMore" class="text-blue-500 mt-2" onclick="showMore('topProductList', 4)">Xem
+            <button id="topProductListSeeMore" class="text-blue-500 mt-2" onclick="showMore('topProductList')">Xem
                 thêm</button>
         </div>
     </div>

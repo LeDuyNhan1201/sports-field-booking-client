@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     try {
                         const response = await fetch(`${SERVER_DOMAIN}/sports-field/${order.sportFieldID}`);
                         sportFieldData = await response.json();
+
+                        console.log(sportFieldData);
+                        
                     } catch (error) {
                         console.error("Error fetching sports field data:", error);
                         continue;
@@ -43,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     orderElement.classList.add("flex", "items-center", "border-b", "pb-4", "mb-4");
 
                     orderElement.innerHTML = `
-                        <img src="${sportFieldData.image}" alt="${sportFieldData.name}" class="w-28 h-28 rounded-md mr-4">
+                        <img src="${sportFieldData.images[0]}" alt="${sportFieldData.name}" class="w-28 h-28 rounded-md mr-4">
                         <div class="flex w-full">
                             <div class="flex-grow">
                                 <h4 class="text-2xl font-bold">${sportFieldData.name}</h4>
