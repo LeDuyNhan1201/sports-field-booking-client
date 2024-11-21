@@ -7,11 +7,11 @@ const fieldManagement = document.getElementById('field-management');
 
 async function loadUserAvatar() {
     try {
-        const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${id}`);
+        const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${JSON.parse(currentUser).id}`);
         const avatarData = await avatarResponse.json();
-
+        
         userAvatar.src = avatarData.results ? avatarData.results : '/sports-field-booking/image/user-info/user-info.png';
-    } catch (error) {
+    } catch (error) {                
         userAvatar.src = '/sports-field-booking/image/user-info/user-info.png';
     }
 }
