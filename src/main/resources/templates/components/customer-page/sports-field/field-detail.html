@@ -1,4 +1,4 @@
-<div class="flex justify-center items-center my-10" id="field-detail" th:fieldId="${id}" th:fragment="fieldDetail"
+<div class="flex justify-center items-center my-10" id="sportsField.field-detail" th:fieldId="${id}" th:fragment="fieldDetail"
      xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="h-3/5 w-4/5 border rounded-xl shadow-xl border-gray-300">
         <div class="flex justify-between p-4 border-b items-center">
@@ -89,7 +89,13 @@
         <div th:replace="~{/components/customer-page/sports-field/booking-detail :: bookingDetail}"></div>
     </div>
 
+    <div th:replace="~{/components/customer-page/sports-field/new-field}"></div>
+
+
     <script th:src="@{/js/customer-page/booking-detail.js}"></script>
     <script th:src="@{/js/customer-page/field-detail.js}"></script>
+    
+    <script th:src="@{/js/customer-page/edit-field.js}"></script>
+
 
 </div>

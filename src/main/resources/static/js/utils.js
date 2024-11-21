@@ -205,3 +205,46 @@ async function calculateFileHash(fileChunk) {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
+
+
+function addTooltip(element, tooltipText) {
+    // Tạo tooltip
+    const tooltip = document.createElement('div');
+    tooltip.textContent = tooltipText;
+    tooltip.className = 'absolute hidden bg-gray-500 text-white text-sm px-2 py-1 rounded shadow-lg pointer-events-none';
+
+    // Thêm tooltip vào cùng parent
+    element.parentElement.appendChild(tooltip);
+
+    // Hiển thị tooltip khi hover
+    element.addEventListener('mouseenter', (event) => {
+        tooltip.classList.remove('hidden');
+        updateTooltipPosition(event);
+    });
+
+    // Cập nhật vị trí tooltip khi di chuyển chuột
+    element.addEventListener('mousemove', (event) => {
+        updateTooltipPosition(event);
+    });
+
+    // Ẩn tooltip khi chuột rời ảnh
+    element.addEventListener('mouseleave', () => {
+        tooltip.classList.add('hidden');
+    });
+
+    // Hàm cập nhật vị trí của tooltip
+    function updateTooltipPosition(event) {
+        const elementRect = event.target.getBoundingClientRect();
+        const tooltipWidth = tooltip.offsetWidth;
+        const tooltipHeight = tooltip.offsetHeight;
+    
+        // Tính toán vị trí để tooltip nằm giữa phần tử
+        const tooltipX = elementRect.left - (elementRect.width / 2) - (tooltipWidth / 2);
+        const tooltipY = elementRect.top + (elementRect.height / 2) - (tooltipHeight / 2);
+    
+        // Gán vị trí cho tooltip
+        tooltip.style.left = `${tooltipX}px`;
+        tooltip.style.top = `${tooltipY}px`;
+    }
+    
+}

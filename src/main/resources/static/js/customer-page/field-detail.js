@@ -1,12 +1,11 @@
 let bookingDetail = document.getElementById("booking-detail");
 let buttonOrder = document.getElementById("buttonOrder");
 let buttonCloseBookingDetail = document.getElementById("buttonCloseBookingDetail");
-let container = document.getElementById("field-detail");
-let id = container.getAttribute("fieldId");
+let fieldDetailContainer = document.getElementById('sportsField.field-detail')
 let currentDate = new Date();
 
-const selectQuantityAvailabilities = document.getElementById('booking_detail.select_quantity_availabilities');
-const selectPriceAvailabilities = document.getElementById('booking_detail.select_price_availabilities');
+const selectQuantityAvailabilities = document.getElementById("booking_detail.select_quantity_availabilities");
+const selectPriceAvailabilities = document.getElementById("booking_detail.select_price_availabilities");
 
 const prevDateButton = document.getElementById("booking_detail.previousDate");
 const nextDateButton = document.getElementById("booking_detail.nextDate");
@@ -14,17 +13,9 @@ const currentDateElement = document.getElementById("booking_detail.currentDate")
 
 let selectedAvailabilities = [];
 
-// có nên đẩy hàm này vô ultils luôn k
-function extractTime(isoString) {
-    const date = new Date(isoString);
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${hours}:${minutes}`;
-}
-
 function displayDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     if (currentDateElement) {
         currentDateElement.textContent = `${day}-${month}-${year}`;
@@ -33,15 +24,15 @@ function displayDate(date) {
 
 function convertDateFormat(isoString) {
     const date = new Date(isoString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
 }
 
 function isTimeWithinRange(startTime, endTime, rangeStart, rangeEnd) {
     const toMinutes = (time) => {
-        const [hours, minutes] = time.split(':').map(Number);
+        const [hours, minutes] = time.split(":").map(Number);
         return hours * 60 + minutes;
     };
 
@@ -55,15 +46,15 @@ function isTimeWithinRange(startTime, endTime, rangeStart, rangeEnd) {
     }
 }
 
-displayDate(currentDate)
+displayDate(currentDate);
 
 if (prevDateButton && nextDateButton) {
-    prevDateButton.addEventListener('click', async () => {
+    prevDateButton.addEventListener("click", async () => {
         const now = new Date();
         currentDate.setDate(currentDate.getDate() - 1);
         displayDate(currentDate);
-        
-        if(currentDate < now) {
+
+        if (currentDate < now) {
             currentDate = now;
             displayDate(currentDate);
         }
@@ -76,7 +67,7 @@ if (prevDateButton && nextDateButton) {
         }
     });
 
-    nextDateButton.addEventListener('click', async () => {
+    nextDateButton.addEventListener("click", async () => {
         currentDate.setDate(currentDate.getDate() + 1);
         displayDate(currentDate);
 
@@ -90,12 +81,14 @@ if (prevDateButton && nextDateButton) {
     });
 }
 
-
-async function loadDetail() {
-    try {
+async function loadDetail(id) {
+    try {        
         const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+        
         const field = await fieldRes.json();
 
+        console.log(field);
+        
         await appendDetail(field);
         await tab_detail(field);
         await appendBookingDetail(field);
@@ -115,8 +108,8 @@ async function appendDetail(field) {
     document.getElementById("field_detail.ownerImage").src = field.owner.avatar;
     document.getElementById("field_detail.rating").textContent = field.rating;
     if (document.getElementById("field_detail.openingTime") && document.getElementById("field_detail.closingTime")) {
-        document.getElementById("field_detail.openingTime").textContent = extractTime(field.openingTime);
-        document.getElementById("field_detail.closingTime").textContent = extractTime(field.closingTime);
+        document.getElementById("field_detail.openingTime").textContent = formatHour(field.openingTime);
+        document.getElementById("field_detail.closingTime").textContent = formatHour(field.closingTime);
     }
     document.getElementById("field_detail.image").src = field.images[0];
 
@@ -133,31 +126,45 @@ async function appendDetail(field) {
     document.getElementById("field_detail.button_tab_detail").href = "/sports-field-booking/sports-field/" + field.id + "/details";
     document.getElementById("field_detail.button_tab_review").href = "/sports-field-booking/sports-field/" + field.id + "/reviews";
 }
-loadDetail();
+
+document.addEventListener("DOMContentLoaded", async function () {  
+    let id = fieldDetailContainer.getAttribute("fieldId");  
+            
+    await loadDetail(id);
+});
+
 if (buttonOrder) {
-    buttonOrder.addEventListener("click", async () => {
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
-            const field = await response.json();
+    const endPath = window.location.pathname.split("/")[2];
 
-            if (field.status === "OPEN" || field.status === "CLOSED") {
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth",
-                });
-                bookingDetail.style.display = "block";
-                window.document.body.style.overflow = "hidden";
-                bookingDetail.style.overflow = "auto";
-            } else {
-                alert("Sân hiện không khả dụng");
+    if (endPath.localeCompare("my-sports-field") === 0) {
+        buttonOrder.addEventListener("click", () => {            
+            let editFieldContainer = fieldDetailContainer.querySelector("#new_field\\.container")
+            editFieldContainer.classList.toggle('hidden')
+        });
+    } else {
+        buttonOrder.addEventListener("click", async () => {
+            try {
+                const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
+                const field = await response.json();
+
+                if (field.status === "OPEN" || field.status === "CLOSED") {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                    });
+                    bookingDetail.style.display = "block";
+                    window.document.body.style.overflow = "hidden";
+                    bookingDetail.style.overflow = "auto";
+                } else {
+                    alert("Sân hiện không khả dụng");
+                }
+            } catch (error) {
+                console.error("Error fetching field data:", error);
+                alert("Có lỗi xảy ra khi tải thông tin sân.");
             }
-        } catch (error) {
-            console.error("Error fetching field data:", error);
-            alert("Có lỗi xảy ra khi tải thông tin sân.");
-        }
-    });
+        });
+    }
 }
-
 
 if (buttonCloseBookingDetail) {
     buttonCloseBookingDetail.addEventListener("click", () => {
@@ -214,19 +221,17 @@ async function appendBookingDetail(field) {
         const bookingItems = await response.json();
 
         console.log(bookingItems);
-        
+
         field.fieldAvailabilities.forEach((fieldAvailability) => {
             let element = document.createElement("a");
             element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
             element.dataset.availabilityId = fieldAvailability.id;
 
-            const startTime = extractTime(fieldAvailability.startTime);
-            const endTime = extractTime(fieldAvailability.endTime);
- 
-            const isOrdered = bookingItems.some(item => {
-                return extractTime(item.startTime) === startTime &&
-                       extractTime(item.endTime) === endTime &&
-                       convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
+            const startTime = formatHour(fieldAvailability.startTime);
+            const endTime = formatHour(fieldAvailability.endTime);
+
+            const isOrdered = bookingItems.some((item) => {
+                return formatHour(item.startTime) === startTime && formatHour(item.endTime) === endTime && convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
             });
 
             if (isOrdered) {
@@ -251,11 +256,11 @@ async function appendBookingDetail(field) {
 
             element.addEventListener("click", () => {
                 if (isOrdered) {
-                    alert('This field availability is not available');
+                    alert("This field availability is not available");
                     return;
                 }
 
-                const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
+                const itemIndex = selectedAvailabilities.findIndex((item) => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
 
                 if (element.style.borderLeft === "5px solid red") {
                     element.style.borderLeft = "none";
@@ -277,52 +282,48 @@ async function appendBookingDetail(field) {
     }
 }
 
-
 function getSportFieldIdFromPath() {
     const path = window.location.pathname;
-    const segments = path.split('/');
+    const segments = path.split("/");
     return segments[segments.length - 2]; // Assuming sportFieldId is the last part of the path
 }
-
 
 function handleOrder() {
     const data = [];
 
-    selectedAvailabilities.forEach(item => {
+    selectedAvailabilities.forEach((item) => {
         data.push({
             sportFieldID: getSportFieldIdFromPath(),
-            userID: JSON.parse(localStorage.getItem('current-user')).id,
+            userID: JSON.parse(localStorage.getItem("current-user")).id,
             currentDate: item.date,
             fieldAvailabilityID: item.id,
         });
-    });   
+    });
 
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];
 
-        const newData = data.filter(item =>
-            !existingData.some(existingItem =>
-                existingItem.sportFieldID === item.sportFieldID &&
-                existingItem.fieldAvailabilityID === item.fieldAvailabilityID &&
-                existingItem.currentDate === item.currentDate
-            )
+        const newData = data.filter(
+            (item) =>
+                !existingData.some(
+                    (existingItem) => existingItem.sportFieldID === item.sportFieldID && existingItem.fieldAvailabilityID === item.fieldAvailabilityID && existingItem.currentDate === item.currentDate
+                )
         );
 
         if (newData.length === 0) {
             alert("You have ordered this field availability");
             return;
-        } 
+        }
         if (confirm("Are you sure you want to place the order for these time slots")) {
             existingData.push(...newData);
             localStorage.setItem("data", JSON.stringify(existingData));
-        }   
-   }
+        }
+    }
 }
 
-
-document.getElementById('orderButton').addEventListener('click', (e) => {
-    const selectedElements = Array.from(document.querySelectorAll('.field_availability'))
-        .filter(element => element.style.borderLeft === "5px solid red"); console.log(selectedElements);
+document.getElementById("orderButton").addEventListener("click", (e) => {
+    const selectedElements = Array.from(document.querySelectorAll(".field_availability")).filter((element) => element.style.borderLeft === "5px solid red");
+    console.log(selectedElements);
 
     if (selectedElements.length === 0) {
         e.preventDefault();
@@ -332,4 +333,3 @@ document.getElementById('orderButton').addEventListener('click', (e) => {
         handleOrder();
     }
 });
-

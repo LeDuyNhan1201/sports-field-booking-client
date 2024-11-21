@@ -14,6 +14,7 @@ let sportFieldGrid = document.getElementById("sportsField.grid");
 
 let buttonNewField = sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField");
 
+
 async function loadSportFieldList(tab, currentOffset, searchValue) {
     const endPath = window.location.pathname.split("/")[2];
 
@@ -64,6 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function appendFieldGrid(data) {
+    const endPath = window.location.pathname.split("/")[2];
+
     sportFieldList.className = "hidden w-full text-left border-collapse";
     sportFieldGrid.style.display = "grid";
 
@@ -72,7 +75,7 @@ async function appendFieldGrid(data) {
         const fieldElement = document.createElement("div");
         fieldElement.innerHTML = `
             <a
-                href="/sports-field-booking/sports-field/${field.id}/details"
+                href="/sports-field-booking/${endPath.localeCompare("my-sports-field")===0 ? "my-" : ""}sports-field/${field.id}/details"
                 class='bg-white shadow-lg rounded-lg overflow-hidden block cursor-pointer'
                 xmlns:th="http://www.w3.org/1999/xhtml"
             >
@@ -117,7 +120,7 @@ async function appendFieldList(data) {
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
                     </td>
                     <td class="p-4">
-                        <a  href="/sports-field-booking/sports-field/${field.id}/details">
+                        <a  href="/sports-field-booking/${endPath.localeCompare("my-sports-field")===0 ? "my-" : ""}sports-field/${field.id}/details">
                             <i class="fa-solid fa-share-from-square text-green-500"></i>
                         </a>
                     </td>

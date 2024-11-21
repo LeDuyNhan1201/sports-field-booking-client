@@ -69,6 +69,16 @@ public class CustomerController {
     public String fieldDetailTab(@PathVariable String id, Model model) {
         model.addAttribute("content", "fieldDetail");
         model.addAttribute("subContent", "detailTab");
+        model.addAttribute("modal_title", "New Sports Field"); //getLocalizedMessage("dashboard.add_sportfield.title")
+        model.addAttribute("id", id);
+        return "pages/customer";
+    }
+
+    @GetMapping("/my-sports-field/{id}/details")
+    public String managerFieldDetailTab(@PathVariable String id, Model model) {
+        model.addAttribute("content", "fieldDetail");
+        model.addAttribute("subContent", "detailTab");
+        model.addAttribute("modal_title", "Edit Sports Field");
         model.addAttribute("id", id);
         return "pages/customer";
     }
