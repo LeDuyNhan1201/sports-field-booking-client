@@ -1,4 +1,5 @@
-<div class="w-full p-6 bg-white rounded-lg shadow h-[100vh] overflow-y-auto" th:fragment="order" xmlns:th="http://www.w3.org/1999/xhtml">
+<div class="w-full p-6 bg-white rounded-lg shadow h-[100vh] overflow-y-auto" th:fragment="order"
+    xmlns:th="http://www.w3.org/1999/xhtml">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold" th:text="#{dashboard.order_heading.title}">Order</h1>
@@ -76,7 +77,7 @@
                 </th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.order_buyerName.title}">Tên
                     người mua</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.order_address.title}">Địa chỉ
+                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.order_address.title}">Tên
                 </th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.order_date.title}">Ngày</th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.order_price.title}">Giá</th>
@@ -85,113 +86,59 @@
                 <th class="p-4" th:text="#{dashboard.order_action.title}">Thao tác</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="handleOrder">
             <!-- Example Order Rows -->
-            <tr class="border-b">
-                <td class="p-4">#3412</td>
-                <td class="p-4 flex items-center">
-                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
-                    <span>Manoj</span>
-                </td>
-                <td class="p-4">Lorem ipsum dummy text industry.</td>
-                <td class="p-4">25/10/2024</td>
-                <td class="p-4">$64.00</td>
-                <td class="p-4">
-                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.order_status.dispatch}">Dispatch</span>
-                </td>
-                <td class="p-4">
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
 
-            <tr class="border-b">
-                <td class="p-4">#3413</td>
-                <td class="p-4 flex items-center">
-                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
-                    <span>Jane Doe</span>
-                </td>
-                <td class="p-4">123 Main St, Cityville</td>
-                <td class="p-4">24/10/2024</td>
-                <td class="p-4">$82.00</td>
-                <td class="p-4">
-                    <span class="bg-red-100 text-red-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.order_status.pending}">Pending</span>
-                </td>
-                <td class="p-4">
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-
-            <tr class="border-b">
-                <td class="p-4">#3414</td>
-                <td class="p-4 flex items-center">
-                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
-                    <span>John Smith</span>
-                </td>
-                <td class="p-4">456 Broadway, Metropolis</td>
-                <td class="p-4">23/10/2024</td>
-                <td class="p-4">$93.50</td>
-                <td class="p-4">
-                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.order_status.dispatch}">Dispatch</span>
-                </td>
-                <td class="p-4">
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-
-            <tr class="border-b">
-                <td class="p-4">#3415</td>
-                <td class="p-4 flex items-center">
-                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
-                    <span>Emily Davis</span>
-                </td>
-                <td class="p-4">789 Oak St, Gotham</td>
-                <td class="p-4">22/10/2024</td>
-                <td class="p-4">$75.25</td>
-                <td class="p-4">
-                    <span class="bg-red-100 text-red-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.order_status.pending}">Pending</span>
-                </td>
-                <td class="p-4">
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-
-            <tr class="border-b">
-                <td class="p-4">#3416</td>
-                <td class="p-4 flex items-center">
-                    <img th:src="@{/image/user-info/user-info.png}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
-                    <span>David Brown</span>
-                </td>
-                <td class="p-4">123 Maple St, Star City</td>
-                <td class="p-4">21/10/2024</td>
-                <td class="p-4">$100.00</td>
-                <td class="p-4">
-                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.order_status.dispatch}">Dispatch</span>
-                </td>
-                <td class="p-4">
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
         </tbody>
 
     </table>
 
     <!-- Pagination -->
-    <div th:replace="~{/components/dashboard-page/pagination}"></div>
+    <div class="mt-6 flex justify-between items-center">
+        <span id="pagination-info" class="text-sm text-gray-700"></span>
+        <div id="pagination-controls" class="inline-flex"></div>
+    </div>
 
+    <!-- Modal -->
+    <div id="booking-detail-modal" class="hidden fixed z-10 inset-0 overflow-y-auto bg-gray-900 bg-opacity-50">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all max-w-lg w-full">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 text-center mb-4">Booking Details</h3>
+                    <div class="mt-2 space-y-4">
+                        <div class="flex justify-between">
+                            <span class="font-semibold">No:</span>
+                            <span id="detail-no" class="text-gray-700"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-semibold">User:</span>
+                            <span id="detail-user" class="text-gray-700"></span>
+                        </div>
+                        <!-- <div class="flex justify-between">
+                            <span class="font-semibold">Sport Field:</span>
+                            <span id="detail-sport-field" class="text-gray-700"></span>
+                        </div> -->
+                        <div id="booking-items-container" class="space-y-4">
+                            <!-- Booking items will be appended here -->
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-semibold">Total Price:</span>
+                            <span id="detail-total-price" class="text-gray-700"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-semibold">Status:</span>
+                            <span id="detail-status" class="text-gray-700"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button id="close-modal-button" th:text="#{booking_detail.close.title}"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/utils.js}"></script>
     <script th:src="@{/js/dashboard-page/order.js}"></script>
 </div>

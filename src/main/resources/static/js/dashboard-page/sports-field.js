@@ -57,7 +57,6 @@ deleteButtons.forEach(button => {
     });
 });
 
-
 window.onload = function () {
     // Fetching data from an API
     fetchCustom({

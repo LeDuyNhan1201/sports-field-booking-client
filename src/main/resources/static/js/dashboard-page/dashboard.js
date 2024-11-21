@@ -89,8 +89,8 @@ async function updateRevenueChart() {
     const currentWeekData = await fetchCurrentWeekData();
     const previousWeekData = await fetchPreviousWeekData();
 
-    currentRevenue.textContent = `$${currentRevenueTotal}`
-    previousRevenue.textContent = `$${previousRevenueTotal}`
+    currentRevenue.textContent = `$${currentRevenueTotal.toFixed(2)}`
+    previousRevenue.textContent = `$${previousRevenueTotal.toFixed(2)}`
 
     revenueChart.data.datasets[0].data = currentWeekData;
     revenueChart.data.datasets[1].data = previousWeekData;
@@ -212,9 +212,7 @@ async function fetchTopProducts() {
         const topProductList = document.getElementById('topProductList');
         topProductList.innerHTML = '';
 
-        sortedSportsField.forEach(({ sportsFieldName, count }) => {
-            console.log({ sportsFieldName, count });
-            
+        sortedSportsField.forEach(({ sportsFieldName, count }) => {            
             const li = document.createElement('li');
             li.classList.add('mb-2', 'flex', 'justify-between');
             li.innerHTML = `
@@ -346,6 +344,9 @@ function showMore(listId) {
     var inputVal = parseInt(document.getElementById('topBuyerInput').value) || 0;
 
     var itemsToShow = items.length - inputVal;
+    if(itemsToShow > 4) {
+        itemsToShow = 4;
+    }
     var currentVisibleItems = 0;
 
     for (var i = 0; i < items.length; i++) {
