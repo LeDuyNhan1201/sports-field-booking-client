@@ -6,6 +6,7 @@ const validSportField = [];
 const totalPriceMap = {};
 
 let fieldAvailabilityIDs = [];
+let flag = false;
 
 function formatTime(dateString) {
     const date = new Date(dateString);
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         sportFieldData = await response.json();
 
                         console.log(sportFieldData);
-                        
+
                     } catch (error) {
                         console.error("Error fetching sports field data:", error);
                         continue;
@@ -167,6 +168,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+setTimeout(async () => {
+    if (flag) {
+        return;
+    }
+    const currentData = JSON.parse(localStorage.getItem("data")) || [];
+    try {
+        await Promise.all(currentData.map(async (item) => {
+            const response = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${item.fieldAvailabilityID}?status=AVAILABLE`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update status for ID: ${item.fieldAvailabilityID} with status ${response.status}`);
+            }
+
+            return response;
+        }));
+    } catch (error) {
+        console.error(`Error updating field availability for ID ${item.fieldAvailabilityID}: `, error);
+    }
+    localStorage.removeItem("data");
+    flag = true;
+
+}, 5 * 60 * 1000);
+
 document.getElementById('paymentButton').addEventListener('click', async function () {
     const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked');
     if (!selectedPaymentMethod) {
@@ -226,10 +256,8 @@ async function createBookingItems(bookingID) {
         const availableDate = item.querySelector('.available-date').getAttribute('data-original');
         const price = item.querySelector('.price').textContent.replace('$', '');
 
-        console.log(sportFieldID);
-        
         try {
-            const response = await fetch(`${SERVER_DOMAIN}/booking-items`, { 
+            const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -243,7 +271,7 @@ async function createBookingItems(bookingID) {
                     availableDate: convertDateFormat(availableDate),
                     price: parseFloat(price)
                 })
-            });            
+            });
         } catch (error) {
             alert("Có lỗi xảy ra khi tạo đơn đặt chỗ. Vui lòng thử lại.");
             break;
@@ -285,11 +313,7 @@ async function processPayment(bookingID, paymentMethod) {
 function removeDataFromLocalStorage(id, key) {
     const storedData = JSON.parse(localStorage.getItem("data")) || [];
 
-    console.log();
-
     const updatedData = storedData.filter(item => item[key] !== id);
-    console.log(updatedData);
-
 
     localStorage.setItem("data", JSON.stringify(updatedData));
 }

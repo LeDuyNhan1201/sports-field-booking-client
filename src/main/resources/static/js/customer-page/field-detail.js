@@ -46,15 +46,15 @@ function isTimeWithinRange(startTime, endTime, rangeStart, rangeEnd) {
     }
 }
 
-displayDate(currentDate);
+displayDate(currentDate)
 
 if (prevDateButton && nextDateButton) {
-    prevDateButton.addEventListener("click", async () => {
+    prevDateButton.addEventListener('click', async () => {
         const now = new Date();
         currentDate.setDate(currentDate.getDate() - 1);
         displayDate(currentDate);
-
-        if (currentDate < now) {
+        
+        if(currentDate < now) {
             currentDate = now;
             displayDate(currentDate);
         }
@@ -67,7 +67,7 @@ if (prevDateButton && nextDateButton) {
         }
     });
 
-    nextDateButton.addEventListener("click", async () => {
+    nextDateButton.addEventListener('click', async () => {
         currentDate.setDate(currentDate.getDate() + 1);
         displayDate(currentDate);
 
@@ -81,14 +81,15 @@ if (prevDateButton && nextDateButton) {
     });
 }
 
-async function loadDetail(id) {
-    try {        
+
+async function loadDetail() {
+    try {
         const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
-        
+
         const field = await fieldRes.json();
 
         console.log(field);
-        
+
         await appendDetail(field);
         await tab_detail(field);
         await appendBookingDetail(field);
@@ -127,9 +128,9 @@ async function appendDetail(field) {
     document.getElementById("field_detail.button_tab_review").href = "/sports-field-booking/sports-field/" + field.id + "/reviews";
 }
 
-document.addEventListener("DOMContentLoaded", async function () {  
-    let id = fieldDetailContainer.getAttribute("fieldId");  
-            
+document.addEventListener("DOMContentLoaded", async function () {
+    let id = fieldDetailContainer.getAttribute("fieldId");
+
     await loadDetail(id);
 });
 
@@ -137,7 +138,7 @@ if (buttonOrder) {
     const endPath = window.location.pathname.split("/")[2];
 
     if (endPath.localeCompare("my-sports-field") === 0) {
-        buttonOrder.addEventListener("click", () => {            
+        buttonOrder.addEventListener("click", () => {
             let editFieldContainer = fieldDetailContainer.querySelector("#new_field\\.container")
             editFieldContainer.classList.toggle('hidden')
         });
@@ -165,6 +166,7 @@ if (buttonOrder) {
         });
     }
 }
+
 
 if (buttonCloseBookingDetail) {
     buttonCloseBookingDetail.addEventListener("click", () => {
@@ -220,67 +222,73 @@ async function appendBookingDetail(field) {
 
         const bookingItems = await response.json();
 
-        console.log(bookingItems);
+        field.fieldAvailabilities.forEach(async (fieldAvailability) => {
+            const startTime = extractTime(fieldAvailability.startTime);
+            const endTime = extractTime(fieldAvailability.endTime);
 
-        field.fieldAvailabilities.forEach((fieldAvailability) => {
-            let element = document.createElement("a");
-            element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
-            element.dataset.availabilityId = fieldAvailability.id;
+            if (isTimeWithinRange(startTime, endTime, extractTime(field.openingTime), extractTime(field.closingTime))) {
+                let element = document.createElement("a");
+                element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
+                element.dataset.availabilityId = fieldAvailability.id;
 
-            const startTime = formatHour(fieldAvailability.startTime);
-            const endTime = formatHour(fieldAvailability.endTime);
+                const isOrdered = bookingItems.some(item => {
+                    return extractTime(item.startTime) === startTime &&
+                        extractTime(item.endTime) === endTime &&
+                        convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
+                });
 
-            const isOrdered = bookingItems.some((item) => {
-                return formatHour(item.startTime) === startTime && formatHour(item.endTime) === endTime && convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
-            });
+                const fieldResponse = await fetch(`${SERVER_DOMAIN}/field-availability/${fieldAvailability.id}`);
 
-            if (isOrdered) {
-                element.innerHTML = `
-                    <div class="flex flex-1 justify-between">
-                        <span class="text-lg flex-1">${startTime}</span>
-                        <span class="text-lg flex-1 text-center">${endTime}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
-                    </div>
-                    <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
-                `;
-            } else {
-                element.innerHTML = `
-                    <div class="flex flex-1 justify-between">
-                        <span class="text-lg flex-1">${startTime}</span>
-                        <span class="text-lg flex-1 text-center">${endTime}</span>
-                        <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
-                    </div>
-                    <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
-                `;
-            }
+                const result = await fieldResponse.json();
+                const isBooked = result.status === "BOOKED";
 
-            element.addEventListener("click", () => {
-                if (isOrdered) {
-                    alert("This field availability is not available");
-                    return;
-                }
-
-                const itemIndex = selectedAvailabilities.findIndex((item) => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
-
-                if (element.style.borderLeft === "5px solid red") {
-                    element.style.borderLeft = "none";
-                    selectedAvailabilities.splice(itemIndex, 1);
-                    selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
-                    selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
+                if (isOrdered || isBooked) {
+                    element.innerHTML = `
+                        <div class="flex flex-1 justify-between">
+                            <span class="text-lg flex-1">${startTime}</span>
+                            <span class="text-lg flex-1 text-center">${endTime}</span>
+                            <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                        </div>
+                        <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
+                    `;
                 } else {
-                    element.style.borderLeft = "5px solid red";
-                    selectedAvailabilities.push({ id: fieldAvailability.id, date: currentDate.toDateString() });
-                    selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
-                    selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
+                    element.innerHTML = `
+                        <div class="flex flex-1 justify-between">
+                            <span class="text-lg flex-1">${startTime}</span>
+                            <span class="text-lg flex-1 text-center">${endTime}</span>
+                            <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                        </div>
+                        <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
+                    `;
                 }
-            });
+                element.addEventListener("click", () => {
+                    if (isOrdered || isBooked) {
+                        alert('This field availability is not available');
+                        return;
+                    }
 
-            fieldAvailabilitiesElement.appendChild(element);
+                    const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
+
+                    if (element.style.borderLeft === "5px solid red") {
+                        element.style.borderLeft = "none";
+                        selectedAvailabilities.splice(itemIndex, 1);
+                        selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
+                        selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
+                    } else {
+                        element.style.borderLeft = "5px solid red";
+                        selectedAvailabilities.push({ id: fieldAvailability.id, date: currentDate.toDateString() });
+                        selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
+                        selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
+                    }
+                });
+                fieldAvailabilitiesElement.appendChild(element);
+            }
         });
     } catch (error) {
         console.error("Error fetching booking items:", error);
     }
 }
+
 
 function getSportFieldIdFromPath() {
     const path = window.location.pathname;
@@ -288,10 +296,11 @@ function getSportFieldIdFromPath() {
     return segments[segments.length - 2]; // Assuming sportFieldId is the last part of the path
 }
 
-function handleOrder() {
+
+async function handleOrder() {
     const data = [];
 
-    selectedAvailabilities.forEach((item) => {
+    selectedAvailabilities.forEach(item => {
         data.push({
             sportFieldID: getSportFieldIdFromPath(),
             userID: JSON.parse(localStorage.getItem("current-user")).id,
@@ -302,34 +311,57 @@ function handleOrder() {
 
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];
-
-        const newData = data.filter(
-            (item) =>
-                !existingData.some(
-                    (existingItem) => existingItem.sportFieldID === item.sportFieldID && existingItem.fieldAvailabilityID === item.fieldAvailabilityID && existingItem.currentDate === item.currentDate
-                )
-        );
+        const newData = data.filter(item => !existingData.some(existingItem =>
+            existingItem.sportFieldID === item.sportFieldID &&
+            existingItem.fieldAvailabilityID === item.fieldAvailabilityID &&
+            existingItem.currentDate === item.currentDate
+        ));
 
         if (newData.length === 0) {
-            alert("You have ordered this field availability");
+            alert("You have already ordered this field availability.");
             return;
         }
-        if (confirm("Are you sure you want to place the order for these time slots")) {
+
+        if (confirm("Are you sure you want to place the order for these time slots?")) {
             existingData.push(...newData);
             localStorage.setItem("data", JSON.stringify(existingData));
+
+            try {
+                await Promise.all(newData.map(async (item) => {
+                    const response = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${item.fieldAvailabilityID}?status=BOOKED`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to update status for ID: ${item.fieldAvailabilityID} with status ${response.status}`);
+                    }
+
+                    return response;
+                }));
+
+                console.log("All field availabilities updated successfully");
+            } catch (error) {
+                console.error("Error updating field availabilities: ", error);
+            }
         }
     }
 }
 
-document.getElementById("orderButton").addEventListener("click", (e) => {
-    const selectedElements = Array.from(document.querySelectorAll(".field_availability")).filter((element) => element.style.borderLeft === "5px solid red");
-    console.log(selectedElements);
+
+document.getElementById('orderButton').addEventListener('click', async (e) => {
+    const selectedElements = Array.from(document.querySelectorAll('.field_availability'))
+        .filter(element => element.style.borderLeft === "5px solid red"); console.log(selectedElements);
 
     if (selectedElements.length === 0) {
         e.preventDefault();
         alert("You haven't chosen the time slots yet!!");
         return;
     } else {
-        handleOrder();
+        await handleOrder();
     }
 });
+
