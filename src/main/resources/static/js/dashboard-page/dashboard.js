@@ -113,15 +113,18 @@ async function updateGoalsChart() {
 
     const normalizedCurrentMonth = (currentMonthTotal / total) * 100;
     const normalizedPreviousMonth = (previousMonthTotal / total) * 100;
-    const normalizedPercentageChange = (Math.abs(percentageChange) / total) * 100;
-
+    const normalizedPercentageChange = normalizedCurrentMonth - normalizedPreviousMonth;
+        
     console.log([normalizedCurrentMonth, normalizedPreviousMonth, normalizedPercentageChange]);
     
     goalsChart.data.datasets[0].data = [
         normalizedCurrentMonth,
         normalizedPreviousMonth,
-        normalizedPercentageChange
     ];
+
+    if (normalizedPercentageChange < 0) {
+        goalsChart.data.datasets[0].data.push(normalizedPercentageChange);
+    }
 
     const percentageElement = document.querySelector('#percentageChange');
     percentageElement.textContent = `${normalizedCurrentMonth.toFixed(2)}%`;
@@ -234,7 +237,6 @@ async function fetchTopProducts() {
         console.error('Error fetching top buyers:', error);
     }
 }
-
 
 
 document.addEventListener('DOMContentLoaded', async function () {

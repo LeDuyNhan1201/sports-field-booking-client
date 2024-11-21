@@ -23,7 +23,7 @@ async function fetchOrders(page) {
     });
 
     if (response.ok) {
-        const data = await response.json();
+        const data = await response.json();        
         renderOrders(data, page);
         setupPagination(data.items.length);
     } else {
@@ -102,12 +102,10 @@ async function renderOrders(orders, page = 1) {
 
 function setupPagination(pagination) {    
     const totalPages = Math.ceil(pagination / ORDER_PER_PAGE);
-
-    console.log(parseInt(Math.min(currentPage * ORDER_PER_PAGE, pagination)));
     
     const paginationInfo = document.getElementById("pagination-info");
-    paginationInfo.textContent = `Hiển thị từ ${(currentPage - 1) * ORDER_PER_PAGE + 1} đến ${parseInt(Math.min(currentPage * ORDER_PER_PAGE, pagination))
-        } trên ${pagination}`;
+    paginationInfo.textContent = `Show from page ${(currentPage - 1) * ORDER_PER_PAGE + 1} to ${parseInt(Math.min(currentPage * ORDER_PER_PAGE, pagination))
+        } in ${pagination}`;
 
     const paginationControls = document.getElementById("pagination-controls");
     paginationControls.innerHTML = "";
@@ -293,6 +291,64 @@ async function viewBookingDetails(bookingId) {
     }
 }
 
+async function searchOrders(page = 1) {
+    const keyword = document.getElementById('search').value || '';
+    const status = document.getElementById('status').value || '';
+    const startDate = document.getElementById('from-date').value || '';
+    const endDate = document.getElementById('to-date').value || '';
+    const offset = (page - 1) * ORDER_PER_PAGE;
+    const limit = ORDER_PER_PAGE;
+
+    console.log(offset+" "+limit);
+    
+
+    const queryParams = new URLSearchParams({
+        keyword,
+        status,
+        startDate,
+        endDate,
+        // offset,
+        // limit
+    });
+
+    console.log({
+        keyword,
+        status,
+        startDate,
+        endDate,
+        // offset,
+        // limit
+    });
+    
+
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/search?${queryParams}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + getAccessTokenFromCookie()
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();            
+            renderOrders(data, page);
+            setupPagination(data.items.length);
+        } else {
+            console.error('Failed to search orders:', response.status);
+        }
+    } catch (error) {
+        console.error('Error during search:', error);
+    }
+}
+
+document.getElementById('search').addEventListener('input', () => {
+    searchOrders();
+});
+
+document.getElementById('search-btn').addEventListener('click', () => {
+    searchOrders();
+});
 
 window.addEventListener('DOMContentLoaded', async () => {
     await fetchOrders();
