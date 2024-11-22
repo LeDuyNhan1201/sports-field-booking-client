@@ -3,6 +3,16 @@ const previousRevenue = document.getElementById('previousRevenueTotal');
 
 let currentRevenueTotal = 0;
 let previousRevenueTotal = 0;
+document.getElementById('from-date').addEventListener('change', updateColumnChart);
+document.getElementById('to-date').addEventListener('change', updateColumnChart);
+
+document.addEventListener('DOMContentLoaded', async function () {
+    await updateRevenueChart();
+    await updateGoalsChart();
+    await updateColumnChart();
+    await fetchTopBuyers();
+    await fetchTopProducts();
+});
 
 function convertToGMT7(dateString) {
     const utcDate = new Date(dateString);
@@ -13,9 +23,9 @@ function convertToGMT7(dateString) {
 
 async function fetchCurrentWeekData() {
     const response = await fetch(`${SERVER_DOMAIN}/booking/current-week`);
-    const data = await response.json();   
+    const data = await response.json();
     const weeklyData = Array(7).fill(0);
- 
+
     for (let item of data) {
         if (item.bookingItems && item.bookingItems.length > 0) {
             let totalPrice = 0;
@@ -24,12 +34,12 @@ async function fetchCurrentWeekData() {
 
                 const date = new Date(item.createdAt);
                 const dayIndex = (date.getDay() + 6) % 7;
-                
+
                 weeklyData[dayIndex] += bookingItem.price;
 
                 totalPrice += bookingItem.price;
             }
-        } 
+        }
     }
     return weeklyData;
 }
@@ -39,10 +49,10 @@ async function fetchPreviousWeekData() {
     const data = await response.json();
     const weeklyData = Array(7).fill(0);
 
-    for (let item of data) {        
+    for (let item of data) {
         if (item.bookingItems && item.bookingItems.length > 0) {
             let totalPrice = 0;
-            for (let bookingItem of item.bookingItems) {                
+            for (let bookingItem of item.bookingItems) {
                 previousRevenueTotal += bookingItem.price
 
                 const date = new Date(item.createdAt);
@@ -52,7 +62,7 @@ async function fetchPreviousWeekData() {
 
                 totalPrice += bookingItem.price;
             }
-        } 
+        }
     }
     return weeklyData;
 }
@@ -63,7 +73,7 @@ async function fetchCurrentMonthData() {
     let total = 0;
     for (let item of data) {
         if (item.bookingItems && item.bookingItems.length > 0) {
-            for (let bookingItem of item.bookingItems) {                
+            for (let bookingItem of item.bookingItems) {
                 total += bookingItem.price;
             }
         }
@@ -72,17 +82,70 @@ async function fetchCurrentMonthData() {
 }
 
 async function fetchPreviousMonthData() {
-    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-month`);    
+    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-month`);
     const data = await response.json();
     let total = 0;
     for (let item of data) {
         if (item.bookingItems && item.bookingItems.length > 0) {
-            for (let bookingItem of item.bookingItems) {
+            for (let bookingItem of item.bookingItems) {                
                 total += bookingItem.price;
             }
         }
     }
     return total;
+}
+
+async function fetchFromYearData() {
+    let fromDate = document.getElementById('from-date').value;
+
+    if (!fromDate) {
+        const today = new Date();
+        fromDate = today.toISOString().split('T')[0];
+    }
+
+    const response = await fetch(`${SERVER_DOMAIN}/booking/from-year?fromDate=${fromDate}`);
+    const data = await response.json();
+
+    const monthlyRevenue = Array(12).fill(0);
+    for (let item of data) {
+        if (item.bookingItems && item.bookingItems.length > 0) {            
+            for (let bookingItem of item.bookingItems) {                
+                const date = new Date(bookingItem.createdAt);                
+                const monthIndex = date.getMonth();   
+                             
+                monthlyRevenue[monthIndex] += bookingItem.price;                 
+            }
+        }
+    }
+    
+    return monthlyRevenue;
+}
+
+async function fetchToYearData() {
+    let toDate = document.getElementById('to-date').value;
+
+    if (!toDate) {
+        const today = new Date();
+        toDate = today.toISOString().split('T')[0];
+    }
+
+    const response = await fetch(`${SERVER_DOMAIN}/booking/to-year?toDate=${toDate}`);
+    const data = await response.json();
+
+    const monthlyRevenue = Array(12).fill(0);
+    for (let item of data) {
+        if (item.bookingItems && item.bookingItems.length > 0) {
+            for (let bookingItem of item.bookingItems) {
+                const date = new Date(bookingItem.createdAt);
+                const monthIndex = date.getMonth();
+                console.log(bookingItem.price);
+                
+                monthlyRevenue[monthIndex] += bookingItem.price; 
+            }
+        }
+    }
+
+    return monthlyRevenue;
 }
 
 async function updateRevenueChart() {
@@ -95,7 +158,6 @@ async function updateRevenueChart() {
     revenueChart.data.datasets[0].data = currentWeekData;
     revenueChart.data.datasets[1].data = previousWeekData;
     revenueChart.update();
-
 }
 
 async function updateGoalsChart() {
@@ -108,15 +170,15 @@ async function updateGoalsChart() {
     } else if (currentMonthTotal > 0) {
         percentageChange = 100; // previous month doesn't have data
     }
-    
+
     const total = currentMonthTotal + previousMonthTotal + Math.abs(percentageChange);
 
     const normalizedCurrentMonth = (currentMonthTotal / total) * 100;
     const normalizedPreviousMonth = (previousMonthTotal / total) * 100;
     const normalizedPercentageChange = normalizedCurrentMonth - normalizedPreviousMonth;
-        
+
     console.log([normalizedCurrentMonth, normalizedPreviousMonth, normalizedPercentageChange]);
-    
+
     goalsChart.data.datasets[0].data = [
         normalizedCurrentMonth,
         normalizedPreviousMonth,
@@ -133,15 +195,26 @@ async function updateGoalsChart() {
     previousMonthElement.textContent = `${normalizedPreviousMonth.toFixed(2)}%`;
 
     const comparisonElement = document.querySelector('#comparisonChange');
+
     comparisonElement.textContent =
-        (normalizedCurrentMonth >= normalizedPreviousMonth ? '+' : '-') + normalizedPercentageChange.toFixed(2) + '%';
+        (normalizedCurrentMonth >= normalizedPreviousMonth ? '+' : '') + normalizedPercentageChange.toFixed(2) + '%';
     comparisonElement.style.color = normalizedCurrentMonth < normalizedPreviousMonth ? 'red' : 'green';
 
     goalsChart.update();
 }
 
+async function updateColumnChart() {
+    const fromDateRevenue = await fetchFromYearData();
+    const toDateRevenue = await fetchToYearData();
+
+    columnChart.data.datasets[0].data = fromDateRevenue;
+    columnChart.data.datasets[1].data = toDateRevenue;
+
+    columnChart.update();
+}
+
 async function fetchTopBuyers() {
-    try {                
+    try {
         const response = await fetch(`${SERVER_DOMAIN}/booking`, {
             method: 'GET',
             headers: {
@@ -151,7 +224,7 @@ async function fetchTopBuyers() {
         });
 
         const bookings = await response.json();
-        
+
         const userCount = new Map();
         bookings.items.forEach(booking => {
             const userName = booking.user.username;
@@ -190,7 +263,7 @@ async function fetchTopBuyers() {
 }
 
 async function fetchTopProducts() {
-    try {                
+    try {
         const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
             method: 'GET',
             headers: {
@@ -200,7 +273,7 @@ async function fetchTopProducts() {
         });
 
         const bookingItems = await response.json();
-        
+
         const sportsFieldCount = new Map();
         bookingItems.items.forEach(bookingItem => {
             const sportsFieldName = bookingItem.sportField.name;
@@ -215,7 +288,7 @@ async function fetchTopProducts() {
         const topProductList = document.getElementById('topProductList');
         topProductList.innerHTML = '';
 
-        sortedSportsField.forEach(({ sportsFieldName, count }) => {            
+        sortedSportsField.forEach(({ sportsFieldName, count }) => {
             const li = document.createElement('li');
             li.classList.add('mb-2', 'flex', 'justify-between');
             li.innerHTML = `
@@ -238,26 +311,11 @@ async function fetchTopProducts() {
     }
 }
 
-
-document.addEventListener('DOMContentLoaded', async function () {
-    // const currentDate = new Date().toISOString().split('T')[0];
-    // document.getElementById('reportDate').value = currentDate;
-
-    // document.getElementById('reportDate').addEventListener('change', function () {
-    //     const selectedDate = this.value;
-    //     console.log("Load data for: " + selectedDate);
-    // });
-    await updateRevenueChart();
-    await updateGoalsChart();
-    await fetchTopBuyers();
-    await fetchTopProducts();
-});
-
 var ctx = document.getElementById('revenueChart').getContext('2d');
 var revenueChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun'],
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         datasets: [{
             label: 'Current Week Revenue',
             data: [],
@@ -297,8 +355,70 @@ var goalsChart = new Chart(goalsCtx, {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    ['topBuyerList', 'topProductList'].forEach(function(listId) {
+const months = [
+    'January', 'February', 'March', 
+    'April', 'May', 'June',
+    'July', 'August', 'September', 
+    'October', 'November', 'December'
+];
+
+const yearlyChartCtx = document.getElementById('yearlyChart').getContext('2d');
+var columnChart = new Chart(yearlyChartCtx, {
+    type: 'bar',
+    data: {
+        labels: months,
+        datasets: [
+            {
+                label: 'From Date Revenue ($)',
+                data: [],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'To Date Revenue ($)',
+                data: [],
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Revenue in $'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Months'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return `${context.dataset.label}: $${context.raw}`;
+                    }
+                }
+            }
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    ['topBuyerList', 'topProductList'].forEach(function (listId) {
         var items = document.getElementById(listId).getElementsByTagName('li');
         for (var i = 4; i < items.length; i++) {
             items[i].classList.add('hidden');
@@ -340,13 +460,13 @@ function updateTopProduct() {
     }
 }
 
-function showMore(listId) {    
+function showMore(listId) {
     var list = document.getElementById(listId);
     var items = list.getElementsByTagName('li');
     var inputVal = parseInt(document.getElementById('topBuyerInput').value) || 0;
 
     var itemsToShow = items.length - inputVal;
-    if(itemsToShow > 4) {
+    if (itemsToShow > 4) {
         itemsToShow = 4;
     }
     var currentVisibleItems = 0;

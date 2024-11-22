@@ -22,6 +22,11 @@ function displayDate(date) {
     }
 }
 
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 function convertDateFormat(isoString) {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -59,7 +64,7 @@ if (prevDateButton && nextDateButton) {
             displayDate(currentDate);
         }
         try {
-            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
             const field = await fieldRes.json();
             await appendBookingDetail(field);
         } catch (error) {
@@ -72,7 +77,7 @@ if (prevDateButton && nextDateButton) {
         displayDate(currentDate);
 
         try {
-            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+            const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
             const field = await fieldRes.json();
             await appendBookingDetail(field);
         } catch (error) {
@@ -84,7 +89,7 @@ if (prevDateButton && nextDateButton) {
 
 async function loadDetail() {
     try {
-        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
+        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
 
         const field = await fieldRes.json();
 
@@ -223,17 +228,17 @@ async function appendBookingDetail(field) {
         const bookingItems = await response.json();
 
         field.fieldAvailabilities.forEach(async (fieldAvailability) => {
-            const startTime = extractTime(fieldAvailability.startTime);
-            const endTime = extractTime(fieldAvailability.endTime);
+            const startTime = formatHour(fieldAvailability.startTime);
+            const endTime = formatHour(fieldAvailability.endTime);
 
-            if (isTimeWithinRange(startTime, endTime, extractTime(field.openingTime), extractTime(field.closingTime))) {
+            if (isTimeWithinRange(startTime, endTime, formatHour(field.openingTime), formatHour(field.closingTime))) {
                 let element = document.createElement("a");
                 element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
                 element.dataset.availabilityId = fieldAvailability.id;
 
                 const isOrdered = bookingItems.some(item => {
-                    return extractTime(item.startTime) === startTime &&
-                        extractTime(item.endTime) === endTime &&
+                    return formatHour(item.startTime) === startTime &&
+                        formatHour(item.endTime) === endTime &&
                         convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
                 });
 
