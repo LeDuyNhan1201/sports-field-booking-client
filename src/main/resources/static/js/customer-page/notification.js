@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('No auth token found');
         }
 
-        const response = await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification?offset=0&limit=3`, {
+        const response = await fetch(`${SERVER_DOMAIN}/notification?offset=0&limit=3`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -79,13 +79,13 @@ async function toggleViewAllNotifications(token, notificationContainer, viewAllL
 
 async function displayAllNotifications(token, notificationContainer) {
     let offset = 0;
-    const limit = 20;
+    const limit = 1000;
     let hasMore = true;
 
     notificationContainer.innerHTML = '';
 
     while (hasMore) {
-        const allResponse = await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification?offset=${offset}&limit=${limit}`, {
+        const allResponse = await fetch(`${SERVER_DOMAIN}/notification?offset=${offset}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -108,20 +108,23 @@ async function displayAllNotifications(token, notificationContainer) {
         offset += limit;
     }
 
-    await markAllNotificationsAsRead(token);
-    updateNotificationCount(0);
+    // await markAllNotificationsAsRead(token);
+    // updateNotificationCount(0);
 }
 
 function createNotificationElement(notification, token) {
     const notificationElement = document.createElement('a');
     if (notification.type === 'COMMENT_FEEDBACK') {
-        notificationElement.href = `http://localhost:3333/sports-field-booking/sports-field/${notification.review.sportField.id}/reviews`;
+        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.review.sportsField.id}/reviews`;
     }
     if (notification.type === 'ORDER_STATUS_UPDATE') {
-        notificationElement.href = `http://localhost:3333/sports-field-booking/my-booking?bookingId=${notification.booking.id}`;
+        notificationElement.href = `${CLIENT_DOMAIN}/my-booking?bookingId=${notification.booking.id}`;
+    }
+    if (notification.type === 'PROMOTION') {
+        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.sportField.id}`;
     }
     else {
-        notificationElement.href = `http://localhost:3333/sports-field-booking/sports-field/${notification.review.sportField.id}/details`;
+        notificationElement.href = `${CLIENT_DOMAIN}/sports-field`;
     }
     notificationElement.className = `flex items-center p-2 hover:bg-gray-100 border-b border-gray-300 ${!notification.read ? 'bg-gray-200' : ''}`;
     const { iconUrl, iconAlt, message } = getNotificationDetails(notification);
@@ -151,7 +154,7 @@ function createNotificationElement(notification, token) {
 }
 
 async function markNotificationAsRead(notificationId, token) {
-    await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification/${notificationId}/read`, {
+    await fetch(`${SERVER_DOMAIN}/notification/${notificationId}/read`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -161,7 +164,7 @@ async function markNotificationAsRead(notificationId, token) {
 }
 
 async function markAllNotificationsAsRead(token) {
-    await fetch(`http://localhost:8888/sports-field-booking/api/v1/notification/read-all`, {
+    await fetch(`${SERVER_DOMAIN}/notification/read-all`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
