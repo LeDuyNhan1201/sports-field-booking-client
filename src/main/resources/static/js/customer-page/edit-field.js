@@ -13,8 +13,7 @@ let editField_category = editFieldContainer.querySelector("#new_field\\.category
 
 let currentEditSportsField = null;
 
-//xác định trạng thái có thay đổi images với availability không
-
+//xác định trạng thái có thay đổi availability không
 let changeAvailability = false;
 
 // thêm các thuộc tính trong category select
@@ -100,21 +99,6 @@ async function appendImagesEditField(images) {
                 appendSelectImage();
             }
         });
-    });
-}
-
-//load field availability
-
-async function appendFieldAvailabilityEditField(fieldAvailabilities) {
-    fieldAvailabilities.forEach((availability, index) => {
-        editAvailabilities.push({
-            index: index + 1,
-            openingTime: new Date(availability.startTime),
-            closingTime: new Date(availability.endTime),
-            price: availability.price,
-        });
-
-        appendAvailabilityElement(index + 1, availability.startTime, availability.endTime, availability.price);
     });
 }
 
@@ -231,10 +215,25 @@ function changeImageElement(element) {
     element.replaceWith(selectImageElement);
 }
 
+//load field availability
+async function appendFieldAvailabilityEditField(fieldAvailabilities) {
+    fieldAvailabilities.forEach((availability, index) => {
+        editAvailabilities.push({
+            index: index + 1,
+            openingTime: new Date(availability.startTime),
+            closingTime: new Date(availability.endTime),
+            price: availability.price,
+        });
+
+        appendAvailabilityElement(index, availability.startTime, availability.endTime, availability.price);
+    });
+}
+
 // xóa tất cả field availability
 editFieldContainer.querySelector("#new_field\\.button_remove_all_availabilities").addEventListener("click", () => {
     fieldAvailabilitiesElement.innerHTML = ``;
     editAvailabilities = [];
+    changeAvailability = true;
 });
 
 //action chọn availability
@@ -303,7 +302,7 @@ editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEv
             price: priceElementValue,
         });
 
-        appendAvailabilityElement(editAvailabilities.length, openingTime, closingTime, priceElementValue);
+        appendAvailabilityElement(editAvailabilities.length - 1, openingTime, closingTime, priceElementValue);
     }
 });
 
@@ -312,7 +311,7 @@ function appendAvailabilityElement(index, startTime, endTime, price) {
     let element = document.createElement("div");
     element.className = "flex justify-between text-center items-center pb-1 px-1";
     element.innerHTML = `
-        <span class="w-3">${index}</span>
+        <span class="w-3">${index + 1}</span>
         <span class="flex-1">${formatHour(startTime)}</span>
         <span class="flex-1">${formatHour(endTime)}</span>
         <span class="flex-1">${price}</span>
@@ -321,21 +320,20 @@ function appendAvailabilityElement(index, startTime, endTime, price) {
     fieldAvailabilitiesElement.appendChild(element);
 
     //hàm xóa 1 field availability
-    element.querySelector("i").addEventListener("click", () => {        
-        editAvailabilities = editAvailabilities.filter((item) => item.index !== index);        
+    element.querySelector("i").addEventListener("click", () => {
+        editAvailabilities = editAvailabilities.filter((item) => item.index !== index);
+        changeAvailability = true
 
         editAvailabilities = editAvailabilities.map((item, newIndex) => ({
-            index: newIndex + 1,
+            index: newIndex,
             openingTime: item.openingTime,
             closingTime: item.closingTime,
             price: item.price,
         }));
 
-        console.log(editAvailabilities);
-        
         fieldAvailabilitiesElement.innerHTML = "";
         editAvailabilities.forEach((availability, index) => {
-            appendAvailabilityElement(index + 1, availability.openingTime, availability.closingTime, availability.price);
+            appendAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
         });
     });
 }
@@ -385,13 +383,16 @@ editFieldContainer.querySelector("#new_field\\.create_field").addEventListener("
                         await uploadPicture(image, newSportsField.id);
                     }
                 });
-
-                // newAvailabilities.forEach((availability) => {
-                //     createFieldAvailability(availability, newSportsField.id);
-                // });
+                
+                if(changeAvailability){
+                    await deleteAllAvailabilities(newSportsField.id)
+                    editAvailabilities.forEach( async(availability) => {
+                        await createFieldAvailability(availability, newSportsField.id);
+                    });
+                }
 
                 alert("Create sports field successfully");
-                // document.location.reload(true);
+                document.location.reload(true);
             }
         } catch (error) {
             console.error("Error create sports field:", error);
@@ -475,5 +476,51 @@ async function uploadPicture(file, sportsFieldId) {
                 break;
             }
         }
+    }
+}
+
+//thêm field availability
+async function createFieldAvailability(availabilityValue, sportsFieldId) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/field-availability/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getAccessTokenFromCookie(),
+            },
+            body: JSON.stringify({
+                price: availabilityValue.price,
+                endTime: availabilityValue.closingTime,
+                startTime: availabilityValue.openingTime,
+                sportsFieldId: sportsFieldId,
+                isConfirmed: true,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Failed to create field availability:", response.status, errorText);
+        } else {
+        }
+    } catch (error) {
+        console.error("Error create field availability:", error);
+    }
+}
+
+// xóa tất cả availability
+
+async function deleteAllAvailabilities(sportFieldId, index) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/sports-field/delete-availabilities/${sportFieldId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getAccessTokenFromCookie(),
+            },
+        });
+
+        console.log(response);
+    } catch (error) {
+        console.error("Error deleting existing avatar:", error);
     }
 }
