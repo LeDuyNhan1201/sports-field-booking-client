@@ -3,6 +3,8 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
+let offset = 0;
+const limit = 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -11,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('No auth token found');
         }
 
-        const response = await fetch(`${SERVER_DOMAIN}/notification?offset=0&limit=3`, {
+        const response = await fetch(`${SERVER_DOMAIN}/notification?offset=${offset}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -59,7 +61,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Error fetching notifications:', error);
     }
-
 });
 
 let isViewAllOpen = false;
@@ -78,8 +79,6 @@ async function toggleViewAllNotifications(token, notificationContainer, viewAllL
 }
 
 async function displayAllNotifications(token, notificationContainer) {
-    let offset = 0;
-    const limit = 1000;
     let hasMore = true;
 
     notificationContainer.innerHTML = '';
@@ -107,9 +106,6 @@ async function displayAllNotifications(token, notificationContainer) {
         hasMore = allData.items.length === limit;
         offset += limit;
     }
-
-    // await markAllNotificationsAsRead(token);
-    // updateNotificationCount(0);
 }
 
 function createNotificationElement(notification, token) {
