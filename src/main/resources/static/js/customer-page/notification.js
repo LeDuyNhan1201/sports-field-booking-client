@@ -3,8 +3,8 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
-let offset = 0;
-const limit = 1000;
+let OFFSET = 0;
+const LIMIT = 1000;
 
 document.addEventListener('DOMContentLoaded', () => {
     const notificationIcon = document.getElementById('notification-icon');
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('No auth token found');
         }
 
-        const response = await fetch(`${SERVER_DOMAIN}/notification?offset=${offset}&limit=${limit}`, {
+        const response = await fetch(`${SERVER_DOMAIN}/notification?offset=${OFFSET}&limit=${LIMIT}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -109,7 +109,7 @@ async function displayAllNotifications(token, notificationContainer) {
     notificationContainer.innerHTML = '';
 
     while (hasMore) {
-        const allResponse = await fetch(`${SERVER_DOMAIN}/notification?offset=${offset}&limit=${limit}`, {
+        const allResponse = await fetch(`${SERVER_DOMAIN}/notification?offset=${OFFSET}&limit=${LIMIT}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -156,6 +156,7 @@ function createNotificationElement(notification, token) {
             <span>${message}</span>
             <span class="font-bold">${notification.id}</span>
         </div>
+        ${!notification.read ? '<div class="w-2 h-2 bg-green-500 rounded-full ml-2"></div>' : ''}
     `;
 
     notificationElement.addEventListener('click', async (event) => {
@@ -169,6 +170,7 @@ function createNotificationElement(notification, token) {
             notificationElement.classList.remove('bg-gray-200');
             notificationElement.classList.add('read');
 
+            // Redirect to the appropriate page after marking as read
             window.location.href = notificationElement.href;
         }
     });
