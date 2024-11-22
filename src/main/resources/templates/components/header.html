@@ -33,8 +33,9 @@
             <!--            <div id="current-user"></div>-->
             <ul class="flex space-x-4">
                 <!-- Notification -->
+                <!-- Notification -->
                 <li id="notification" class="relative group">
-                    <div class="relative flex items-center space-x-2 cursor-pointer">
+                    <div id="notification-icon" class="relative flex items-center space-x-2 cursor-pointer">
                         <!-- Bell icon -->
                         <svg height="30px" width="30px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"
@@ -72,8 +73,8 @@
                     </div>
 
                     <!-- Notification dropdown -->
-                    <div
-                        class="absolute right-0 w-96 bg-white text-black rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-10">
+                    <div id="notification-dropdown"
+                        class="absolute right-0 w-96 bg-white text-black rounded-lg shadow-lg opacity-0 invisible transition-opacity duration-300 z-10">
                         <div class="px-4 py-2 font-bold border-b border-gray-300">
                             <span th:text="#{homepage.notification.header}"></span>
                         </div>

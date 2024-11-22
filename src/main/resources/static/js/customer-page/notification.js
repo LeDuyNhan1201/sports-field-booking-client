@@ -6,6 +6,28 @@ function getCookie(name) {
 let offset = 0;
 const limit = 1000;
 
+document.addEventListener('DOMContentLoaded', () => {
+    const notificationIcon = document.getElementById('notification-icon');
+    const notificationDropdown = document.getElementById('notification-dropdown');
+
+    notificationIcon.addEventListener('click', (event) => {
+        event.stopPropagation();
+        notificationDropdown.classList.toggle('opacity-0');
+        notificationDropdown.classList.toggle('invisible');
+        notificationDropdown.classList.toggle('opacity-100');
+        notificationDropdown.classList.toggle('visible');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.classList.add('opacity-0');
+            notificationDropdown.classList.add('invisible');
+            notificationDropdown.classList.remove('opacity-100');
+            notificationDropdown.classList.remove('visible');
+        }
+    });
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const token = getCookie('accessToken');
@@ -54,7 +76,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             viewAllLink.id = 'view-all-notification';
             viewAllLink.className = 'text-center p-2 hover:bg-gray-100 text-sm';
             viewAllLink.textContent = 'View All Notifications';
-            viewAllLink.addEventListener('click', () => toggleViewAllNotifications(token, notificationContainer, viewAllLink));
+            viewAllLink.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleViewAllNotifications(token, notificationContainer, viewAllLink);
+            });
             notificationContainer.appendChild(viewAllLink);
         }
 
@@ -143,6 +168,8 @@ function createNotificationElement(notification, token) {
             updateNotificationCount(Math.max(0, currentUnreadCount - 1));
             notificationElement.classList.remove('bg-gray-200');
             notificationElement.classList.add('read');
+
+            window.location.href = notificationElement.href;
         }
     });
 
