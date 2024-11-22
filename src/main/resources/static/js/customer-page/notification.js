@@ -140,10 +140,8 @@ function createNotificationElement(notification, token) {
         notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.review.sportsField.id}/reviews`;
     } else if (notification.type === 'ORDER_STATUS_UPDATE') {
         notificationElement.href = `${CLIENT_DOMAIN}/my-booking?bookingId=${notification.booking.id}`;
-    } else if (notification.type === 'PROMOTION') {
-        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.sportField.id}/details`;
     } else {
-        notificationElement.href = `${CLIENT_DOMAIN}/sports-field`;
+        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.sportField.id}/details`;
     }
     notificationElement.className = `flex items-center p-2 hover:bg-gray-100 border-b border-gray-300 ${!notification.read ? 'bg-gray-200' : ''}`;
     const { iconUrl, iconAlt, message } = getNotificationDetails(notification);
