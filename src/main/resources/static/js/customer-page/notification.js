@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const data = await response.json();
+        console.log(data);
         const notificationContainer = document.querySelector('.flex.flex-col');
         notificationContainer.innerHTML = '';
 
@@ -137,14 +138,11 @@ function createNotificationElement(notification, token) {
     const notificationElement = document.createElement('a');
     if (notification.type === 'COMMENT_FEEDBACK') {
         notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.review.sportsField.id}/reviews`;
-    }
-    if (notification.type === 'ORDER_STATUS_UPDATE') {
+    } else if (notification.type === 'ORDER_STATUS_UPDATE') {
         notificationElement.href = `${CLIENT_DOMAIN}/my-booking?bookingId=${notification.booking.id}`;
-    }
-    if (notification.type === 'PROMOTION') {
-        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.sportField.id}`;
-    }
-    else {
+    } else if (notification.type === 'PROMOTION') {
+        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.sportField.id}/details`;
+    } else {
         notificationElement.href = `${CLIENT_DOMAIN}/sports-field`;
     }
     notificationElement.className = `flex items-center p-2 hover:bg-gray-100 border-b border-gray-300 ${!notification.read ? 'bg-gray-200' : ''}`;
