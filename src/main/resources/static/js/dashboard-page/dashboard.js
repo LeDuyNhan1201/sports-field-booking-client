@@ -5,6 +5,8 @@ let currentRevenueTotal = 0;
 let previousRevenueTotal = 0;
 document.getElementById('from-date').addEventListener('change', updateColumnChart);
 document.getElementById('to-date').addEventListener('change', updateColumnChart);
+document.getElementById('month-fromDate').addEventListener('change', updateGoalsChart);
+document.getElementById('month-toDate').addEventListener('change', updateGoalsChart);
 
 document.addEventListener('DOMContentLoaded', async function () {
     await updateRevenueChart();
@@ -68,12 +70,21 @@ async function fetchPreviousWeekData() {
 }
 
 async function fetchCurrentMonthData() {
-    const response = await fetch(`${SERVER_DOMAIN}/booking/current-month`);
+    let fromDate = document.getElementById('month-fromDate').value;
+
+    if (!fromDate) {
+        const today = new Date();
+        fromDate = today.toISOString().split('T')[0];
+    }
+
+    const response = await fetch(`${SERVER_DOMAIN}/booking/current-month?fromDate=${fromDate}`);
     const data = await response.json();
     let total = 0;
     for (let item of data) {
         if (item.bookingItems && item.bookingItems.length > 0) {
             for (let bookingItem of item.bookingItems) {
+                console.log(bookingItem.price);
+                
                 total += bookingItem.price;
             }
         }
@@ -82,7 +93,14 @@ async function fetchCurrentMonthData() {
 }
 
 async function fetchPreviousMonthData() {
-    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-month`);
+    let toDate = document.getElementById('month-toDate').value;
+
+    if (!toDate) {
+        const today = new Date();
+        toDate = today.toISOString().split('T')[0];
+    }
+
+    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-month?toDate=${toDate}`);
     const data = await response.json();
     let total = 0;
     for (let item of data) {
@@ -137,9 +155,7 @@ async function fetchToYearData() {
         if (item.bookingItems && item.bookingItems.length > 0) {
             for (let bookingItem of item.bookingItems) {
                 const date = new Date(bookingItem.createdAt);
-                const monthIndex = date.getMonth();
-                console.log(bookingItem.price);
-                
+                const monthIndex = date.getMonth();                
                 monthlyRevenue[monthIndex] += bookingItem.price; 
             }
         }
@@ -164,6 +180,8 @@ async function updateGoalsChart() {
     const currentMonthTotal = await fetchCurrentMonthData();
     const previousMonthTotal = await fetchPreviousMonthData();
 
+    console.log(currentMonthTotal, previousMonthTotal);
+    
     let percentageChange = 0;
     if (previousMonthTotal > 0) {
         percentageChange = ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100;
@@ -177,7 +195,8 @@ async function updateGoalsChart() {
     const normalizedPreviousMonth = (previousMonthTotal / total) * 100;
     const normalizedPercentageChange = normalizedCurrentMonth - normalizedPreviousMonth;
 
-    console.log([normalizedCurrentMonth, normalizedPreviousMonth, normalizedPercentageChange]);
+    console.log(normalizedCurrentMonth+" "+normalizedPreviousMonth);
+    
 
     goalsChart.data.datasets[0].data = [
         normalizedCurrentMonth,
