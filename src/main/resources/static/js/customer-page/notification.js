@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const data = await response.json();
-        console.log(data);
         const notificationContainer = document.querySelector('.flex.flex-col');
         notificationContainer.innerHTML = '';
 
@@ -71,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         let viewAllLink;
-        if (data.items.length > 2) {
+        if (data.items.length > 3) {
             viewAllLink = document.createElement('a');
             viewAllLink.href = '#';
             viewAllLink.id = 'view-all-notification';
@@ -129,8 +128,8 @@ async function displayAllNotifications(token, notificationContainer) {
             notificationContainer.appendChild(notificationElement);
         });
 
-        hasMore = allData.items.length === limit;
-        offset += limit;
+        hasMore = allData.items.length === LIMIT;
+        OFFSET += LIMIT;
     }
 }
 
