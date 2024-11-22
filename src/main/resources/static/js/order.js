@@ -87,6 +87,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const currentOrderElement = document.querySelector('.order-list').lastChild;
                 const scheduleList = currentOrderElement.querySelector('.schedule-list');
 
+                
+                // discount handle
+                const sportFieldResponse = await fetch(`${SERVER_DOMAIN}/sports-field/${lastSportFieldID}`);
+                if (!sportFieldResponse.ok) {
+                    throw new Error("Failed to fetch booking items");
+                }
+
+                const sportFieldData = await sportFieldResponse.json();
+
+                let discountedPrice = fieldAvailabilityData.price;
+                if (sportFieldData.promotion) {
+                    const discount = sportFieldData.promotion.discountPercentage;
+                    discountedPrice = fieldAvailabilityData.price - (discount / 100 * fieldAvailabilityData.price);
+                }
+
                 scheduleList.innerHTML += `
                     <div class="flex justify-between w-full field-availability-item" data-sports-field="${order.sportFieldID}">
                         <div class="flex w-full items-end">
@@ -101,15 +116,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 ${convertDateFormat(order.currentDate)}
                             </p>                        
                         </div>
-                        <p class="text-lg font-semibold text-right price">$${fieldAvailabilityData.price}</p>
+                        <div class="text-right">
+                            ${sportFieldData.promotion ? `
+                                <p class="text-gray-400 line-through">$${fieldAvailabilityData.price.toFixed(2)}</p>
+                                <p class="text-lg font-semibold text-green-500">$${discountedPrice.toFixed(2)}</p>
+                            ` : `
+                                <p class="text-lg font-semibold">$${fieldAvailabilityData.price.toFixed(2)}</p>
+                            `}
+                        </div>
                         <button class="delete-field-availability-btn text-red-500 ml-2 cursor-pointer" data-id="${fieldAvailabilityData.id}">
                             🗑️
                         </button>
                     </div>
                 `;
-                totalPrice += fieldAvailabilityData.price;
 
-                const price = parseFloat(fieldAvailabilityData.price);
+                totalPrice += discountedPrice;
+
+                const price = parseFloat(discountedPrice);
 
                 if (totalPriceMap[order.sportFieldID]) {
                     totalPriceMap[order.sportFieldID] += price;
@@ -220,6 +243,8 @@ document.getElementById('paymentButton').addEventListener('click', async functio
 
 async function createBooking() {
     for (const item of fieldAvailabilityIDs) {
+        console.log(item);
+        
         const { fieldAvailabilityID, sportFieldID } = item;
 
         if (!validSportField.includes(sportFieldID)) {
@@ -254,9 +279,27 @@ async function createBookingItems(bookingID) {
         const endTime = item.querySelector('.end-time').getAttribute('data-original');
 
         const availableDate = item.querySelector('.available-date').getAttribute('data-original');
-        const price = item.querySelector('.price').textContent.replace('$', '');
 
+        let priceElement = item.querySelector('.text-green-500');
+        let price;
+        if (priceElement) {
+            // has discount
+            price = priceElement.textContent.replace('$', '');
+        } else {
+            // don't have discount
+            priceElement = item.querySelector('.font-semibold:not(.text-green-500)');
+            price = priceElement.textContent.replace('$', '');
+        }
+        
         try {
+            alert(JSON.stringify({
+                orderId: bookingID,
+                sportFieldID: sportFieldID,
+                startTime: startTime,
+                endTime: endTime,
+                availableDate: convertDateFormat(availableDate),
+                price: parseFloat(price)
+            }))
             const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
                 method: 'POST',
                 headers: {

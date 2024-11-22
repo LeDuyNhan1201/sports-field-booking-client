@@ -58,8 +58,8 @@ if (prevDateButton && nextDateButton) {
         const now = new Date();
         currentDate.setDate(currentDate.getDate() - 1);
         displayDate(currentDate);
-        
-        if(currentDate < now) {
+
+        if (currentDate < now) {
             currentDate = now;
             displayDate(currentDate);
         }
@@ -225,7 +225,14 @@ async function appendBookingDetail(field) {
             throw new Error("Failed to fetch booking items");
         }
 
+        const sportFieldResponse = await fetch(`${SERVER_DOMAIN}/sports-field/${sportFieldID}`);
+        if (!sportFieldResponse.ok) {
+            throw new Error("Failed to fetch booking items");
+        }
+
         const bookingItems = await response.json();
+        const sportFieldData = await sportFieldResponse.json();
+
 
         field.fieldAvailabilities.forEach(async (fieldAvailability) => {
             const startTime = formatHour(fieldAvailability.startTime);
@@ -243,29 +250,46 @@ async function appendBookingDetail(field) {
                 });
 
                 const fieldResponse = await fetch(`${SERVER_DOMAIN}/field-availability/${fieldAvailability.id}`);
-
                 const result = await fieldResponse.json();
                 const isBooked = result.status === "BOOKED";
+
+                // Check promotion
+                let discountInfo = "";
+                let discountedPrice = fieldAvailability.price;
+
+                if (sportFieldData.promotion) {
+                    const discount = sportFieldData.promotion.discountPercentage;
+                    discountedPrice = fieldAvailability.price - (discount / 100 * fieldAvailability.price);
+                    discountInfo = `
+                            <span class="text-lg flex-1">${startTime}</span>
+                        <span class="text-lg flex-1 text-left">${endTime}</span>
+                            <span class="text-gray-400 line-through">${fieldAvailability.price.toFixed(2)}</span>
+                            <span class="text-green-500 font-semibold">${discountedPrice.toFixed(2)}</span>
+                    `;
+                } else {
+                    discountInfo = `
+                        <span class="text-lg flex-1">${startTime}</span>
+                        <span class="text-lg flex-1 text-center">${endTime}</span>
+                        <span class="text-lg flex-1 text-end">${fieldAvailability.price.toFixed(2)}</span>
+                    `;
+                }
 
                 if (isOrdered || isBooked) {
                     element.innerHTML = `
                         <div class="flex flex-1 justify-between">
-                            <span class="text-lg flex-1">${startTime}</span>
-                            <span class="text-lg flex-1 text-center">${endTime}</span>
-                            <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                            ${discountInfo}
                         </div>
                         <span class="flex w-1/2 justify-end text-lg font-semibold text-red-400">Ordered</span>
                     `;
                 } else {
                     element.innerHTML = `
                         <div class="flex flex-1 justify-between">
-                            <span class="text-lg flex-1">${startTime}</span>
-                            <span class="text-lg flex-1 text-center">${endTime}</span>
-                            <span class="text-lg flex-1 text-end">${fieldAvailability.price}</span>
+                            ${discountInfo}
                         </div>
                         <span class="flex w-1/2 justify-end text-lg font-semibold text-green-400">Available</span>
                     `;
                 }
+
                 element.addEventListener("click", () => {
                     if (isOrdered || isBooked) {
                         alert('This field availability is not available');
@@ -278,17 +302,26 @@ async function appendBookingDetail(field) {
                         element.style.borderLeft = "none";
                         selectedAvailabilities.splice(itemIndex, 1);
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
-                        selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) - fieldAvailability.price).toFixed(2);
+                    
+                        let newPrice = Number(selectPriceAvailabilities.innerText) - discountedPrice;
+                    
+                        selectPriceAvailabilities.innerText = Math.abs(newPrice) < 0.01 ? "0.00" : newPrice.toFixed(2);
                     } else {
                         element.style.borderLeft = "5px solid red";
                         selectedAvailabilities.push({ id: fieldAvailability.id, date: currentDate.toDateString() });
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
-                        selectPriceAvailabilities.innerText = (Number(selectPriceAvailabilities.innerText) + fieldAvailability.price).toFixed(2);
+                    
+                        let newPrice = Number(selectPriceAvailabilities.innerText) + discountedPrice;
+                    
+                        selectPriceAvailabilities.innerText = newPrice.toFixed(2);
                     }
+                    
                 });
+
                 fieldAvailabilitiesElement.appendChild(element);
             }
         });
+
     } catch (error) {
         console.error("Error fetching booking items:", error);
     }
