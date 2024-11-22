@@ -63,6 +63,8 @@ async function appendEditValue(field) {
     editField_location.placeholder = field.location;
     editField_opacity.placeholder = field.opacity;
 
+    editFieldContainer.querySelector('#new_field\\.button_remove_all_availabilities').classList.add('hidden')
+
     loadCategory(field.category);
     appendImagesEditField(field.images);
     appendFieldAvailabilityEditField(field.fieldAvailabilities);
@@ -229,15 +231,8 @@ async function appendFieldAvailabilityEditField(fieldAvailabilities) {
     });
 }
 
-// xóa tất cả field availability
-editFieldContainer.querySelector("#new_field\\.button_remove_all_availabilities").addEventListener("click", () => {
-    fieldAvailabilitiesElement.innerHTML = ``;
-    editAvailabilities = [];
-    changeAvailability = true;
-});
-
-//action chọn availability
-editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEventListener("click", () => {
+//action thêm availability
+editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEventListener("click", async () => {
     let openingTimeElementValue = editFieldContainer.querySelector("#new_field\\.availability\\.openingTime").value;
     let closingTimeElementValue = editFieldContainer.querySelector("#new_field\\.availability\\.closingTime").value;
     let priceElementValue = editFieldContainer.querySelector("#new_field\\.availability\\.price").value;
@@ -295,19 +290,28 @@ editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEv
     }
 
     if (duplicate) {
-        editAvailabilities.push({
+        let newAvailability = {
             index: editAvailabilities.length,
             openingTime: openingTime,
             closingTime: closingTime,
             price: priceElementValue,
-        });
+        };
+        if (confirm("Bạn có chắc chắn tạo giờ này khong")) {
+            editAvailabilities.push(newAvailability);
 
-        appendAvailabilityElement(editAvailabilities.length - 1, openingTime, closingTime, priceElementValue);
+            await createFieldAvailability(newAvailability, currentEditSportsField.id);
+
+            //load lại element
+            fieldAvailabilitiesElement.innerHTML =""
+            editAvailabilities.forEach((availability, index) => {
+                appendAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
+            });
+        }
     }
 });
 
 // inner availability time vào  fieldAvailabilitiesElement
-function appendAvailabilityElement(index, startTime, endTime, price) {
+async function appendAvailabilityElement(index, startTime, endTime, price) {
     let element = document.createElement("div");
     element.className = "flex justify-between text-center items-center pb-1 px-1";
     element.innerHTML = `
@@ -320,9 +324,9 @@ function appendAvailabilityElement(index, startTime, endTime, price) {
     fieldAvailabilitiesElement.appendChild(element);
 
     //hàm xóa 1 field availability
-    element.querySelector("i").addEventListener("click", () => {
+    element.querySelector("i").addEventListener("click", async () => {
         editAvailabilities = editAvailabilities.filter((item) => item.index !== index);
-        changeAvailability = true
+        changeAvailability = true;
 
         editAvailabilities = editAvailabilities.map((item, newIndex) => ({
             index: newIndex,
@@ -331,10 +335,24 @@ function appendAvailabilityElement(index, startTime, endTime, price) {
             price: item.price,
         }));
 
-        fieldAvailabilitiesElement.innerHTML = "";
-        editAvailabilities.forEach((availability, index) => {
-            appendAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
-        });
+        if (confirm("Bạn có chắc chắn muốn xóa mục này?")) {
+            console.log(editAvailabilities.length);
+
+            if (editAvailabilities.length < 2) {
+                alert("Thông tin booking không thể rỗng");
+            } else {
+                await deleteAvailability(currentEditSportsField.id, index);
+
+                alert("Create sports field successfully");
+                document.location.reload(true);
+                // fieldAvailabilitiesElement.innerHTML =""
+                // editAvailabilities.forEach((availability, index) => {
+                //     appendAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
+                // });
+            }
+        } else {
+            console.log("Hủy");
+        }
     });
 }
 
@@ -344,10 +362,6 @@ editFieldContainer.querySelector("#new_field\\.create_field").addEventListener("
     let location = editFieldContainer.querySelector("#new_field\\.location").value == "" ? currentEditSportsField.location : editFieldContainer.querySelector("#new_field\\.location").value;
     let opacity = editFieldContainer.querySelector("#new_field\\.opacity").value == "" ? currentEditSportsField.opacity : editFieldContainer.querySelector("#new_field\\.opacity").value;
     let category = editFieldContainer.querySelector("#new_field\\.category").value;
-
-    const minOpeningTime = Math.min(...editAvailabilities.map((a) => a.openingTime));
-
-    const maxClosingTime = Math.max(...editAvailabilities.map((a) => a.closingTime));
 
     let newSportsField = null;
 
@@ -364,8 +378,6 @@ editFieldContainer.querySelector("#new_field\\.create_field").addEventListener("
                     name: name,
                     location: location,
                     opacity: opacity,
-                    closingTime: maxClosingTime,
-                    openingTime: minOpeningTime,
                     categoryId: category,
                     isConfirmed: true,
                 }),
@@ -383,13 +395,13 @@ editFieldContainer.querySelector("#new_field\\.create_field").addEventListener("
                         await uploadPicture(image, newSportsField.id);
                     }
                 });
-                
-                if(changeAvailability){
-                    await deleteAllAvailabilities(newSportsField.id)
-                    editAvailabilities.forEach( async(availability) => {
-                        await createFieldAvailability(availability, newSportsField.id);
-                    });
-                }
+
+                // if(changeAvailability){
+                //
+                //     editAvailabilities.forEach( async(availability) => {
+                //         await createFieldAvailability(availability, newSportsField.id);
+                //     });
+                // }
 
                 alert("Create sports field successfully");
                 document.location.reload(true);
@@ -507,11 +519,11 @@ async function createFieldAvailability(availabilityValue, sportsFieldId) {
     }
 }
 
-// xóa tất cả availability
+// xóa availability
 
-async function deleteAllAvailabilities(sportFieldId, index) {
+async function deleteAvailability(sportFieldId, index) {
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/sports-field/delete-availabilities/${sportFieldId}`, {
+        const response = await fetch(`${SERVER_DOMAIN}/sports-field/delete-availabilities/${index}/${sportFieldId}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
