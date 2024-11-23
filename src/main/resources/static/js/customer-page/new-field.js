@@ -7,7 +7,9 @@ let newAvailabilitiesElement = newFieldContainer.querySelector("#new_field\\.ava
 function appendSelectImage() {
     let button_select_image = document.getElementsByClassName("new_field.select_image");
 
-    Array.from(button_select_image).forEach((element, index) => {
+    Array.from(button_select_image).forEach((element) => {
+        let parentDiv = element.parentElement.parentElement.parentElement;
+        let index = parentDiv.id[parentDiv.id.length - 1];
         // Xử lý sự kiện chọn file qua input
         element.addEventListener("change", (e) => {
             const file = e.target.files[0];
@@ -40,6 +42,7 @@ function appendSelectImage() {
 document.addEventListener("DOMContentLoaded", function () {
     appendSelectImage();
     loadCategory();
+    loadNewFieldAvailability();
 });
 
 // Hàm xử lý tải lên file
@@ -49,14 +52,37 @@ function handleFileUpload(file, element, index) {
         if (allowedTypes.includes(file.type)) {
             const reader = new FileReader();
             reader.onload = function (e) {
-                const img = document.createElement("img");
-                img.classList = "new_field.image w-48";
-                img.src = e.target.result;
-
                 newImages[index] = file;
+                const newElement = document.createElement("div");
+                newElement.className = "new_field.image";
+                newElement.innerHTML = `
+                    <img 
+                        src="${e.target.result}" 
+                        alt="Hover Image" 
+                        class="w-48"
+                    />
+                    <div 
+                        id="tooltip" 
+                        class="absolute hidden bg-black text-white text-sm px-2 py-1 rounded shadow-lg pointer-events-none"
+                    ></div>
+                `;
+
+                addTooltip(newElement.querySelector("img"), "Nhấn phải chuột để xóa ảnh");
 
                 let form = element.parentElement.parentElement;
-                form.replaceWith(img); // Thay thế form bằng ảnh
+                form.replaceWith(newElement); // Thay thế form bằng ảnh
+
+                //xóa 1 ảnh
+                newElement.addEventListener("mousedown", function (event) {
+                    if (event.button === 2) {
+                        event.preventDefault();
+
+                        newImages[index] = null;
+
+                        changeImageElement(newElement);
+                        appendSelectImage();
+                    }
+                });
             };
             reader.readAsDataURL(file);
         } else {
@@ -64,14 +90,23 @@ function handleFileUpload(file, element, index) {
         }
     }
 }
-// Xử lý khi nhấn nút "Xóa ảnh"
-document.getElementById("new_field.clear_image").addEventListener("click", () => {
-    let imageElements = Array.from(document.getElementsByClassName("new_field.image"));
+// Xử lý khi xóa tất cả ảnh
+newFieldContainer.querySelector("#new_field\\.clear_image").addEventListener("click", () => {
+    let imageElements = Array.from(newFieldContainer.querySelectorAll(".new_field\\.image"));
 
     imageElements.forEach((element) => {
-        let selectImageElement = document.createElement("div");
-        selectImageElement.className = "flex items-center justify-center w-full";
-        selectImageElement.innerHTML = `
+        changeImageElement(element);
+    });
+
+    newImages = [];
+    appendSelectImage();
+});
+
+// thay thế image bằng element cũ
+function changeImageElement(element) {
+    let selectImageElement = document.createElement("div");
+    selectImageElement.className = "flex items-center justify-center w-full";
+    selectImageElement.innerHTML = `
             <label class="flex flex-col rounded-lg border-2 border-dashed w-full h-60 p-5 group text-center">
                 <div class="h-full w-full text-center flex flex-col items-center justify-center items-center">
                     <i class="fa-solid fa-upload text-3xl text-gray-400"></i>
@@ -83,12 +118,8 @@ document.getElementById("new_field.clear_image").addEventListener("click", () =>
                 <input type="file" class="new_field.select_image hidden" />
             </label>
         `;
-        element.replaceWith(selectImageElement);
-    });
-
-    appendSelectImage();
-    newImages = [];
-});
+    element.replaceWith(selectImageElement);
+}
 
 // thêm các thuộc tính trong category select
 
@@ -110,6 +141,14 @@ async function appendCategory(data) {
         option.value = category.id;
         option.text = category.name.charAt(0).toUpperCase() + category.name.slice(1).toLowerCase();
         selectContainer.appendChild(option);
+    });
+}
+
+//load field availability
+function loadNewFieldAvailability() {
+    newAvailabilitiesElement.innerHTML = "";
+    newAvailabilities.forEach((availability, index) => {
+        appendNewAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
     });
 }
 
@@ -176,21 +215,39 @@ newFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEve
             index: newAvailabilities.length,
             openingTime: openingTime,
             closingTime: closingTime,
-            price: priceElementValue
+            price: priceElementValue,
         });
-
-        let element = document.createElement("div");
-        element.className = "flex justify-between text-center items-center pb-1 px-1";
-        element.innerHTML = `
-            <span class="w-3">${newAvailabilities.length}</span>
-            <span class="flex-1">${openingTimeElementValue}</span>
-            <span class="flex-1">${closingTimeElementValue}</span>
-            <span class="flex-1">${priceElementValue}</span>
-            <i class="fa-solid fa-xmark w-3"></i>
-        `;
-        newAvailabilitiesElement.appendChild(element);
+        loadNewFieldAvailability();
     }
 });
+
+// thêm elementt
+function appendNewAvailabilityElement(index, startTime, endTime, price) {
+    let element = document.createElement("div");
+    element.className = "flex justify-between text-center items-center pb-1 px-1";
+    element.innerHTML = `
+        <span class="w-3">${index + 1}</span>
+        <span class="flex-1">${formatHour(startTime)}</span>
+        <span class="flex-1">${formatHour(endTime)}</span>
+        <span class="flex-1">${price}</span>
+        <i class="fa-solid fa-xmark w-3 cursor-pointer"></i>
+    `;
+    newAvailabilitiesElement.appendChild(element);
+
+    //hàm xóa 1 field availability
+    element.querySelector("i").addEventListener("click", async () => {
+        newAvailabilities = newAvailabilities.filter((item) => item.index !== index);
+
+        newAvailabilities = newAvailabilities.map((item, newIndex) => ({
+            index: newIndex,
+            openingTime: item.openingTime,
+            closingTime: item.closingTime,
+            price: item.price,
+        }));
+
+        loadNewFieldAvailability();
+    });
+}
 
 //xóa tất cả field availabilities
 
@@ -221,46 +278,44 @@ document.getElementById("new_field.create_field").addEventListener("click", asyn
 
     let newSportsField = null;
 
-    if (newImages.length == 3) {
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + getAccessTokenFromCookie(),
-                },
-                body: JSON.stringify({
-                    name: name,
-                    location: location,
-                    opacity: opacity,
-                    closingTime: maxClosingTime,
-                    openingTime: minOpeningTime,
-                    categoryId: category,
-                    rating: 0,
-                    userId: user.id,
-                    isConfirmed: true,
-                }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Failed to create sports field:", response.status, errorText);
-            } else {
-                newSportsField = await response.json();
-
-                newImages.forEach(async (image) => {
-                    await uploadPicture(image, newSportsField.id);
+    if (checkImages(newImages)) {
+        if (confirm("Bạn có chắc chắn tạo sân này không")) {
+            try {
+                const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + getAccessTokenFromCookie(),
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        location: location,
+                        opacity: opacity,
+                        closingTime: maxClosingTime,
+                        openingTime: minOpeningTime,
+                        categoryId: category,
+                        rating: 0,
+                        userId: user.id,
+                        isConfirmed: true,
+                    }),
                 });
-
-                newAvailabilities.forEach((availability) => {
-                    createFieldAvailability(availability, newSportsField.id)
-                });
-
-                alert("Create sports field successfully");
-                document.location.reload(true)
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Failed to create sports field:", response.status, errorText);
+                } else {
+                    newSportsField = await response.json();
+                    newImages.forEach(async (image) => {
+                        await uploadPicture(image, newSportsField.id);
+                    });
+                    newAvailabilities.forEach((availability) => {
+                        createFieldAvailability(availability, newSportsField.id);
+                    });
+                    alert("Create sports field successfully");
+                    document.location.reload(true);
+                }
+            } catch (error) {
+                console.error("Error create sports field:", error);
             }
-        } catch (error) {
-            console.error("Error create sports field:", error);
         }
     } else {
         alert("Vui lòng chọn đủ 3 ảnh");
@@ -338,4 +393,18 @@ async function createFieldAvailability(availabilityValue, sportsFieldId) {
     } catch (error) {
         console.error("Error create field availability:", error);
     }
+}
+
+function checkImages(images) {
+    console.log(images.length);
+
+    if (images.length < 3) return false;
+
+    for (const image of images) {
+        if (image === null) {
+            console.log("Có hình ảnh null");
+            return false;
+        }
+    }
+    return true;
 }

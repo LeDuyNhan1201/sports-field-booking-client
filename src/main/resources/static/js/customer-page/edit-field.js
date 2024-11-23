@@ -63,7 +63,7 @@ async function appendEditValue(field) {
     editField_location.placeholder = field.location;
     editField_opacity.placeholder = field.opacity;
 
-    editFieldContainer.querySelector('#new_field\\.button_remove_all_availabilities').classList.add('hidden')
+    editFieldContainer.querySelector("#new_field\\.button_remove_all_availabilities").classList.add("hidden");
 
     loadCategory(field.category);
     appendImagesEditField(field.images);
@@ -187,17 +187,6 @@ function appendSelectImage() {
     });
 }
 
-// Xử lý khi xóa tất cả ảnh
-editFieldContainer.querySelector("#new_field\\.clear_image").addEventListener("click", () => {
-    let imageElements = Array.from(editFieldContainer.querySelectorAll(".new_field\\.image"));
-
-    imageElements.forEach((element) => {
-        changeImageElement(element);
-    });
-
-    appendSelectImage();
-});
-
 // thay thế image bằng element cũ
 function changeImageElement(element) {
     let selectImageElement = document.createElement("div");
@@ -302,7 +291,7 @@ editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEv
             await createFieldAvailability(newAvailability, currentEditSportsField.id);
 
             //load lại element
-            fieldAvailabilitiesElement.innerHTML =""
+            fieldAvailabilitiesElement.innerHTML = "";
             editAvailabilities.forEach((availability, index) => {
                 appendAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
             });
@@ -345,10 +334,6 @@ async function appendAvailabilityElement(index, startTime, endTime, price) {
 
                 alert("Create sports field successfully");
                 document.location.reload(true);
-                // fieldAvailabilitiesElement.innerHTML =""
-                // editAvailabilities.forEach((availability, index) => {
-                //     appendAvailabilityElement(index, availability.openingTime, availability.closingTime, availability.price);
-                // });
             }
         } else {
             console.log("Hủy");
@@ -365,52 +350,41 @@ editFieldContainer.querySelector("#new_field\\.create_field").addEventListener("
 
     let newSportsField = null;
 
-    if (newImages) {
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + getAccessTokenFromCookie(),
-                },
-                body: JSON.stringify({
-                    id: currentEditSportsField.id,
-                    name: name,
-                    location: location,
-                    opacity: opacity,
-                    categoryId: category,
-                    isConfirmed: true,
-                }),
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getAccessTokenFromCookie(),
+            },
+            body: JSON.stringify({
+                id: currentEditSportsField.id,
+                name: name,
+                location: location,
+                opacity: opacity,
+                categoryId: category,
+                isConfirmed: true,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Failed to create sports field:", response.status, errorText);
+        } else {
+            newSportsField = await response.json();
+
+            newImages.forEach(async (image, index) => {
+                if (image != null) {
+                    await deleteImages(newSportsField.id, index);
+                    await uploadPicture(image, newSportsField.id);
+                }
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error("Failed to create sports field:", response.status, errorText);
-            } else {
-                newSportsField = await response.json();
-
-                newImages.forEach(async (image, index) => {
-                    if (image != null) {
-                        await deleteImages(newSportsField.id, index);
-                        await uploadPicture(image, newSportsField.id);
-                    }
-                });
-
-                // if(changeAvailability){
-                //
-                //     editAvailabilities.forEach( async(availability) => {
-                //         await createFieldAvailability(availability, newSportsField.id);
-                //     });
-                // }
-
-                alert("Create sports field successfully");
-                document.location.reload(true);
-            }
-        } catch (error) {
-            console.error("Error create sports field:", error);
+            alert("Create sports field successfully");
+            document.location.reload(true);
         }
-    } else {
-        alert("Vui lòng chọn đủ 3 ảnh");
+    } catch (error) {
+        console.error("Error create sports field:", error);
     }
 });
 
