@@ -36,8 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const response = await fetch(`${SERVER_DOMAIN}/sports-field/${order.sportFieldID}`);
                         sportFieldData = await response.json();
 
-                        console.log(sportFieldData);
-
                     } catch (error) {
                         console.error("Error fetching sports field data:", error);
                         continue;
@@ -175,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         orderDeleteButton.addEventListener('click', () => {
             const sportFieldID = orderDeleteButton.getAttribute('data-sport-field-id');
             removeDataFromLocalStorage(sportFieldID, 'sportFieldID');
-            alert('Xóa thành công');
+            alert('Delete successfully');
             location.reload();
         });
     });
@@ -184,7 +182,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         fieldDeleteButton.addEventListener('click', () => {
             const fieldAvailabilityID = fieldDeleteButton.getAttribute('data-id');
             removeDataFromLocalStorage(fieldAvailabilityID, 'fieldAvailabilityID');
-            alert('Xóa thành công');
+            alert('Delete successfully');
             location.reload();
         });
     });
@@ -263,7 +261,7 @@ async function createBooking() {
             if (data && data.id) {
                 return data.id;
             } else {
-                alert(`Không thể tạo đơn đặt chỗ cho sân với ID ${fieldAvailabilityID}. Vui lòng thử lại.`);
+                alert(`Can't create booking`);
             }
         }
     }
@@ -292,14 +290,6 @@ async function createBookingItems(bookingID) {
         }
         
         try {
-            alert(JSON.stringify({
-                orderId: bookingID,
-                sportFieldID: sportFieldID,
-                startTime: startTime,
-                endTime: endTime,
-                availableDate: convertDateFormat(availableDate),
-                price: parseFloat(price)
-            }))
             const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
                 method: 'POST',
                 headers: {
@@ -316,7 +306,7 @@ async function createBookingItems(bookingID) {
                 })
             });
         } catch (error) {
-            alert("Có lỗi xảy ra khi tạo đơn đặt chỗ. Vui lòng thử lại.");
+            alert("Error happens. Please try again");
             break;
         }
     }
@@ -342,14 +332,14 @@ async function processPayment(bookingID, paymentMethod) {
         if (paymentData.code === 'ok' && paymentData.paymentUrl) {
             window.location.href = paymentData.paymentUrl;
         } else {
-            alert("Không tìm thấy URL thanh toán. Vui lòng thử lại.");
+            alert("URL payment does not exist");
         }
     } else if (paymentData) {
-        alert("Thanh toán tiền mặt thành công!");
+        alert("Cash payment successfully");
         localStorage.removeItem("data");
         window.location.reload();
     } else {
-        alert("Có lỗi xảy ra trong quá trình thanh toán tiền mặt. Vui lòng thử lại.");
+        alert("Payment error happens. Please try again");
     }
 }
 

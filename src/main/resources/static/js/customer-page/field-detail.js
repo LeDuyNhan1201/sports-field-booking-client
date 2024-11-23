@@ -107,7 +107,24 @@ async function appendDetail(field) {
     document.getElementById("field_detail.category").textContent = field.category;
     document.getElementById("field_detail.ownerName").textContent = field.owner.firstName + " " + field.owner.lastName;
     document.getElementById("field_detail.ownerImage").src = field.owner.avatar;
-    document.getElementById("field_detail.rating").textContent = field.rating;
+
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/rating/average/${getSportFieldIdFromPath()}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const averageRating = await response.json();
+        document.getElementById("field_detail.rating").textContent = averageRating.toFixed(2);
+    } catch (error) {
+        console.error('Error fetching rating:', error);
+        document.getElementById("field_detail.rating").textContent = 0;
+    }
     if (document.getElementById("field_detail.openingTime") && document.getElementById("field_detail.closingTime")) {
         document.getElementById("field_detail.openingTime").textContent = formatHour(field.openingTime);
         document.getElementById("field_detail.closingTime").textContent = formatHour(field.closingTime);
@@ -282,8 +299,8 @@ async function appendBookingDetail(field) {
                     const isTimeMatching =
                         formatHour(item.startDate) === formatHour(fieldAvailability.startTime) &&
                         formatHour(item.endDate) === formatHour(fieldAvailability.endTime);
-                    
-                    if (isDateInRange && isTimeMatching) {                        
+
+                    if (isDateInRange && isTimeMatching) {
                         isLocked = true;
                     }
                 })

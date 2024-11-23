@@ -131,7 +131,7 @@ async function cancelBooking(bookingId) {
     }
 }
 
-function viewBookingDetails(bookingId) {
+async function viewBookingDetails(bookingId) {
     const booking = bookings.find(b => b.id === bookingId);
     if (!booking) {
         console.error('Booking not found:', bookingId);
@@ -156,7 +156,7 @@ function viewBookingDetails(bookingId) {
 
     let totalPrice = 0;
 
-    booking.bookingItems.forEach((item, index) => {
+    booking.bookingItems.forEach(async (item, index) => {
         const startTime = new Date(item.startTime);
         const endTime = new Date(item.endTime);
         const date = startTime.toLocaleDateString('en-US');
@@ -170,11 +170,13 @@ function viewBookingDetails(bookingId) {
             minute: '2-digit',
             hour12: false
         });
-
+    
         const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
         const itemTotalPrice = durationInHours * item.price;
         totalPrice += itemTotalPrice;
-
+    
+        const ratingValue = await loadRating(item.id);
+    
         const itemElement = document.createElement('div');
         itemElement.classList.add('border', 'p-4', 'rounded', 'bg-gray-100', 'mb-2');
         itemElement.innerHTML = `
@@ -200,6 +202,17 @@ function viewBookingDetails(bookingId) {
             <div class="flex justify-between">
                 <span class="font-semibold">Total Price:</span>
                 <span class="text-gray-700">${itemTotalPrice.toFixed(2)} đ</span>
+            </div>
+            <div class="booking-item flex justify-between" booking-item-id=${item.id} sports-field-id=${item.sportField.id}>
+                <span class="font-semibold mt-2">Star rating:</span>
+                <fieldset class="rating">
+                    ${[5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5].map(rating => `
+                        <input type="radio" id="star${rating}-${item.id}" name="rating-${item.id}" value="${rating}" ${
+                            rating === ratingValue ? "checked" : ""} 
+                            ${ratingValue !== null ? "disabled" : ""} />
+                        <label for="star${rating}-${item.id}" class="${rating % 1 === 0.5 ? 'half' : 'full'}" title="${rating}"></label>
+                    `).join('')}
+                </fieldset>
             </div>
         `;
         bookingItemsContainer.appendChild(itemElement);
@@ -282,3 +295,87 @@ function setupBookingTypeSelector() {
 }
 
 setupBookingTypeSelector();
+
+async function createRating(ratingPoint, userId, sportsFieldId, bookingItemId) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/rating/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + getAccessTokenFromCookie()
+            },
+            body: JSON.stringify({
+                rating_point: ratingPoint,
+                userId: userId,
+                sportsFieldId: sportsFieldId,
+                bookingItemId: bookingItemId
+            })
+        });
+
+        console.log(response);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to create rating: ${response.statusText}`);
+        }
+
+        console.log({
+            rating_point: ratingPoint,
+            userId: userId,
+            sportsFieldId: sportsFieldId,
+            bookingItemId: bookingItemId
+        });
+        
+
+        alert('Your rating has been submitted!');
+        window.location.reload();
+    } catch (error) {
+        alert('Failed to submit rating. Please try again.');
+        window.location.reload();
+    }
+}
+
+async function loadRating(itemId) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/rating/booking-item/${itemId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                "Authorization": "Bearer " + getAccessTokenFromCookie()
+            }
+        });
+
+        const rating = await response.json();
+        console.log("Rating loaded:", rating);
+
+        if (rating && rating.rating_point) {
+            return rating.rating_point;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("Error loading rating:", error);
+        return null;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', async function (event) {
+        if (event.target.matches('input[type="radio"]')) {
+            console.log("Star clicked:", event.target.value);
+
+            const ratingPoint = event.target.value;
+            const userId = JSON.parse(currentUser).id;
+
+            const bookingItem = event.target.closest('.booking-item');
+            if (bookingItem) {
+                const bookingItemId = bookingItem.getAttribute('booking-item-id');
+                const sportsFieldId = bookingItem.getAttribute('sports-field-id');
+
+                console.log({ ratingPoint, userId, sportsFieldId, bookingItemId });
+
+                await createRating(ratingPoint, userId, sportsFieldId, bookingItemId);
+            }
+        }
+    });
+});
+

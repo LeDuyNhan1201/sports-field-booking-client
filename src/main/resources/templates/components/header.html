@@ -10,11 +10,12 @@
 
         <ul class="flex space-x-4">
             <li class="relative group flex items-center">
-                <select id="languageSelect" class="bg-transparent border-none text-white p-0 appearance-none"
-                    onchange="switchLanguage(this.value)">
-                    <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
-                    <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
-                </select>
+                <select id="languageSelect" class="bg-transparent border-none text-black p-0 appearance-none"
+                onchange="switchLanguage(this.value)">
+                <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}"></option>
+                <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
+                <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
+            </select>
             </li>
 
             <li class="relative group flex items-center">
