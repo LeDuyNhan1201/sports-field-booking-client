@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadPromotions();
+    let currentPage = 1;
+    const itemsPerPage = 4;
+    let totalItems = 0;
+
+    loadPromotions(currentPage - 1, itemsPerPage);
 
     const promotionModal = document.getElementById('promotionModal');
     const promotionOverlay = document.getElementById('promotionOverlay');
@@ -45,11 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         promotionModal.classList.add('hidden');
-        loadPromotions();
+        loadPromotions(currentPage - 1, itemsPerPage);
     });
 
-    async function loadPromotions() {
-        const promotions = await fetchData('promotions', 'GET', null, null, 0, 5);
+    async function loadPromotions(OFFSET = 0, LIMIT = 10000) {
+        const promotions = await fetchData('promotions', 'GET', null, null, OFFSET, LIMIT);
         const allPromotions = await fetchData('promotions');
 
         if (!Array.isArray(promotions)) {
@@ -57,9 +61,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        totalItems = allPromotions.length;
+        updatePagination();
+
         const promotionsTableBody = document.querySelector('tbody');
         const promotionQuantity = document.getElementById('promotion-quantity');
-        promotionQuantity.textContent = allPromotions.length;
+        promotionQuantity.textContent = totalItems;
         promotionsTableBody.innerHTML = '';
         promotions.forEach(promotion => {
             const row = document.createElement('tr');
@@ -104,8 +111,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
             row.querySelector('.text-red-500').addEventListener('click', async () => {
                 await fetchData('promotions', 'DELETE', promotion.id);
-                loadPromotions();
+                loadPromotions(currentPage - 1, itemsPerPage);
             });
         });
+    }
+
+    function updatePagination() {
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+        document.getElementById('show-item-of-page-promotion').textContent = `Showing ${startItem} to ${endItem} of ${totalItems}`;
+
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationContainer = document.querySelector('.inline-flex');
+        paginationContainer.innerHTML = '';
+
+        if (currentPage > 1) {
+            const prevButton = document.createElement('button');
+            prevButton.id = 'previous-page-button-promotion';
+            prevButton.className = 'px-3 py-2 mr-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50';
+            prevButton.textContent = 'Previous';
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadPromotions(currentPage - 1, itemsPerPage);
+                }
+            });
+            paginationContainer.appendChild(prevButton);
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.className = 'px-3 py-2 mr-1 text-gray-700 bg-white border-t border-b border-gray-300 hover:bg-gray-50';
+            pageButton.textContent = i;
+            if (i === currentPage) {
+                // background color is blue
+                pageButton.className += ' bg-blue-600';
+                // text color is white
+                pageButton.classList.add('text-white');
+            }
+            pageButton.addEventListener('click', () => {
+                currentPage = i;
+                loadPromotions(currentPage - 1, itemsPerPage);
+            });
+            paginationContainer.appendChild(pageButton);
+        }
+
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement('button');
+            nextButton.id = 'next-page-button-promotion';
+            nextButton.className = 'px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50';
+            nextButton.textContent = 'Next';
+            nextButton.addEventListener('click', () => {
+                if (currentPage * itemsPerPage < totalItems) {
+                    currentPage++;
+                    loadPromotions(currentPage - 1, itemsPerPage);
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+        }
     }
 });
