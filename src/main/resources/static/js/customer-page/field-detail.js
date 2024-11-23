@@ -22,11 +22,6 @@ function displayDate(date) {
     }
 }
 
-function formatTime(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
 function convertDateFormat(isoString) {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -232,8 +227,6 @@ async function appendBookingDetail(field) {
 
         const bookingItems = await response.json();
         const sportFieldData = await sportFieldResponse.json();
-        console.log(sportFieldData);
-        
 
         field.fieldAvailabilities.forEach(async (fieldAvailability) => {
             const startTime = formatHour(fieldAvailability.startTime);
@@ -258,8 +251,8 @@ async function appendBookingDetail(field) {
                 let discountInfo = "";
                 let discountedPrice = fieldAvailability.price;
 
-                if (sportFieldData.promotion && (convertDateFormat(currentDate) >= convertDateFormat(sportFieldData.promotion.startDate) && 
-                                                convertDateFormat(currentDate) <= convertDateFormat(sportFieldData.promotion.endDate))) {
+                if (sportFieldData.promotion && (convertDateFormat(currentDate) >= convertDateFormat(sportFieldData.promotion.startDate) &&
+                    convertDateFormat(currentDate) <= convertDateFormat(sportFieldData.promotion.endDate))) {
                     const discount = sportFieldData.promotion.discountPercentage;
                     discountedPrice = fieldAvailability.price - (discount / 100 * fieldAvailability.price);
                     discountInfo = `
@@ -276,7 +269,28 @@ async function appendBookingDetail(field) {
                     `;
                 }
 
-                if (isOrdered || isBooked) {
+                // check locked field availability 
+                const fieldAvailabilityResponse = await fetch(`${SERVER_DOMAIN}/field-availability-access/sports-field?sportsFieldID=${sportFieldID}`)
+                const fieldAvailabilityData = await fieldAvailabilityResponse.json();
+
+                console.log(fieldAvailabilityData);
+
+                let isLocked = false;
+
+                fieldAvailabilityData.forEach((item) => {
+                    const isDateInRange =
+                        convertDateFormat(currentDate) >= convertDateFormat(item.startDate) &&
+                        convertDateFormat(currentDate) <= convertDateFormat(item.endDate);
+                    const isTimeMatching =
+                        formatHour(item.startDate) === formatHour(fieldAvailability.startTime) &&
+                        formatHour(item.endDate) === formatHour(fieldAvailability.endTime);
+                    
+                    if (isDateInRange && isTimeMatching) {                        
+                        isLocked = true;
+                    }
+                })
+
+                if (isOrdered || isBooked || isLocked) {
                     element.innerHTML = `
                         <div class="flex flex-1 justify-between">
                             ${discountInfo}
@@ -293,7 +307,7 @@ async function appendBookingDetail(field) {
                 }
 
                 element.addEventListener("click", () => {
-                    if (isOrdered || isBooked) {
+                    if (isOrdered || isBooked || isLocked) {
                         alert('This field availability is not available');
                         return;
                     }
@@ -304,20 +318,20 @@ async function appendBookingDetail(field) {
                         element.style.borderLeft = "none";
                         selectedAvailabilities.splice(itemIndex, 1);
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) - 1;
-                    
+
                         let newPrice = Number(selectPriceAvailabilities.innerText) - discountedPrice;
-                    
+
                         selectPriceAvailabilities.innerText = Math.abs(newPrice) < 0.01 ? "0.00" : newPrice.toFixed(2);
                     } else {
                         element.style.borderLeft = "5px solid red";
                         selectedAvailabilities.push({ id: fieldAvailability.id, date: currentDate.toDateString() });
                         selectQuantityAvailabilities.innerText = Number(selectQuantityAvailabilities.innerText) + 1;
-                    
+
                         let newPrice = Number(selectPriceAvailabilities.innerText) + discountedPrice;
-                    
+
                         selectPriceAvailabilities.innerText = newPrice.toFixed(2);
                     }
-                    
+
                 });
 
                 fieldAvailabilitiesElement.appendChild(element);

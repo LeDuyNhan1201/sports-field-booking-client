@@ -24,7 +24,7 @@ async function loadSportFieldList(tab, currentOffset, searchValue) {
         if (endPath.localeCompare("my-sports-field") === 0) {
             // xử lý do quản lý sân
             let user = JSON.parse(localStorage.getItem("current-user"));
-            if (user.roles[1] === "FIELD_OWNER") {
+            if (user.roles[0] === "FIELD_OWNER") {
                 
                 if (searchValue === "" || searchValue) {
                     response = await fetch(`${SERVER_DOMAIN}/sports-field/management/${user.id}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
