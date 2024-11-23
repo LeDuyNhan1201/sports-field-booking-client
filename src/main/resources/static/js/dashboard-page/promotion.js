@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (isEditing) {
-            await updatePromotion(currentPromotionId, promotionData);
+            await fetchData('promotions', 'PUT', currentPromotionId, promotionData);
         } else {
-            await addPromotion(promotionData);
+            await fetchData('promotions', 'POST', null, promotionData);
         }
 
         promotionModal.classList.add('hidden');
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function loadPromotions() {
-        const promotions = await fetchData('promotions', 0, 5);
+        const promotions = await fetchData('promotions', 'GET', null, null, 0, 5);
         const allPromotions = await fetchData('promotions');
 
         if (!Array.isArray(promotions)) {
@@ -103,72 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             row.querySelector('.text-red-500').addEventListener('click', async () => {
-                await deletePromotion(promotion.id);
+                await fetchData('promotions', 'DELETE', promotion.id);
                 loadPromotions();
             });
         });
-    }
-
-    async function addPromotion(promotionData) {
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/promotions`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${getAccessTokenFromCookie()}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(promotionData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-        } catch (error) {
-            console.error('Error adding promotion:', error);
-        }
-    }
-
-    async function updatePromotion(id, promotionData) {
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/promotions/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${getAccessTokenFromCookie()}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(promotionData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Failed to update promotion:', errorData);
-                return;
-            }
-
-            console.log('Promotion updated successfully');
-        } catch (error) {
-            console.error('Error updating promotion:', error);
-        }
-    }
-
-
-
-
-    async function deletePromotion(id) {
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/promotions/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${getAccessTokenFromCookie()}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-        } catch (error) {
-            console.error('Error deleting promotion:', error);
-        }
     }
 });

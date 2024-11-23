@@ -53,22 +53,33 @@ window.addEventListener('DOMContentLoaded', () => {
     loadUserAvatar();
 });
 
-async function fetchData(endpoint, OFFSET = 0, LIMIT = 10000) {
+async function fetchData(endpoint, method = 'GET', id = null, body = null, OFFSET = 0, LIMIT = 10000) {
     try {
         const token = getAccessTokenFromCookie();
         if (!token) {
             throw new Error('Authorization token is missing');
         }
 
-        const url = `${SERVER_DOMAIN}/${endpoint}?offset=${OFFSET}&limit=${LIMIT}`;
+        let url = `${SERVER_DOMAIN}/${endpoint}`;
+        if (id && (method === 'PUT' || method === 'DELETE')) {
+            url += `/${id}`;
+        } else if (method === 'GET') {
+            url += `?offset=${OFFSET}&limit=${LIMIT}`;
+        }
 
-        const response = await fetch(url, {
-            method: 'GET',
+        const options = {
+            method,
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
-        });
+        };
+
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch data. Status: ${response.status}`);
@@ -76,15 +87,13 @@ async function fetchData(endpoint, OFFSET = 0, LIMIT = 10000) {
 
         const data = await response.json();
 
-        if (!data || !Array.isArray(data.items)) {
+        if (method === 'GET' && (!data || !Array.isArray(data.items))) {
             throw new Error('Invalid data format: expected an array of items');
         }
 
-        return data.items;
+        return data.items || data;
     } catch (error) {
         console.error('Error fetching data:', error);
         return [];
     }
 }
-
-
