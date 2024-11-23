@@ -75,15 +75,17 @@
         <thead>
             <tr class="text-gray-600 bg-gray-100">
                 <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.promotion_id.title}">ID</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(1)"
-                    th:text="#{dashboard.promotion_description.title}">Description</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.promotion_name.title}">Name
+                </th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(2)"
+                    th:text="#{dashboard.promotion_description.title}">Description</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)"
                     th:text="#{dashboard.promotion_discountPercentage.title}">Discount</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.promotion_startDate.title}">
+                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.promotion_startDate.title}">
                     Start Date</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.promotion_endDate.title}">End
+                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.promotion_endDate.title}">End
                     Date</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.promotion_status.title}">
+                <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.promotion_status.title}">
                     Status</th>
                 <th class="p-4" th:text="#{dashboard.promotion_action.title}">Actions</th>
             </tr>
@@ -92,6 +94,7 @@
             <!-- Example Row -->
             <tr class="border-b">
                 <td class="p-4">#101</td>
+                <td class="p-4">Holiday Sale</td>
                 <td class="p-4">Holiday Sale</td>
                 <td class="p-4">50%</td>
                 <td class="p-4">2024-12-01</td>
@@ -149,6 +152,12 @@
                     <h2 id="promotionModalTitle" class="text-xl font-bold">Add/Edit Promotion</h2>
                 </div>
                 <form id="promotionForm">
+                    <!-- name -->
+                    <div class="mb-4">
+                        <label for="promotionName" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" id="promotionName"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
                     <div class="mb-4">
                         <label for="promotionDescription"
                             class="block text-sm font-medium text-gray-700">Description</label>
@@ -179,8 +188,8 @@
                         <label for="promotionStatus" class="block text-sm font-medium text-gray-700">Status</label>
                         <select id="promotionStatus"
                             class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
                         </select>
                     </div>
                 </form>

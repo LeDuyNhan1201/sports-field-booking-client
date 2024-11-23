@@ -29,11 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     savePromotionButton.addEventListener('click', async () => {
         const promotionData = {
+            name: document.getElementById('promotionName').value,
             description: document.getElementById('promotionDescription').value,
             discountPercentage: document.getElementById('discountPercentage').value,
             startDate: document.getElementById('startDate').value,
             endDate: document.getElementById('endDate').value,
-            status: document.getElementById('promotionStatus').value
+            status: document.getElementById('promotionStatus').value,
+            isConfirmed: true
         };
 
         if (isEditing) {
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             row.innerHTML = `
                 <td class="p-4">${promotion.id}</td>
+                <td class="p-4">${promotion.name}</td>
                 <td class="p-4">${promotion.description}</td>
                 <td class="p-4">${promotion.discountPercentage}%</td>
                 <td class="p-4">${promotion.startDate}</td>
@@ -90,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isEditing = true;
                 currentPromotionId = promotion.id;
                 promotionModalTitle.textContent = 'Edit Promotion';
+                document.getElementById('promotionName').value = promotion.name;
                 document.getElementById('promotionDescription').value = promotion.description;
                 document.getElementById('discountPercentage').value = promotion.discountPercentage;
                 document.getElementById('startDate').value = promotion.startDate;
@@ -126,27 +130,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function updatePromotion(id, promotionData) {
         try {
-            const token = getAccessTokenFromCookie();
-            if (!token) {
-                throw new Error('Authorization token is missing');
-            }
-
-            const response = await fetch(`${SERVER_DOMAIN}/promotions`, {
+            const response = await fetch(`${SERVER_DOMAIN}/promotions/${id}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${getAccessTokenFromCookie()}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ...promotionData, id })
+                body: JSON.stringify(promotionData)
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const errorData = await response.json();
+                console.error('Failed to update promotion:', errorData);
+                return;
             }
+
+            console.log('Promotion updated successfully');
         } catch (error) {
             console.error('Error updating promotion:', error);
         }
     }
+
+
+
 
     async function deletePromotion(id) {
         try {
