@@ -1,5 +1,6 @@
 const ORDER_PER_PAGE = 8;
 let currentPage = 1;
+let isSearch = false;
 
 async function loadImage(id) {
     try {
@@ -51,7 +52,7 @@ async function renderOrders(orders, page = 1) {
 
         let statusClass = "py-1 px-3 rounded-full text-xs";
 
-        switch(order.status) {
+        switch (order.status) {
             case 'ACCEPTED':
                 statusClass += " bg-green-300 text-green-600";
                 break;
@@ -70,7 +71,7 @@ async function renderOrders(orders, page = 1) {
             case 'REFUND_REQUESTED':
                 statusClass += " bg-yellow-300 text-yellow-600";
                 break;
-        }        
+        }
         const row = `
             <tr class="border-b">
                 <td class="p-4">${order.id}</td>
@@ -81,7 +82,7 @@ async function renderOrders(orders, page = 1) {
                 <td class="p-4">${order.user.username}</td>
                 <td class="p-4">${new Date(order.createdAt).toLocaleDateString()}</td>
                 <td class="p-4">$${totalPrice.toFixed(2)}</td>
-                <td class="p-4">
+                <td class="p-4 status-cell" data-id="${order.id}">
                     <span class="${statusClass}">${order.status}</span>
                 </td>
                 <td class="p-4">
@@ -96,9 +97,107 @@ async function renderOrders(orders, page = 1) {
         `;
         tbody.insertAdjacentHTML("beforeend", row);
     }
+
+    await attachStatusHandlers();
     await deleteOrder();
     await detailOrder();
 }
+
+async function attachStatusHandlers() {
+    const statusCells = document.querySelectorAll(".status-cell");
+    const statuses = await fetchBookingStatus();
+
+    statusCells.forEach((cell) => {
+        cell.addEventListener("dblclick", (e) => {
+            const orderId = cell.getAttribute("data-id");
+            const currentStatus = cell.querySelector("span").textContent;
+
+            const select = document.createElement("select");
+            select.className = "border p-1 rounded";
+            statuses.forEach((status) => {
+                const option = document.createElement("option");
+                option.value = status;
+                option.textContent = status;
+                if (status === currentStatus) option.selected = true;
+                select.appendChild(option);
+            });
+
+            // Replace span with select
+            cell.innerHTML = "";
+            cell.appendChild(select);
+
+            // Save new status on blur or change
+            const saveStatus = async () => {
+                const newStatus = select.value;
+                // Replace select with span
+                cell.innerHTML = `<span class="py-1 px-3 rounded-full text-xs">${newStatus}</span>`;
+                // Apply new class
+                const span = cell.querySelector("span");
+                span.className = `py-1 px-3 rounded-full text-xs ${
+                    newStatus === "ACCEPTED"
+                        ? "bg-green-300 text-green-600"
+                        : newStatus === "REJECTED"
+                        ? "bg-red-300 text-red-600"
+                        : newStatus === "CANCELED"
+                        ? "bg-orange-300 text-orange-600"
+                        : newStatus === "PENDING"
+                        ? "bg-yellow-300 text-yellow-600"
+                        : newStatus === "RESCHEDULED"
+                        ? "bg-purple-300 text-purple-600"
+                        : "bg-yellow-300 text-yellow-600"
+                }`;
+
+                await updateOrderStatus(orderId, newStatus);
+            };
+
+            select.addEventListener("change", saveStatus);
+
+            select.focus();
+        });
+    });
+}
+
+async function updateOrderStatus(orderId, newStatus) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/update-status/${orderId}?newStatus=${newStatus}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getAccessTokenFromCookie()}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update order status: ${response.status}`);
+        }
+
+        const updatedOrder = await response.json();
+
+        if(updatedOrder) {
+            alert('Order updated successfully')
+            window.location.reload();
+        }
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        throw error;
+    }
+}
+
+async function fetchBookingStatus() {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/booking-status`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const listStatus = await response.json();
+        return listStatus;
+    } catch (error) {
+        console.error("Failed to fetch booking statuses:", error);
+        return [];
+    }
+}
+
+
 
 function setupPagination(pagination) {    
     const totalPages = Math.ceil(pagination / ORDER_PER_PAGE);
@@ -118,7 +217,11 @@ function setupPagination(pagination) {
 
         button.addEventListener("click", () => {
             currentPage = i;
-            fetchOrders(currentPage);
+            if (isSearch) {
+                searchOrders(currentPage);
+            }else {
+                fetchOrders(currentPage);
+            }
         });
 
         paginationControls.appendChild(button);
@@ -131,7 +234,11 @@ function setupPagination(pagination) {
             "px-3 py-2 border border-gray-300 rounded-l-md bg-white text-gray-700 hover:bg-gray-50";
         prevButton.addEventListener("click", () => {
             currentPage--;
-            fetchOrders(currentPage);
+            if(isSearch) {
+                searchOrders(currentPage)
+            }else {
+                fetchOrders(currentPage);
+            }
         });
         paginationControls.prepend(prevButton); // add to front of paginations
     }
@@ -143,7 +250,11 @@ function setupPagination(pagination) {
             "px-3 py-2 border border-gray-300 rounded-r-md bg-white text-gray-700 hover:bg-gray-50";
         nextButton.addEventListener("click", () => {
             currentPage++;
-            fetchOrders(currentPage);
+            if (isSearch) {
+                searchOrders(currentPage)
+            }else {
+                fetchOrders(currentPage);
+            }
         });
         paginationControls.appendChild(nextButton);
     }
@@ -296,19 +407,12 @@ async function searchOrders(page = 1) {
     const status = document.getElementById('status').value || '';
     const startDate = document.getElementById('from-date').value || '';
     const endDate = document.getElementById('to-date').value || '';
-    const offset = (page - 1) * ORDER_PER_PAGE;
-    const limit = ORDER_PER_PAGE;
-
-    console.log(offset+" "+limit);
-    
 
     const queryParams = new URLSearchParams({
         keyword,
         status,
         startDate,
         endDate,
-        // offset,
-        // limit
     });
 
     console.log({
@@ -316,11 +420,8 @@ async function searchOrders(page = 1) {
         status,
         startDate,
         endDate,
-        // offset,
-        // limit
     });
     
-
     try {
         const response = await fetch(`${SERVER_DOMAIN}/booking/search?${queryParams}`, {
             method: 'GET',
@@ -343,13 +444,37 @@ async function searchOrders(page = 1) {
 }
 
 document.getElementById('search').addEventListener('input', () => {
+    isSearch = true;
     searchOrders();
 });
 
 document.getElementById('search-btn').addEventListener('click', () => {
+    isSearch = true;
     searchOrders();
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
+    isSearch = false;
+
     await fetchOrders();
+    
+    const statusSelect = document.getElementById('status');
+
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/booking-status`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const listStatus = await response.json();
+        listStatus.forEach((status) => {
+            const option = document.createElement('option');
+            option.value = status;
+            option.textContent = status;
+            statusSelect.appendChild(option)
+        })
+
+    } catch (error) {
+        console.error("Failed to fetch booking statuses:", error);
+    }
+
 });
