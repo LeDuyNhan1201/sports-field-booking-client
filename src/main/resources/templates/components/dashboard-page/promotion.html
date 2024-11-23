@@ -10,13 +10,14 @@
             <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
         </select>
     </div>
-
     <!-- Promotions Found -->
     <div class="flex justify-between items-center mb-6">
         <span class="flex text-gray-500">
-            <p class="mr-1">20</p>
+            <p id="promotion-quantity" class="mr-1">...</p>
             <span th:text="#{dashboard.promotion_found.title}"> promotions found</span>
         </span>
+        <button id="add-promotion-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            th:text="#{dashboard.promotion_add.title}"></button>
     </div>
 
     <!-- Search Section -->
@@ -117,7 +118,7 @@
                 <td class="p-4">2024-12-31</td>
                 <td class="p-4">
                     <span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.promotion_status.active}">Inactive</span>
+                        th:text="#{dashboard.promotion_status.inactive}">Inactive</span>
                 </td>
                 <td class="p-4">
                     <button class="edit-button text-blue-500 hover:text-blue-700">
@@ -134,7 +135,7 @@
     <!-- Pagination -->
     <div th:replace="~{/components/dashboard-page/pagination}"></div>
 
-    <!-- Modal to Add Promotion -->
+    <!-- Modal to Add/Edit Promotion -->
     <div id="promotionModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
         <div id="promotionOverlay" class="fixed inset-0 bg-black opacity-50"></div>
 
@@ -145,57 +146,52 @@
 
             <div>
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold" th:text="#{dashboard.promotion_modal.title}">Add Promotion</h2>
+                    <h2 id="promotionModalTitle" class="text-xl font-bold">Add/Edit Promotion</h2>
                 </div>
-
-                <form>
+                <form id="promotionForm">
                     <div class="mb-4">
-                        <label for="promotionDescription" class="block text-sm font-medium text-gray-700"
-                            th:text="#{dashboard.description.title}">Description</label>
+                        <label for="promotionDescription"
+                            class="block text-sm font-medium text-gray-700">Description</label>
                         <input type="text" id="promotionDescription"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
 
                     <div class="mb-4">
-                        <label for="discountPercentage" class="block text-sm font-medium text-gray-700"
-                            th:text="#{dashboard.discount_percentage.title}">Discount Percentage</label>
+                        <label for="discountPercentage" class="block text-sm font-medium text-gray-700">Discount
+                            Percentage</label>
                         <input type="number" id="discountPercentage" step="0.01" min="0" max="100"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
 
                     <div class="mb-4">
-                        <label for="startDate" class="block text-sm font-medium text-gray-700"
-                            th:text="#{dashboard.start_date.title}">Start Date</label>
+                        <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
                         <input type="date" id="startDate"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
 
                     <div class="mb-4">
-                        <label for="endDate" class="block text-sm font-medium text-gray-700"
-                            th:text="#{dashboard.end_date.title}">End Date</label>
+                        <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
                         <input type="date" id="endDate"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
 
                     <div class="mb-4">
-                        <label for="promotionStatus" class="block text-sm font-medium text-gray-700"
-                            th:text="#{dashboard.status.title}">Status</label>
+                        <label for="promotionStatus" class="block text-sm font-medium text-gray-700">Status</label>
                         <select id="promotionStatus"
                             class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="active" th:text="#{dashboard.status.active}">Active</option>
-                            <option value="inactive" th:text="#{dashboard.status.inactive}">Inactive</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
                         </select>
                     </div>
                 </form>
 
                 <div class="text-right">
-                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        th:text="#{dashboard.save_button.title}">Save</button>
+                    <button id="savePromotionButton"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
                 </div>
             </div>
         </div>
     </div>
-
 
     <script th:src="@{/js/dashboard-page/utils.js}"></script>
     <script th:src="@{/js/dashboard-page/promotion.js}"></script>
