@@ -273,8 +273,6 @@ async function appendBookingDetail(field) {
                 const fieldAvailabilityResponse = await fetch(`${SERVER_DOMAIN}/field-availability-access/sports-field?sportsFieldID=${sportFieldID}`)
                 const fieldAvailabilityData = await fieldAvailabilityResponse.json();
 
-                console.log(fieldAvailabilityData);
-
                 let isLocked = false;
 
                 fieldAvailabilityData.forEach((item) => {
