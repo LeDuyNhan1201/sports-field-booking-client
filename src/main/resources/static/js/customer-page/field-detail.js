@@ -232,7 +232,8 @@ async function appendBookingDetail(field) {
 
         const bookingItems = await response.json();
         const sportFieldData = await sportFieldResponse.json();
-
+        console.log(sportFieldData);
+        
 
         field.fieldAvailabilities.forEach(async (fieldAvailability) => {
             const startTime = formatHour(fieldAvailability.startTime);
@@ -257,7 +258,8 @@ async function appendBookingDetail(field) {
                 let discountInfo = "";
                 let discountedPrice = fieldAvailability.price;
 
-                if (sportFieldData.promotion) {
+                if (sportFieldData.promotion && (convertDateFormat(currentDate) >= convertDateFormat(sportFieldData.promotion.startDate) && 
+                                                convertDateFormat(currentDate) <= convertDateFormat(sportFieldData.promotion.endDate))) {
                     const discount = sportFieldData.promotion.discountPercentage;
                     discountedPrice = fieldAvailability.price - (discount / 100 * fieldAvailability.price);
                     discountInfo = `
