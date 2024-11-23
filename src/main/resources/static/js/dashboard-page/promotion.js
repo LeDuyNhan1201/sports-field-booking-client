@@ -144,9 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pageButton.className = 'px-3 py-2 mr-1 text-gray-700 bg-white border-t border-b border-gray-300 hover:bg-gray-50';
             pageButton.textContent = i;
             if (i === currentPage) {
-                // background color is blue
                 pageButton.className += ' bg-blue-600';
-                // text color is white
                 pageButton.classList.add('text-white');
             }
             pageButton.addEventListener('click', () => {
