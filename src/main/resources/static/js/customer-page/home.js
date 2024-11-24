@@ -6,10 +6,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const data = await response.json();
 
+        const ratingResponse = await fetch(`${SERVER_DOMAIN}/rating/average/all`);
+        if (!ratingResponse.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const ratingData = await ratingResponse.json();
+        console.log(ratingData);
+        
+
         const ratingSection = document.getElementById('ratingSection');
         if (ratingSection) {
             ratingSection.innerHTML = '';
-            const openFields = data.items.filter(field => field.status !== 'INACTIVE').slice(0, 3);
+
+            for(let field of data.items) {                                                
+                field.rating = ratingData[field.id] || 0;                
+            }
+
+            data.items.sort((a, b) => {
+                return b.rating - a.rating
+            })
+
+            const openFields = data.items
+                .filter(field => field.status !== 'INACTIVE')
+                .sort((a, b) => b.rating - a.rating)
+                .slice(0, 3);
+
+                console.log(openFields);
+                
             openFields.forEach(field => {
                 const prices = field.fieldAvailabilities.map(availability => availability.price);
                 const minPrice = prices.length > 0 ? Math.min(...prices) : null;
@@ -35,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                                     <p class="text-gray-600 hover:text-gray-700">${priceText}</p>
                                                     <p class="text-gray-500 h-12 hover:text-gray-600">${field.location}</p>
                                                     <div class="mt-2 flex space-x-2">
-                                                        <span class="hover:text-gray-700">⭐ ${field.rating}/5</span>
+                                                        <span class="hover:text-gray-700">⭐ ${field.rating.toFixed(2)}/5</span>
                                                     </div>
                                                 </div>
                 `;
