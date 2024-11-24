@@ -1,5 +1,7 @@
 const currentUser = localStorage.getItem('current-user');
 const loginSection = document.getElementById('login-section');
+const notificationSection = document.getElementById('notification');
+const orderSection = document.getElementById('order-section');
 const userInfoSection = document.getElementById('user-info');
 const userAvatar = document.getElementById('avatar');
 const usernameElement = document.getElementById('username');
@@ -19,10 +21,11 @@ async function loadUserAvatar() {
 if (localStorage.getItem('current-user') !== null) {
     if (currentUser) {
         const user = JSON.parse(currentUser)
-        console.log('test: ' + user.birthdate);
-
-        loginSection.classList.add('hidden')
-        userInfoSection.classList.remove('hidden')
+        
+        loginSection.classList.add('hidden');
+        notificationSection.classList.remove('hidden');
+        orderSection.classList.remove('hidden');
+        userInfoSection.classList.remove('hidden');
         
         usernameElement.textContent = user.username
 
@@ -36,9 +39,9 @@ if (localStorage.getItem('current-user') !== null) {
             window.location.href = CLIENT_DOMAIN + '/dashboard';
         }
 
-    } else {
-        loginSection.classList.remove('hidden')
-        userInfoSection.classList.add('hidden')
+    } else {        
+        loginSection.classList.remove('hidden');
+        userInfoSection.classList.add('hidden');
     }
 }
 

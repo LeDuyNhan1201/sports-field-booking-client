@@ -1,11 +1,11 @@
 <div class="w-full p-6" th:fragment="home" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold" th:text="#{dashboard.heading.title}">Report</h1>
-        <select id="languageSelect" class="bg-transparent border-none text-black p-0 appearance-none"
+        <select id="languageSelect" class="bg-transparent border-none text-black p-0 appearance-none text-2xl"
             onchange="switchLanguage(this.value)">
             <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}"></option>
-            <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
-            <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
+            <option value="en" class="text-black text-2xl" th:text="#{homepage.english.title}"></option>
+            <option value="vi" class="text-black text-2xl" th:text="#{homepage.vietnamese.title}"></option>
         </select>
         <!-- <div>
             <input id="reportDate" type="date" class="border rounded-md p-2">
