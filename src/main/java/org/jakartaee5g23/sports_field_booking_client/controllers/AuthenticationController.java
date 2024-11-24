@@ -25,7 +25,17 @@ public class AuthenticationController {
         return "pages/authentication/sign-in";
     }
 
-    @GetMapping("sign-up")
+    @GetMapping("/google/callback")
+    public String googleCallbackPage(){
+        return "pages/authentication/google-callback";
+    }
+
+    @GetMapping("/facebook/callback")
+    public String facebookCallbackPage(){
+        return "pages/authentication/facebook-callback";
+    }
+
+    @GetMapping("/sign-up")
     public String signUpPage(Model model){
         model.addAttribute("title", getLocalizedMessage("sign_up.title"));
         return "pages/authentication/sign-up";

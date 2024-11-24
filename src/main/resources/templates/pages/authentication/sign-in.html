@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <div th:replace="~{/components/head :: head}"></div>
 
 <body>
@@ -11,7 +11,7 @@
                 <div class="text-center text-white p-10 rounded-lg bg-opacity-30 bg-gray-900">
                     <h2 class="flex items-center justify-center text-2xl font-bold mb-4">
                         👍
-                        <p th:text="#{login.login_header.title}">Login</p>
+                        <p th:text="#{login.login_header.title}"></p>
                     </h2>
                     <p class="text-2xl mb-4" th:text="#{login.login_content.title}"></p>
                 </div>
@@ -23,16 +23,17 @@
                 <!-- Logo Section -->
                 <div class="mb-6 text-center">
                     <img th:src="@{/image/login/run.png}" alt="Logo" class="mx-auto mb-4 w-20">
-                    <h2 class="text-3xl font-bold" th:text="#{login.welcome.title}">Welcome Back</h2>
-                    <p class="text-gray-500" th:text="#{login.welcome_content.title}">Login into your account</p>
+                    <h2 class="text-3xl font-bold" th:text="#{login.welcome.title}"></h2>
+                    <p class="text-gray-500" th:text="#{login.welcome_content.title}"></p>
                 </div>
 
-                <form id="sign-in-form">
+                <form id="formSignIn">
                     <!-- Email/Username Field -->
                     <div class="mb-4">
                         <input type="email" id="email" name="email" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Email">
+                        <p id="emailError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Password Field -->
@@ -45,38 +46,35 @@
                                 th:data-hidden-path="@{/image/login/hidden.png}" alt="Toggle Password" id="passwordIcon"
                                 class="w-6 h-6">
                         </span>
+                        <p id="passwordError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Remember Password and Forgot Password -->
                     <div class="flex justify-between items-center mb-6">
-                        <a th:href="@{/auth/forgot}" class="text-sm text-red-500 hover:underline ml-auto" th:text="#{login.forgot.title}">Forgot
-                            Password?</a>
+                        <a th:href="@{/auth/forgot}" class="text-sm text-red-500 hover:underline ml-auto"
+                           th:text="#{login.forgot.title}"></a>
                     </div>
 
                     <!-- Submit Button -->
-                    <button class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6"
-                        th:text="#{login.submit.title}">Sign
-                        In</button>
-
-                    <button id="refresh-btn" type="button"
-                        class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6"
-                        th:text="#{login.refresh.title}">Refresh</button>
+                    <button type="button" id="btnSignIn" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6"
+                        th:text="#{login.submit.title}"></button>
 
                     <!-- Or continue with -->
                     <div class="flex items-center justify-center mb-4">
                         <div class="w-1/3 border-b border-gray-300"></div>
-                        <span class="mx-3 text-gray-500" th:text="#{login.method.title}">or continue with</span>
+                        <span class="mx-3 text-gray-500" th:text="#{login.method.title}"></span>
                         <div class="w-1/3 border-b border-gray-300"></div>
                     </div>
 
                     <!-- Social Login Buttons -->
                     <div class="flex justify-between">
-                        <button
+                        <button id="btnGoogle"
                             class="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-lg mr-2">
                             <img th:src="@{/image/login/google.png}" alt="Google" class="w-6 h-6 mr-2">
                             <span>Google</span>
                         </button>
-                        <button
+
+                        <button id="btnFacebook"
                             class="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-lg">
                             <img th:src="@{/image/login/facebook.png}" alt="Facebook" class="w-6 h-6 mr-2">
                             <span>Facebook</span>
@@ -87,7 +85,7 @@
                     <div class="flex items-center justify-center text-center mt-6 text-sm">
                         <p th:text="#{login.create_content.title}"></p>
                         <a th:href="@{/auth/sign-up}" id="signup" class="text-green-500 font-bold"
-                            th:text="#{login.sign_up.title}">Sign up!</a>
+                            th:text="#{login.sign_up.title}"></a>
                     </div>
 
                 </form>
@@ -95,7 +93,13 @@
         </div>
     </div>
 
-    <div id="loading" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden"></div>
+    <div id="loading" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div id="error" class="hidden fixed bottom-4 right-4 bg-red-100 text-red-600 p-3 rounded shadow-lg">
+        Lỗi xảy ra!
+    </div>
 
     <script th:src="@{/js/utils.js}"></script>
     <script th:src="@{/js/sign-in.js}"></script>

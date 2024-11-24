@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <div th:replace="~{/components/head :: head}"></div>
 
 <body>
@@ -11,11 +11,9 @@
                 <div class="text-center text-white p-10 rounded-lg bg-opacity-30 bg-gray-900">
                     <h2 class="flex items-center justify-center text-2xl font-bold mb-4">
                         👍
-                        <p th:text="#{register.register_header.title}">Register now!!!</p>
+                        <p th:text="#{register.register_header.title}"></p>
                     </h2>
-                    <p class="text-2xl mb-4" th:text="#{register.register_content.title}">Register now for our
-                        innovative sports software solutions, designed to tackle challenges in everyday sports
-                        activities and events.</p>
+                    <p class="text-2xl mb-4" th:text="#{register.register_content.title}"></p>
                 </div>
             </div>
         </div>
@@ -25,24 +23,22 @@
                 <!-- Logo Section -->
                 <div class="mb-6">
                     <img th:src="@{/image/login/run.png}" alt="Logo" class="mx-auto mb-4 w-20">
-                    <h2 class="text-2xl font-bold" th:text="#{register.welcome.title}">Get Started With Sports Booking
-                    </h2>
-                    <p class="text-gray-500" th:text="#{register.welcome_content.title}">Ignite your sports journey with
-                        sports and get started now.</p>
+                    <h2 class="text-2xl font-bold" th:text="#{register.welcome.title}"></h2>
+                    <p class="text-gray-500" th:text="#{register.welcome_content.title}"></p>
                 </div>
 
-                <form id="sign-up-form">
+                <form id="formSignUp">
                     <!-- Role Selection -->
                     <div class="flex justify-around mb-6">
                         <label id="userLabel"
                             class="flex items-center border-2 border-green-500 p-2 rounded-lg cursor-pointer">
                             <input type="radio" name="role" value="1" class="mr-2" checked>
-                            <span th:text="#{register.user_option.title}">I am a User</span>
+                            <span th:text="#{register.user_option.title}"></span>
                         </label>
                         <label id="ownerLabel"
                             class="flex items-center border-2 border-gray-300 p-2 rounded-lg cursor-pointer">
                             <input type="radio" name="role" value="2" class="mr-2">
-                            <span th:text="#{register.owner_option.title}">I am a Owner</span>
+                            <span th:text="#{register.owner_option.title}"></span>
                         </label>
                     </div>
 
@@ -50,16 +46,17 @@
                         <!-- First Name Field -->
                         <div class="flex-1">
                             <label class="block text-gray-700 font-bold mb-2"
-                                th:text="#{register.first_name.title}">First Name</label>
+                                th:text="#{register.first_name.title}"></label>
                             <input type="text" id="firstName" name="firstName" required
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                 placeholder="First Name">
+                            <p id="firstNameError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                         </div>
 
                         <!-- Middle Name Field -->
                         <div class="flex-1">
                             <label class="block text-gray-700 font-bold mb-2"
-                                th:text="#{register.middle_name.title}">Middle Name</label>
+                                th:text="#{register.middle_name.title}"></label>
                             <input type="text" id="middleName" name="middleName" required
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                 placeholder="Middle Name">
@@ -67,65 +64,68 @@
 
                         <!-- Last Name Field -->
                         <div class="flex-1">
-                            <label class="block text-gray-700 font-bold mb-2" th:text="#{register.last_name.title}">Last
-                                Name</label>
+                            <label class="block text-gray-700 font-bold mb-2" th:text="#{register.last_name.title}"></label>
                             <input type="text" id="lastName" name="lastName" required
                                 class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                 placeholder="Last Name">
+                            <p id="lastNameError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                         </div>
                     </div>
 
                     <!-- Username Field-->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.username.title}">Username</label>
+                            th:text="#{register.username.title}"></label>
                         <input type="text" id="username" name="username" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Username">
+                        <p id="usernameError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Email Field -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.email.title}">Email</label>
+                            th:text="#{register.email.title}"></label>
                         <input type="email" id="email" name="email" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Email">
+                        <p id="emailError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Mobile Number Field -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.mobile_number.title}">Mobile Number</label>
+                            th:text="#{register.mobile_number.title}"></label>
                         <input type="text" id="mobileNumber" name="mobileNumber" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Mobile Number">
+                        <p id="mobileNumberError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Birthdate Field -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.birthdate.title}">Birthdate</label>
+                            th:text="#{register.birthdate.title}"></label>
                         <input type="date" id="birthdate" name="birthdate" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <p id="birthdateError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Gender Selection -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.gender.title}">Gender</label>
+                            th:text="#{register.gender.title}"></label>
                         <select id="gender" name="gender" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                            <option value="Male" th:text="#{register.gender.male}">Male</option>
-                            <option value="Female" th:text="#{register.gender.female}">Female</option>
-                            <option value="Other" th:text="#{register.gender.other}">Other</option>
+                            <option value="Male" th:text="#{register.gender.male}"></option>
+                            <option value="Female" th:text="#{register.gender.female}"></option>
+                            <option value="Other" th:text="#{register.gender.other}"></option>
                         </select>
                     </div>
 
                     <!-- Password Field -->
                     <div class="mb-4 relative">
-                        <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.password.title}">Password</label>
+                        <label class="block text-gray-700 font-bold mb-2" th:text="#{register.password.title}"></label>
                         <input type="password" id="password" name="password" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
                         <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer" id="togglePassword">
@@ -133,12 +133,13 @@
                                 th:data-hidden-path="@{/image/login/hidden.png}" alt="Toggle Password" id="passwordIcon"
                                 class="w-6 h-6 mt-8">
                         </span>
+                        <p id="passwordError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Repeat Password Field -->
                     <div class="mb-4 relative">
                         <label class="block text-gray-700 font-bold mb-2"
-                            th:text="#{register.repeat_password.title}">Repeat Password</label>
+                            th:text="#{register.repeat_password.title}"></label>
                         <input type="password" id="repeatPassword" name="repeatPassword" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
                         <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer"
@@ -147,26 +148,25 @@
                                 th:data-hidden-path="@{/image/login/hidden.png}" alt="Repeat Toggle Password"
                                 id="repeatPasswordIcon" class="w-6 h-6 mt-8">
                         </span>
+                        <p id="passwordConfirmationError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Accept Terms -->
                     <div class="flex justify-between items-center mb-6">
                         <label class="flex items-center">
                             <input type="checkbox" class="form-checkbox text-green-500 mr-2" name="acceptTerms">
-                            <span class="text-sm text-center" th:text="#{register.terms.title}">By continuing you
-                                indicate that you read and agreed to the Terms of Use</span>
+                            <span class="text-sm text-center" th:text="#{register.terms.title}"></span>
                         </label>
                     </div>
 
                     <!-- Submit Button -->
-                    <button class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6"
-                        th:text="#{register.register.title}">Sign
-                        up</button>
+                    <button id="btnSignUp" type="button" class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6"
+                        th:text="#{register.register.title}"></button>
 
                     <!-- Or continue with -->
                     <div class="flex items-center justify-center mb-4">
                         <div class="w-1/3 border-b border-gray-300"></div>
-                        <span class="mx-3 text-gray-500" th:text="#{register.method.title}">or continue with</span>
+                        <span class="mx-3 text-gray-500" th:text="#{register.method.title}"></span>
                         <div class="w-1/3 border-b border-gray-300"></div>
                     </div>
 
@@ -187,18 +187,22 @@
                     <!-- Signin Link -->
                     <div class="flex items-center justify-center text-center mt-6 text-sm">
                         <p th:text="#{register.account.title}"></p>
-                        <a th:href="@{/auth/sign-in}" id="signin" class="text-green-500 font-bold"
-                            th:text="#{register.sign_in.title}">Sign up!</a>
+                        <a th:href="@{/auth}" class="text-green-500 font-bold" th:text="#{register.sign_in.title}"></a>
                     </div>
                 </form>
             </div>
         </div>
 
     </div>
-    <script th:src="@{/js/sign-up.js}"></script>
+
+    <div id="loading" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div id="error" class="hidden fixed bottom-4 right-4 bg-red-100 text-red-600 p-3 rounded shadow-lg">
+        Lỗi xảy ra!
+    </div>
+
     <script th:src="@{/js/utils.js}"></script>
-
+    <script th:src="@{/js/sign-up.js}"></script>
 </body>
-
-
-<script src="https://cdn.tailwindcss.com"></script>

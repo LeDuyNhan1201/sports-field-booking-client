@@ -47,10 +47,9 @@ function switchLanguage(lang) {
     window.location.href = CLIENT_DOMAIN + '/settings/switch-language?lang=' + lang + '&returnUrl=' + window.location.pathname.replace('/sports-field-booking', '');
 }
 
-document.getElementById('btn-sign-out').addEventListener('click', async (event) => {
+document.getElementById('btnSignOut')
+    .addEventListener('click', async (event) => {
     event.preventDefault();
-    showLoading(true);
-
     try {
         const response = await fetchCustom({
             url: SERVER_DOMAIN + '/auth/sign-out',
@@ -62,13 +61,13 @@ document.getElementById('btn-sign-out').addEventListener('click', async (event) 
         });
 
         if (!response.ok) showError("Failed to refresh token");
+        else window.location.href = `${CLIENT_DOMAIN}/auth`;
 
         localStorage.removeItem('current-user');
     } catch (error) {
         console.error('Error refreshing token:', error);
     }
     finally {
-        showLoading(false);
     }
 });
 

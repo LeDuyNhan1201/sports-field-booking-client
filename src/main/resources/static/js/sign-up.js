@@ -49,111 +49,114 @@ repeatTogglePassword.addEventListener('click', () => {
     repeatPasswordIcon.src = isRepeatPasswordHidden ? eyePath : hiddenPath;
 });
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const form = document.getElementById('sign-up-form');
-    const mobileInput = document.getElementById('mobileNumber');
-    const emailInput = document.getElementById('email');
-    const requiredFields = form.querySelectorAll('input[required], select[required]');
-    const birthdateInput = document.getElementById('birthdate');
+document.getElementById('btnSignUp')
+    .addEventListener('click', async (event) => {
+    event.preventDefault();
+    showLoading(true);
 
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const mobileValue = mobileInput.value;
-        if (!/^0\d{9}$/.test(mobileValue)) {
-            event.preventDefault();
-            alert('Mobile phone number must start with 0 and 10 digits long.');
-            return;
-        }
+    // const mobileValue = mobileInput.value;
+    // if (!/^0\d{9}$/.test(mobileValue)) {
+    //     event.preventDefault();
+    //     alert('Mobile phone number must start with 0 and 10 digits long.');
+    //     return;
+    // }
+    //
+    // const emailValue = emailInput.value;
+    // if (!emailValue.endsWith('@gmail.com')) {
+    //     event.preventDefault();
+    //     alert('Email must be a valid gmail address (ending with @gmail.com).');
+    //     return;
+    // }
 
-        const emailValue = emailInput.value;
-        if (!emailValue.endsWith('@gmail.com')) {
-            event.preventDefault();
-            alert('Email must be a valid gmail address (ending with @gmail.com).');
-            return;
-        }
+    // const birthdateValue = new Date(birthdateInput.value);
+    // const today = new Date();
+    // const age = today.getFullYear() - birthdateValue.getFullYear();
+    // const isBirthdayPassedThisYear = today.getMonth() > birthdateValue.getMonth() ||
+    //     (today.getMonth() === birthdateValue.getMonth() && today.getDate() >= birthdateValue.getDate());
+    //
+    // if (age < 18 || (age === 18 && !isBirthdayPassedThisYear)) {
+    //     alert('You must be at least 18 years old to sign up.');
+    //     return;
+    // }
+    //
+    // let flag = true;
+    // requiredFields.forEach(field => {
+    //     if (!field.value) {
+    //         flag = false;
+    //         alert(`The ${field.name} field is required.`);
+    //     }
+    // });
+    //
+    // if (!flag) return;
+    //
+    // const acceptTerms = form.querySelector('input[name="acceptTerms"]').checked;
+    // if (!acceptTerms) {
+    //     alert('You must accept the Terms of Use.');
+    //     return;
+    // }
 
-        const birthdateValue = new Date(birthdateInput.value);
-        const today = new Date();
-        const age = today.getFullYear() - birthdateValue.getFullYear();
-        const isBirthdayPassedThisYear = today.getMonth() > birthdateValue.getMonth() ||
-            (today.getMonth() === birthdateValue.getMonth() && today.getDate() >= birthdateValue.getDate());
+    const form = document.getElementById('formSignUp');
+    const formData = {
+        firstName: form.firstName.value,
+        lastName: form.lastName.value,
+        middleName: form.middleName.value,
+        username: form.username.value,
+        email: form.email.value,
+        password: form.password.value,
+        passwordConfirmation: form.repeatPassword.value,
+        mobileNumber: form.mobileNumber.value,
+        birthdate: form.birthdate.value,
+        gender: form.gender.value,
+        isFieldOwner: form.querySelector('input[name="role"]:checked').value === '2',
+        acceptTerms: form.querySelector('input[name="acceptTerms"]').checked
+    };
 
-        if (age < 18 || (age === 18 && !isBirthdayPassedThisYear)) {
-            alert('You must be at least 18 years old to sign up.');
-            return;
-        }
-
-        let flag = true;
-        requiredFields.forEach(field => {
-            if (!field.value) {
-                flag = false;
-                alert(`The ${field.name} field is required.`);
-            }
+    try {
+        const response = await fetchCustom({
+            url: `${SERVER_DOMAIN}/auth/sign-up`,
+            method: 'POST',
+            body: formData
         });
 
-        if (!flag) return;
+        const data = await response.json();
+        console.log(data);
 
-        const acceptTerms = form.querySelector('input[name="acceptTerms"]').checked;
-        if (!acceptTerms) {
-            alert('You must accept the Terms of Use.');
-            return;
+        if (response.ok) {
+            window.location.href = CLIENT_DOMAIN + '/auth';
+            // const userRoleData = {
+            //     userId: responseData.userId,
+            //     roleId: form.querySelector('input[name="role"]:checked').value
+            // };
+            //
+            // const userRoleResponse = await fetch(`${SERVER_DOMAIN}/userRole`, {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(userRoleData)
+            // });
+            //
+            // console.log(userRoleResponse);
+            //
+            // if (userRoleResponse.ok) {
+            //     window.location.href = CLIENT_DOMAIN + '/auth';
+            //
+            // } else {
+            //     const roleErrorData = await userRoleResponse.json();
+            //     console.log(roleErrorData);
+            //
+            //     alert(`Failed to assign role: ${roleErrorData.message}`);
+            // }
+        } else {
+            const message = data.message || 'Sign up failed';
+            popupError(message);
+            if (data.errors) validationForm("formSignUp", data.errors);
         }
-
-        const formData = {
-            firstName: form.firstName.value,
-            lastName: form.lastName.value,
-            middleName: form.middleName.value,
-            username: form.username.value,
-            email: form.email.value,
-            password: form.password.value,
-            passwordConfirmation: form.repeatPassword.value,
-            mobileNumber: form.mobileNumber.value,
-            birthdate: form.birthdate.value,
-            gender: form.gender.value,
-            acceptTerms: acceptTerms
-        };
-
-        try {            
-            const response = await fetch(`${SERVER_DOMAIN}/auth/sign-up`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const responseData = await response.json();
-            
-            if (response.ok) {
-                const userRoleData = {
-                    userId: responseData.userId,
-                    roleId: form.querySelector('input[name="role"]:checked').value
-                };
-                
-                const userRoleResponse = await fetch(`${SERVER_DOMAIN}/userRole`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userRoleData)
-                });
-
-                console.log(userRoleResponse);
-                
-                if (userRoleResponse.ok) {
-                    alert('Sign-up successful, you can switch to login page and login!');
-                    window.location.href = CLIENT_DOMAIN + '/auth';
-                } else {
-                    const roleErrorData = await userRoleResponse.json();
-                    console.log(roleErrorData);
-                    
-                    alert(`Failed to assign role: ${roleErrorData.message}`);
-                }
-            } else {
-                alert(`Sign-up failed: ${responseData.message}`);
-            }
-        } catch (error) {
-            alert(`An error occurred: ${error.message}`);
-        }
-    });
+    } catch (error) {
+        console.error('Error signing up:', error);
+        popupError(error.message);
+    }
+    finally {
+        showLoading(false);
+    }
 });

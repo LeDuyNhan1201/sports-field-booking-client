@@ -1,5 +1,5 @@
 <!-- Header -->
-<header class="bg-green-800 text-white" th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+<header class="bg-green-800 text-white" th:fragment="header">
     <div class="flex justify-between items-center py-4 px-16">
         <a th:href="@{/}"
             th:class="${content == 'Sports booking'} ? 'nav active text-4xl font-bold flex items-center' : 'nav inactive flex items-center'"
@@ -131,7 +131,7 @@
                                 th:class="${content == 'sportsField'} ? 'block w-full px-4 py-2 hover:bg-gray-100 text-left hidden' : 'block w-full px-4 py-2 hover:bg-gray-100 text-left hidden'"
                                 th:text="#{homepage.field_owner.title}" id="field-management"></a>
 
-                            <a href="#" id="btn-sign-out"
+                            <a id="btnSignOut"
                                 class="block w-full px-4 py-2 hover:bg-gray-100 text-left border-t border-gray-400"
                                 th:text="#{homepage.logout.title}"></a>
                         </div>

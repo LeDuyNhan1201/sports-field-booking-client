@@ -1,8 +1,7 @@
-<div class="flex justify-center items-center my-10" id="sportsField.field-detail" th:fieldId="${id}" th:fragment="fieldDetail"
-     xmlns:th="http://www.w3.org/1999/xhtml">
+<div class="flex justify-center items-center my-10" id="sportsField.field-detail" th:fieldId="${id}" th:fragment="fieldDetail">
     <div class="h-3/5 w-4/5 border rounded-xl shadow-xl border-gray-300">
         <div class="flex justify-between p-4 border-b items-center">
-            <span class="text-2xl font-semibold" th:text="#{field_detail.field_detail_header.title}">Sport Field Detail</span>
+            <span class="text-2xl font-semibold" th:text="#{field_detail.field_detail_header.title}"></span>
             <i onclick="history.back()" class="fa-solid fa-xmark cursor-pointer text-red-500"></i>
         </div>
 
@@ -40,14 +39,14 @@
                         <div class="flex flex-column items-center">
                             <i class="fa-solid fa-basketball p-2 text-xl w-10 rounded-full mx-3"></i>
                             <div class="flex flex-col">
-                                <span th:text="#{field_detail.category.title}">Loại</span>
+                                <span th:text="#{field_detail.category.title}"></span>
                                 <span class="text-md font-bold" id="field_detail.category"></span>
                             </div>
                         </div>
                         <div class="flex flex-column items-center px-8">
                             <img id="field_detail.ownerImage" class="w-10 rounded-full mx-3" alt="" />
                             <div class="flex flex-col">
-                                <span th:text="#{field_detail.owner.title}">Chủ sân</span>
+                                <span th:text="#{field_detail.owner.title}"></span>
                                 <span class="text-md font-bold" id="field_detail.ownerName">Chủ tịch Mohamed</span>
                             </div>
                         </div>
@@ -94,8 +93,6 @@
 
     <script th:src="@{/js/customer-page/booking-detail.js}"></script>
     <script th:src="@{/js/customer-page/field-detail.js}"></script>
-    
     <script th:src="@{/js/customer-page/edit-field.js}"></script>
-
 
 </div>

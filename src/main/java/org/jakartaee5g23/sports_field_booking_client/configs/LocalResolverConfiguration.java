@@ -1,5 +1,6 @@
 package org.jakartaee5g23.sports_field_booking_client.configs;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -52,7 +53,7 @@ public class LocalResolverConfiguration extends AcceptHeaderLocaleResolver imple
     }
 
     @Bean
-    public LocaleResolver localeResolver(){
+    public LocaleResolver localeResolver(HttpServletRequest request){
         SessionLocaleResolver slr = new SessionLocaleResolver();
         slr.setDefaultLocale(Locale.ENGLISH); // Ngôn ngữ mặc định
         return slr;

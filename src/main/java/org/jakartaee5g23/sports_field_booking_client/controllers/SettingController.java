@@ -1,5 +1,6 @@
 package org.jakartaee5g23.sports_field_booking_client.controllers;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -30,6 +31,11 @@ public class SettingController {
                                  @RequestParam(name = "returnUrl", required = false) String returnUrl) {
         Locale locale = Locale.of(lang);
         localeResolver.setLocale(request, response, locale);
+        Cookie cookie = new Cookie("accept-language", lang);
+        cookie.setPath("/");
+        cookie.setDomain("localhost"); // Thiết lập domain nếu cần
+        response.addCookie(cookie);
+
         if (returnUrl != null && !returnUrl.isEmpty()) {
             return "redirect:" + returnUrl;
         }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <div th:replace="~{/components/head :: head}"></div>
 
 <body>
@@ -11,11 +11,9 @@
                 <div class="text-center text-white p-10 rounded-lg bg-opacity-30 bg-gray-900">
                     <h2 class="flex items-center justify-center text-2xl font-bold mb-4">
                         👍
-                        <p th:text="#{forgot.password_header.title}">Forgot Password</p>
+                        <p th:text="#{forgot.password_header.title}"></p>
                     </h2>
-                    <p class="text-2xl mb-4" th:text="#{forgot.password_content.title}">
-                        Enter your email to receive a verification code and reset your password.
-                    </p>
+                    <p class="text-2xl mb-4" th:text="#{forgot.password_content.title}"></p>
                 </div>
             </div>
         </div>
@@ -25,10 +23,8 @@
                 <!-- Logo Section -->
                 <div class="mb-6">
                     <img th:src="@{/image/login/run.png}" alt="Logo" class="mx-auto mb-4 w-20">
-                    <h2 class="text-2xl font-bold" th:text="#{forgot.reset_password.title}">Reset Your Password</h2>
-                    <p class="text-gray-500" th:text="#{forgot.instructions.title}">
-                        Follow the steps below to reset your password.
-                    </p>
+                    <h2 class="text-2xl font-bold" th:text="#{forgot.reset_password.title}"></h2>
+                    <p class="text-gray-500" th:text="#{forgot.instructions.title}"></p>
                 </div>
 
                 <form id="forgot-password-form">
@@ -105,14 +101,14 @@
 
                     <!-- Submit Button -->
                     <button class="bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 px-4 w-full rounded-lg mb-6" id="resetBtn"
-                        th:text="#{forgot.reset_button.title}">Reset Password</button>
+                        th:text="#{forgot.reset_button.title}"></button>
                 </form>
             </div>
         </div>
     </div>
+
+    <script th:src="@{/js/utils.js}"></script>
     <script th:src="@{/js/forgot-password.js}"></script>
 </body>
-
-<script src="https://cdn.tailwindcss.com"></script>
 
 </html>

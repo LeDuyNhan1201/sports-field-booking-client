@@ -2,10 +2,44 @@ const CLIENT_DOMAIN = 'http://localhost:3333/sports-field-booking';
 const SERVER_DOMAIN = 'http://localhost:8888/sports-field-booking/api/v1';
 
 function showLoading(isLoading) {
-    // Lấy phần tử loading từ DOM
-    let loadingElement = document.getElementById('loading');
-    // Hiển thị hoặc ẩn loading tùy thuộc vào giá trị của isLoading
-    loadingElement.style.display = isLoading ? 'block' : 'none';
+    const loading = document.getElementById("loading");
+    loading.classList.toggle("hidden", !isLoading);
+}
+
+function popupError(message = "Đã xảy ra lỗi!", timeout = 3000) {
+    const error = document.getElementById("error");
+    error.textContent = message; // Cập nhật nội dung
+    error.classList.remove("hidden"); // Hiện popup
+
+    // Tự ẩn sau timeout (mặc định 3 giây)
+    setTimeout(() => {
+        error.classList.add("hidden");
+    }, timeout);
+}
+
+function validationForm(formId, errors) {
+    const form = document.getElementById(formId);
+    const errorFields = form.querySelectorAll('.errorFields');
+    errorFields.forEach(field => {
+        const fieldName = field.id.replace('Error', '');
+        showValidationError(errors, fieldName);
+    });
+}
+
+function showValidationError(errors, field) {
+    const error = errors[field];
+    console.log(error);
+    const errorElement = document.getElementById(`${field}Error`);
+    if (error) {
+        errorElement.textContent
+        toggleFieldError(errorElement, true, error);
+    }
+    else toggleFieldError(errorElement, false);
+}
+
+function toggleFieldError(errorElement, show, message = "") {
+    errorElement.textContent = message; // Cập nhật thông báo lỗi
+    errorElement.classList.toggle("hidden", !show); // Ẩn/hiện
 }
 
 function checkAccessToken() {
@@ -205,7 +239,6 @@ async function calculateFileHash(fileChunk) {
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
-
 
 function addTooltip(element, tooltipText) {
     // Tạo tooltip

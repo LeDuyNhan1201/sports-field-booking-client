@@ -1,36 +1,34 @@
-<footer th:fragment="footer" xmlns:th="http://www.w3.org/1999/xhtml">
+<footer th:fragment="footer">
     <!-- Footer -->
     <footer class="bg-black text-white py-8">
         <div class="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:text-left">
             <div>
-                <h3 class="text-2xl font-bold" th:text="#{homepage.footer_sports_header.title}">Sports field</h3>
-                <p class="mt-4 text-gray-500" th:text="#{homepage.footer_sports_content.title}">An online sports booking platform is a service that allows users to find,
-                    reserve, and pay for sports venues near them.</p>
+                <h3 class="text-2xl font-bold" th:text="#{homepage.footer_sports_header.title}"></h3>
+                <p class="mt-4 text-gray-500" th:text="#{homepage.footer_sports_content.title}"></p>
             </div>
 
             <!-- Contact -->
             <div>
-                <h3 class="text-xl font-bold" th:text="#{homepage.footer_contact_header.title}">Contact us</h3>
+                <h3 class="text-xl font-bold" th:text="#{homepage.footer_contact_header.title}"></h3>
                 <ul class="mt-4 space-y-2 text-gray-400">
                     <li><span>📞</span> +00000000</li>
                     <li><span>📧</span> test@gmail.com</li>
-                    <li><span>📍</span> TPHCM, Viet Nam</li>
+                    <li><span>📍</span> TP.HCM, Viet Nam</li>
                 </ul>
             </div>
 
             <!-- Social -->
             <div>
-                <h3 class="text-xl font-bold" th:text="#{homepage.footer_follow_header.title}">Follow us</h3>
+                <h3 class="text-xl font-bold" th:text="#{homepage.footer_follow_header.title}"></h3>
                 <div class="mt-4 flex flex-col space-y-4">
                     <a href="#" class="hover:text-gray-300 flex items-center">
-                        <img th:src="@{/image/social/facebook.png}" alt="facebook" class="w-6 h-6 mr-2">
-                        Facebook</a>
+                        <img th:src="@{/image/social/facebook.png}" alt="facebook" class="w-6 h-6 mr-2"></a>
+
                     <a href="#" class="hover:text-gray-300 flex items-center">
-                        <img th:src="@{/image/social/linkedin.png}" alt="linkedin" class="w-6 h-6 mr-2">
-                        LinkedIn</a>
+                        <img th:src="@{/image/social/linkedin.png}" alt="linkedin" class="w-6 h-6 mr-2"></a>
+
                     <a href="#" class="hover:text-gray-300 flex items-center">
-                        <img th:src="@{/image/social/instagram.png}" alt="instagram" class="w-6 h-6 mr-2">
-                        Instagram</a>
+                        <img th:src="@{/image/social/instagram.png}" alt="instagram" class="w-6 h-6 mr-2"></a>
                 </div>
             </div>
         </div>
@@ -40,8 +38,8 @@
             <div class="container mx-auto text-center text-gray-400 text-sm">
                 <p>All right @sports 2024</p>
                 <div class="mt-2 flex justify-center space-x-4">
-                    <a href="#" class="hover:text-white" th:text="#{homepage.policy.title}">Privacy policy</a>
-                    <a href="#" class="hover:text-white" th:text="#{homepage.terms.title}">Terms of use</a>
+                    <a href="#" class="hover:text-white" th:text="#{homepage.policy.title}"></a>
+                    <a href="#" class="hover:text-white" th:text="#{homepage.terms.title}"></a>
                 </div>
             </div>
         </div>

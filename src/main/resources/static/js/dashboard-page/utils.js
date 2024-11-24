@@ -1,5 +1,5 @@
 function sortTable(n) {
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+    let table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
     table = document.querySelector("table");
     switching = true;
     dir = "asc";
@@ -13,12 +13,12 @@ function sortTable(n) {
             x = rows[i].getElementsByTagName("TD")[n];
             y = rows[i + 1].getElementsByTagName("TD")[n];
 
-            if (dir == "asc") {
+            if (dir === "asc") {
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
                     shouldSwitch = true;
                     break;
                 }
-            } else if (dir == "desc") {
+            } else if (dir === "desc") {
                 if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
                     shouldSwitch = true;
                     break;
@@ -30,7 +30,7 @@ function sortTable(n) {
             switching = true;
             switchCount++;
         } else {
-            if (switchCount == 0 && dir == "asc") {
+            if (switchCount === 0 && dir === "asc") {
                 dir = "desc";
                 switching = true;
             }
