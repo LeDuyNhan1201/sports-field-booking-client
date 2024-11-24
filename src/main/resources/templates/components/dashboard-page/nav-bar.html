@@ -1,4 +1,4 @@
-<div th:fragment="navBar" xmlns:th="http://www.w3.org/1999/xhtml" class="w-1/5 bg-gradient-to-b from-green-500 via-green-400 to-green-300 min-h-screen p-4 flex flex-col justify-between">
+<div th:fragment="navBar" xmlns:th="http://www.w3.org/1999/xhtml" class="w-1/5 bg-green-500 min-h-screen p-4 flex flex-col justify-between">
     <div>
         <div class="flex items-center mb-8">
             <img class="w-10 h-10 rounded-full" alt="User Avatar" id="avatar">
@@ -8,7 +8,7 @@
         <div class="text-white text-xl font-bold mb-8">Main</div>
         <nav>
             <ul>
-                <li class="mb-4">
+                <li class="mb-4 text-2xl mt-8">
                     <a th:text="#{dashboard.home.title}"
                        th:href="@{/dashboard}"
                        th:class="${content == 'home'} ? 'text-white flex items-center space-x-2' : 'text-white flex items-center space-x-2 opacity-70'" aria-current="page">
@@ -16,33 +16,33 @@
                     </a>
                 </li>
 
-                <li class="mb-4">
+                <li class="mb-4 text-2xl mt-8">
                     <a th:text="#{dashboard.promotion.title}"
                        th:href="@{/dashboard/promotion}"
-                       th:class="${content == 'promotion'} ? 'text-white' : 'text-white opacity-70'">
+                       th:class="${content == 'promotion'} ? 'text-white' : 'text-white'">
                         Promotion
                     </a>
                 </li>
 
-                <li class="mb-4">
+                <li class="mb-4 text-2xl mt-8">
                     <a th:text="#{dashboard.user_heading.title}"
                        th:href="@{/dashboard/user}"
-                       th:class="${content == 'user'} ? 'text-white' : 'text-white opacity-70'">
+                       th:class="${content == 'user'} ? 'text-white' : 'text-white'">
                         User
                     </a>
                 </li>
 
-                <li class="mb-4">
+                <li class="mb-4 text-2xl mt-8">
                     <a th:text="#{dashboard.order.title}"
                        th:href="@{/dashboard/order}"
-                       th:class="${content == 'order'} ? 'text-white' : 'text-white opacity-70'">
+                       th:class="${content == 'order'} ? 'text-white' : 'text-white'">
                         Order
                     </a>
 
-                <li class="mb-4">
+                <li class="mb-4 text-2xl mt-8">
                     <a th:text="#{dashboard.sports_field.title}"
                        th:href="@{/dashboard/sport-field}"
-                       th:class="${content == 'sportField'} ? 'text-white' : 'text-white opacity-70'">
+                       th:class="${content == 'sportField'} ? 'text-white' : 'text-white'">
                         Sport fields
                     </a>
                 </li>
@@ -52,6 +52,6 @@
         </nav>
     </div>
     <div class="mb-4">
-        <a href="#" class="text-white opacity-70" th:text="#{dashboard.logout.title}" id="btn-sign-out">Log out</a>
+        <a href="#" class="text-white text-2xl" th:text="#{dashboard.logout.title}" id="btn-sign-out">Log out</a>
     </div>
 </div>

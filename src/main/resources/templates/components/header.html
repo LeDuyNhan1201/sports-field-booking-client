@@ -4,28 +4,28 @@
         <a th:href="@{/}"
             th:class="${content == 'Sports booking'} ? 'nav active text-4xl font-bold flex items-center' : 'nav inactive flex items-center'"
             aria-current="page">
-            <span th:text="#{homepage.name.title}"></span>
+            <span th:text="#{homepage.name.title}" class="text-xl"></span>
             <img th:src="@{/image/run.png}" alt="Run" class="ml-2 w-8 h-8">
         </a>
 
         <ul class="flex space-x-4">
             <li class="relative group flex items-center">
-                <select id="languageSelect" class="bg-transparent border-none text-black p-0 appearance-none"
+                <select id="languageSelect" class="bg-transparent border-none text-white p-0 appearance-none text-xl"
                 onchange="switchLanguage(this.value)">
-                <option value="" disabled selected class="text-white" th:text="#{homepage.language.label}"></option>
-                <option value="en" class="text-black" th:text="#{homepage.english.title}"></option>
-                <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
+                <option value="" disabled selected class="text-white text-xl" th:text="#{homepage.language.label}"></option>
+                <option value="en" class="text-black text-xl" th:text="#{homepage.english.title}"></option>
+                <option value="vi" class="text-black text-xl" th:text="#{homepage.vietnamese.title}"></option>
             </select>
             </li>
 
-            <li class="relative group flex items-center">
+            <li class="relative group flex items-center text-xl">
                 <a href="#" th:href="@{/sports-field}"
                     th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'"
                     aria-current="page" th:text="#{homepage.sports_list.title}"></a>
             </li>
 
 
-            <li id="login-section">
+            <li id="login-section" class="text-xl">
                 <a th:href="@{/auth}"
                     th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'"
                     th:text="#{homepage.login.title}"></a>
@@ -34,8 +34,7 @@
             <!--            <div id="current-user"></div>-->
             <ul class="flex space-x-4">
                 <!-- Notification -->
-                <!-- Notification -->
-                <li id="notification" class="relative group">
+                <li id="notification" class="relative group hidden">
                     <div id="notification-icon" class="relative flex items-center space-x-2 cursor-pointer">
                         <!-- Bell icon -->
                         <svg height="30px" width="30px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +138,7 @@
                 </li>
             </ul>
 
-            <li class="relative group flex items-center">
+            <li class="relative group flex items-center hidden" id="order-section">
                 <a th:href="@{/order}"
                     th:class="${content == 'orderHistory'} ? 'nav active hover:text-gray-300' : 'nav inactive'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
