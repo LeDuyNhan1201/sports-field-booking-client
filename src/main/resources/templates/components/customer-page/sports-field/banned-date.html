@@ -1,0 +1,27 @@
+<div class="w-full max-w-sm bg-white rounded-lg shadow-md py-3 px-3">
+    <div class="flex justify-between around">
+        <span class="text-lg text-gray-500 font-bold">Banned Date</span>
+        <i id="edit-field.banned-time.closeModal" class="fa-solid fa-xmark cursor-pointer"></i>
+    </div>
+    <div class="my-4 flex justify-center px-2">
+        <div class="flex-1 mr-3">
+            <label for="openingTime" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.opening_time.title}">Opening Time</label>
+            <span id="edit-field.banned-time.start-time">10:20</span>
+        </div>
+        <div class="flex-1 ml-3">
+            <label for="closingTime" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.closing_time.title}">Closing Time</label>
+            <span id="edit-field.banned-time.end-time">10:30</span>
+        </div>
+    </div>
+    <div class="flex items-center justify-between my-2">
+        <input
+            type="date"
+            id="edit-field.banned-time.new-time"
+            class="border-dashed mt-1 block p-2 bg-white border-gray-300 border-2 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+        <button id="edit-field.banned-time.button-add" class="bg-green-500 hover:bg-green-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.add_button.title}">Add</button>
+    </div>
+    <div id="edit-field.banned-time.list" class="shadow-lg border-2 border-black-500 h-60 overflow-y-auto custom-scrollbar p-1">
+        <span class="text-sm italic text-gray-300">Hiện tại không có ngày khóa<span/>
+    </div>
+</div>
