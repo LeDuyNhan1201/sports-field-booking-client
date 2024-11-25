@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
-    const itemsPerPage = 4;
+    const itemsPerPage = 2;
     let totalItems = 0;
+    let isSearch = false;
 
     loadPromotions(currentPage - 1, itemsPerPage);
 
@@ -42,28 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
             isConfirmed: true
         };
 
-        if (isEditing) {
-            await fetchData('promotions', 'PUT', currentPromotionId, promotionData);
-        } else {
-            await fetchData('promotions', 'POST', null, promotionData);
-        }
-
+        const method = isEditing ? 'PUT' : 'POST';
+        await fetchData('promotions', method, currentPromotionId, promotionData);
         promotionModal.classList.add('hidden');
         loadPromotions(currentPage - 1, itemsPerPage);
     });
 
     async function loadPromotions(OFFSET = 0, LIMIT = 10000) {
-        const promotions = await fetchData('promotions', 'GET', null, null, OFFSET, LIMIT);
-        const allPromotions = await fetchData('promotions');
+        try {
+            const promotions = await fetchData('promotions', 'GET', null, null, OFFSET, LIMIT);
+            const allPromotions = await fetchData('promotions');
 
-        if (!Array.isArray(promotions)) {
-            console.error('Promotions data is not an array');
-            return;
+            if (!Array.isArray(promotions)) {
+                console.error('Invalid promotions data format');
+                return;
+            }
+
+            totalItems = allPromotions.length;
+            updatePagination();
+            renderPromotions(promotions);
+        } catch (error) {
+            console.error('Error loading promotions:', error);
         }
+    }
 
-        totalItems = allPromotions.length;
-        updatePagination();
-
+    function renderPromotions(promotions) {
         const promotionsTableBody = document.querySelector('tbody');
         const promotionQuantity = document.getElementById('promotion-quantity');
         promotionQuantity.textContent = totalItems;
@@ -72,27 +76,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.className = 'border-b';
 
+            const startTime = new Date(promotion.startDate).toLocaleDateString('en-US');
+            const endTime = new Date(promotion.endDate).toLocaleDateString('en-US');
             row.innerHTML = `
-                <td class="p-4">${promotion.id}</td>
-                <td class="p-4">${promotion.name}</td>
-                <td class="p-4">${promotion.description}</td>
-                <td class="p-4">${promotion.discountPercentage}%</td>
-                <td class="p-4">${promotion.startDate}</td>
-                <td class="p-4">${promotion.endDate}</td>
-                <td class="p-4">
-                    <span class="${promotion.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-red-200 text-red-600'} py-1 px-3 rounded-full text-xs">
-                        ${promotion.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
-                    </span>
-                </td>
-                <td class="p-4">
-                    <button class="edit-button text-blue-500 hover:text-blue-700">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            `;
+            <td class="p-4">${promotion.id}</td>
+            <td class="p-4">${promotion.name}</td>
+            <td class="p-4">${promotion.description}</td>
+            <td class="p-4">${promotion.discountPercentage}%</td>
+            <td class="p-4">${startTime}</td>
+            <td class="p-4">${endTime}</td>
+            <td class="p-4">
+                <span class="${promotion.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-red-200 text-red-600'} py-1 px-3 rounded-full text-xs">
+                    ${promotion.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
+                </span>
+            </td>
+            <td class="p-4">
+                <button class="edit-button text-blue-500 hover:text-blue-700">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
 
             promotionsTableBody.appendChild(row);
 
@@ -117,22 +123,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updatePagination() {
-        const startItem = (currentPage - 1) * itemsPerPage + 1;
-        const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-        document.getElementById('show-item-of-page-promotion').textContent = `Showing ${startItem} to ${endItem} of ${totalItems}`;
-
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         const paginationContainer = document.querySelector('.inline-flex');
+        const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+        document.getElementById('show-item-of-page-promotion').textContent = `Showing ${startItem} to ${endItem} of ${totalItems}`;
+
         paginationContainer.innerHTML = '';
 
+        if (currentPage < 1) {
+            currentPage = 1;
+            loadPromotions(currentPage - 1, itemsPerPage);
+        } else if (currentPage > totalPages) {
+            currentPage = totalPages;
+            loadPromotions(currentPage - 1, itemsPerPage);
+        }
+
         if (currentPage > 1) {
-            const prevButton = document.createElement('button');
-            prevButton.id = 'previous-page-button-promotion';
-            prevButton.className = 'px-3 py-2 mr-1 text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50';
-            prevButton.textContent = 'Previous';
-            prevButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
+            const prevButton = createPaginationButton('Previous', () => {
+                currentPage--;
+                if (isSearch) {
+                    searchPromotions();
+                } else {
                     loadPromotions(currentPage - 1, itemsPerPage);
                 }
             });
@@ -140,32 +153,107 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.className = 'px-3 py-2 mr-1 text-gray-700 bg-white border-t border-b border-gray-300 hover:bg-gray-50';
-            pageButton.textContent = i;
-            if (i === currentPage) {
-                pageButton.className += ' bg-blue-600';
-                pageButton.classList.add('text-white');
-            }
-            pageButton.addEventListener('click', () => {
+            const pageButton = createPaginationButton(i, () => {
                 currentPage = i;
-                loadPromotions(currentPage - 1, itemsPerPage);
+                if (isSearch) {
+                    searchPromotions();
+                } else {
+                    loadPromotions(currentPage - 1, itemsPerPage);
+                }
             });
+            if (i === currentPage) {
+                pageButton.classList.add('bg-blue-600', 'text-white');
+            }
             paginationContainer.appendChild(pageButton);
         }
 
         if (currentPage < totalPages) {
-            const nextButton = document.createElement('button');
-            nextButton.id = 'next-page-button-promotion';
-            nextButton.className = 'px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50';
-            nextButton.textContent = 'Next';
-            nextButton.addEventListener('click', () => {
-                if (currentPage * itemsPerPage < totalItems) {
-                    currentPage++;
+            const nextButton = createPaginationButton('Next', () => {
+                currentPage++;
+                if (isSearch) {
+                    searchPromotions();
+                } else {
                     loadPromotions(currentPage - 1, itemsPerPage);
                 }
             });
             paginationContainer.appendChild(nextButton);
+        }
+    }
+    function createPaginationButton(text, onClick) {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.className = 'px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-200';
+        button.addEventListener('click', onClick);
+        return button;
+    }
+
+    document.getElementById('search-btn').addEventListener('click', () => {
+        isSearch = true;
+        currentPage = 1;
+        searchPromotions();
+    });
+
+    document.getElementById('search').addEventListener('input', () => {
+        const keyword = document.getElementById('search').value;
+        if (keyword.trim() === '') {
+            isSearch = false;
+            loadPromotions(currentPage - 1, itemsPerPage);
+        } else {
+            isSearch = true;
+            currentPage = 1;
+            searchPromotions();
+        }
+    });
+
+    async function searchPromotions() {
+        const keyword = document.getElementById('search').value || '';
+        const status = document.getElementById('status').value.toUpperCase() || '';
+        const startDate = document.getElementById('from-date').value || '';
+        const endDate = document.getElementById('to-date').value || '';
+
+
+        const queryParamSearchCurrentPage = new URLSearchParams({
+            keyword,
+            status,
+            startDate,
+            endDate,
+            offset: currentPage - 1,
+            limit: itemsPerPage
+        });
+
+        const queryParams = new URLSearchParams({
+            keyword,
+            status,
+            startDate,
+            endDate
+        });
+        try {
+
+            const response = await fetch(`${SERVER_DOMAIN}/promotions/search?${queryParamSearchCurrentPage}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const allPromotionSearch = await fetch(`${SERVER_DOMAIN}/promotions/search?${queryParams}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const allPromotionSearchJson = await allPromotionSearch.json();
+                totalItems = allPromotionSearchJson.items.length;
+                renderPromotions(data.items);
+                updatePagination();
+            } else {
+                console.error('Failed to search promotions:', response.status);
+            }
+        } catch (error) {
+            console.error('Error during search:', error.message || error);
         }
     }
 });
