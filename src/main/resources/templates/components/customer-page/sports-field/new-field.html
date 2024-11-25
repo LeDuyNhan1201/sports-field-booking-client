@@ -174,4 +174,8 @@
             <button id="new_field.create_field" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" th:text="#{dashboard.save_button.title}"></button>
         </div>
     </div>
+    <!-- hiện những khung giờ đã khóa -->
+    <div id="edit-field.banned-time.container" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div th:replace="~{/components/customer-page/sports-field/banned-date}"></div>
+    </div>
 </div>
