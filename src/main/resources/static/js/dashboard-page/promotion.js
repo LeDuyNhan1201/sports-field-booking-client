@@ -76,27 +76,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.className = 'border-b';
 
+            const startTime = new Date(promotion.startDate).toLocaleDateString('en-US');
+            const endTime = new Date(promotion.endDate).toLocaleDateString('en-US');
             row.innerHTML = `
-                <td class="p-4">${promotion.id}</td>
-                <td class="p-4">${promotion.name}</td>
-                <td class="p-4">${promotion.description}</td>
-                <td class="p-4">${promotion.discountPercentage}%</td>
-                <td class="p-4">${promotion.startDate}</td>
-                <td class="p-4">${promotion.endDate}</td>
-                <td class="p-4">
-                    <span class="${promotion.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-red-200 text-red-600'} py-1 px-3 rounded-full text-xs">
-                        ${promotion.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
-                    </span>
-                </td>
-                <td class="p-4">
-                    <button class="edit-button text-blue-500 hover:text-blue-700">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            `;
+            <td class="p-4">${promotion.id}</td>
+            <td class="p-4">${promotion.name}</td>
+            <td class="p-4">${promotion.description}</td>
+            <td class="p-4">${promotion.discountPercentage}%</td>
+            <td class="p-4">${startTime}</td>
+            <td class="p-4">${endTime}</td>
+            <td class="p-4">
+                <span class="${promotion.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-red-200 text-red-600'} py-1 px-3 rounded-full text-xs">
+                    ${promotion.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'}
+                </span>
+            </td>
+            <td class="p-4">
+                <button class="edit-button text-blue-500 hover:text-blue-700">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
 
             promotionsTableBody.appendChild(row);
 
@@ -180,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('search-btn').addEventListener('click', () => {
         isSearch = true;
-        currentPage = 1; // Reset to first page
+        currentPage = 1;
         searchPromotions();
     });
 
@@ -191,16 +193,17 @@ document.addEventListener('DOMContentLoaded', () => {
             loadPromotions(currentPage - 1, itemsPerPage);
         } else {
             isSearch = true;
-            currentPage = 1; // Reset to first page
+            currentPage = 1;
             searchPromotions();
         }
     });
 
     async function searchPromotions() {
         const keyword = document.getElementById('search').value || '';
-        const status = document.getElementById('status').value || '';
-        const startDate = document.getElementById('startDate').value || '';
-        const endDate = document.getElementById('endDate').value || '';
+        const status = document.getElementById('status').value.toUpperCase() || '';
+        const startDate = document.getElementById('from-date').value || '';
+        const endDate = document.getElementById('to-date').value || '';
+
 
         const queryParamSearchCurrentPage = new URLSearchParams({
             keyword,
@@ -210,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             offset: currentPage - 1,
             limit: itemsPerPage
         });
+        console.log(keyword, status, startDate, endDate);
 
         const queryParams = new URLSearchParams({
             keyword,
@@ -237,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 const allPromotionSearchJson = await allPromotionSearch.json();
                 totalItems = allPromotionSearchJson.items.length;
-                console.log(totalItems);
                 renderPromotions(data.items);
                 updatePagination();
             } else {
