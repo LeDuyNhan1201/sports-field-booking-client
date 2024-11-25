@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const prevButton = createPaginationButton('Previous', () => {
                 currentPage--;
                 if (isSearch) {
-                    searchPromotions(currentPage);
+                    searchPromotions();
                 } else {
                     loadPromotions(currentPage - 1, itemsPerPage);
                 }
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const pageButton = createPaginationButton(i, () => {
                 currentPage = i;
                 if (isSearch) {
-                    searchPromotions(currentPage);
+                    searchPromotions();
                 } else {
                     loadPromotions(currentPage - 1, itemsPerPage);
                 }
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const nextButton = createPaginationButton('Next', () => {
                 currentPage++;
                 if (isSearch) {
-                    searchPromotions(currentPage);
+                    searchPromotions();
                 } else {
                     loadPromotions(currentPage - 1, itemsPerPage);
                 }
@@ -180,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('search-btn').addEventListener('click', () => {
         isSearch = true;
+        currentPage = 1; // Reset to first page
         searchPromotions();
     });
 
@@ -190,11 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
             loadPromotions(currentPage - 1, itemsPerPage);
         } else {
             isSearch = true;
+            currentPage = 1; // Reset to first page
             searchPromotions();
         }
     });
 
-    async function searchPromotions(page = 1) {
+    async function searchPromotions() {
         const keyword = document.getElementById('search').value || '';
         const status = document.getElementById('status').value || '';
         const startDate = document.getElementById('startDate').value || '';
