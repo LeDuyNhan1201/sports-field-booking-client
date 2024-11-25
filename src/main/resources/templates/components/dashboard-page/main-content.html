@@ -26,6 +26,9 @@
     <div th:case="'user'">
         <div th:replace="~{/components/dashboard-page/user :: user}"></div>
     </div>
+    <div th:case="'category'">
+        <div th:replace="~{/components/dashboard-page/category :: category}"></div>
+    </div>
 
     <div id="loading"></div>
 </div>
