@@ -132,6 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paginationContainer.innerHTML = '';
 
+        if (currentPage < 1) {
+            currentPage = 1;
+            loadPromotions(currentPage - 1, itemsPerPage);
+        } else if (currentPage > totalPages) {
+            currentPage = totalPages;
+            loadPromotions(currentPage - 1, itemsPerPage);
+        }
+
         if (currentPage > 1) {
             const prevButton = createPaginationButton('Previous', () => {
                 currentPage--;
@@ -171,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
             paginationContainer.appendChild(nextButton);
         }
     }
-
     function createPaginationButton(text, onClick) {
         const button = document.createElement('button');
         button.textContent = text;
@@ -213,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
             offset: currentPage - 1,
             limit: itemsPerPage
         });
-        console.log(keyword, status, startDate, endDate);
 
         const queryParams = new URLSearchParams({
             keyword,
