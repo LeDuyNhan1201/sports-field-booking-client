@@ -1,4 +1,4 @@
-<div th:fragment="home" xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="home">
     <!-- Search section -->
     <section class="bg-cover bg-center py-20"
         th:style="'background-image: url(' + @{/image/background.png} + '); background-size: cover; filter: brightness(1.1) contrast(0.8);'">
@@ -52,4 +52,6 @@
             </div>
         </div>
     </section>
+
+    <script th:src="@{/js/customer-page/home.js}"></script>
 </div>

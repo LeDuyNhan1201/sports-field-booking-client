@@ -1,5 +1,4 @@
-<div class="w-full p-6 bg-white rounded-lg shadow h-[100vh] overflow-y-auto" th:fragment="user"
-    xmlns:th="http://www.w3.org/1999/xhtml">
+<div class="w-full p-6 bg-white rounded-lg shadow h-[100vh] overflow-y-auto" th:fragment="user">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold" th:text="#{dashboard.user_heading.title}">Users</h1>
@@ -10,14 +9,14 @@
             <option value="vi" class="text-black" th:text="#{homepage.vietnamese.title}"></option>
         </select>
         <button id="addUserBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            th:text="#{dashboard.add_user.title}">Add User</button>
+            th:text="#{dashboard.add_user.title}"></button>
     </div>
 
     <!-- Users Found -->
     <div class="flex justify-between items-center mb-6">
         <span class="flex text-gray-500">
             <p class="mr-1">100</p>
-            <span th:text="#{dashboard.user_found.title}"> người dùng được tìm thấy</span>
+            <span th:text="#{dashboard.user_found.title}"></span>
         </span>
     </div>
 
@@ -27,17 +26,16 @@
         <div class="flex items-center space-x-4 w-2/3">
             <input type="text" id="search"
                 class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                th:placeholder="#{dashboard.user_search.placeholder}" placeholder="Tìm kiếm người dùng...">
+                th:placeholder="#{dashboard.user_search.placeholder}">
         </div>
 
         <!-- Status Filter -->
         <div class="flex items-center space-x-4">
-            <select id="status"
+            <select id=""
                 class="block w-64 bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <option value="" th:text="#{dashboard.user_searchStatus.title}" class="w-full">Tất cả trạng thái
-                </option>
-                <option value="active" th:text="#{dashboard.user_status.active}" class="w-full">Active</option>
-                <option value="banned" th:text="#{dashboard.user_status.banned}" class="w-full">Banned</option>
+                <option value="" th:text="#{dashboard.user_searchStatus.title}" class="w-full"></option>
+                <option value="active" th:text="#{dashboard.user_status.active}" class="w-full"></option>
+                <option value="banned" th:text="#{dashboard.user_status.banned}" class="w-full"></option>
             </select>
         </div>
     </div>
@@ -46,27 +44,19 @@
     <table class="w-full text-left border-collapse">
         <thead>
             <tr class="text-gray-600 bg-gray-100">
-                <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.user_id.title}">ID</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.user_image.title}">Image</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.user_bio.title}">Bio</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.user_birthdate.title}">
-                    Birthdate</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.user_email.title}">Email</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.user_firstname.title}">First
-                    Name</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.user_middlename.title}">
-                    Middle Name</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(7)" th:text="#{dashboard.user_lastname.title}">Last
-                    Name</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(8)" th:text="#{dashboard.user_gender.title}">Gender
-                </th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(9)" th:text="#{dashboard.user_phone.title}">Phone
-                    Number</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(10)" th:text="#{dashboard.user_username.title}">
-                    Username</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(11)" th:text="#{dashboard.user_status.title}">Status
-                </th>
-                <th class="p-4" th:text="#{dashboard.user_action.title}">Action</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.user_id.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.user_image.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.user_bio.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.user_birthdate.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.user_email.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.user_firstname.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.user_middlename.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(7)" th:text="#{dashboard.user_lastname.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(8)" th:text="#{dashboard.user_gender.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(9)" th:text="#{dashboard.user_phone.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(10)" th:text="#{dashboard.user_username.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(11)" th:text="#{dashboard.user_status.title}"></th>
+                <th class="p-4" th:text="#{dashboard.user_action.title}"></th>
             </tr>
         </thead>
         <tbody>
@@ -87,7 +77,7 @@
                 <td class="p-4">john.doe</td>
                 <td class="p-4">
                     <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.user_status.active}">Active</span>
+                        th:text="#{dashboard.user_status.active}"></span>
                 </td>
                 <td class="p-4">
                     <button class="edit-button text-blue-500 hover:text-blue-700">
@@ -117,82 +107,82 @@
             <!-- Left Side: Image -->
             <div class="w-1/2 pr-6">
                 <label class="block text-lg font-semibold text-gray-700 mb-4"
-                    th:text="#{dashboard.user_image.title}">User Image</label>
+                    th:text="#{dashboard.user_image.title}"></label>
                 <img id="userImagePreview" src="https://placehold.co/800x600"
                     class="w-400 h-400 object-cover rounded-md mb-4" alt="User Image Preview">
                 <div class="flex justify-between">
                     <button class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded"
-                        onclick="replaceUserImage()" th:text="#{dashboard.replace_button.title}">Change</button>
+                        onclick="replaceUserImage()" th:text="#{dashboard.replace_button.title}"></button>
                     <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-                        onclick="clearUserImage()" th:text="#{dashboard.clear_button.title}">Clear</button>
+                        onclick="clearUserImage()" th:text="#{dashboard.clear_button.title}"></button>
                 </div>
             </div>
 
             <!-- Right Side: Form Fields -->
             <div class="w-1/2">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold" th:text="#{dashboard.add_user_modal.title}">Add User</h2>
+                    <h2 class="text-xl font-bold" th:text="#{dashboard.add_user_modal.title}"></h2>
                 </div>
 
                 <form>
                     <!-- First Name -->
                     <div class="mb-4">
-                        <label for="firstName" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.first_name.title}">First Name</label>
+                        <label for="firstName" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.first_name.title}"></label>
                         <input type="text" id="firstName" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 
                     <!-- Middle Name -->
                     <div class="mb-4">
-                        <label for="middleName" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.middle_name.title}">Middle Name</label>
+                        <label for="middleName" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.middle_name.title}"></label>
                         <input type="text" id="middleName" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 
                     <!-- Last Name -->
                     <div class="mb-4">
-                        <label for="lastName" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.last_name.title}">Last Name</label>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.last_name.title}"></label>
                         <input type="text" id="lastName" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 
                     <!-- Email -->
                     <div class="mb-4">
-                        <label for="email" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.email.title}">Email</label>
+                        <label for="email" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.email.title}"></label>
                         <input type="email" id="email" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 
                     <!-- Phone -->
                     <div class="mb-4">
-                        <label for="phone" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.phone_number.title}">Phone</label>
+                        <label for="phone" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.phone_number.title}"></label>
                         <input type="text" id="phone" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 
                     <!-- Gender -->
                     <div class="mb-4">
-                        <label for="gender" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.gender.title}">Gender</label>
+                        <label for="gender" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.gender.title}"></label>
                         <select id="gender" class="block w-full bg-white border-gray-300 p-2 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="male" th:text="#{dashboard.gender.male}">Male</option>
-                            <option value="female" th:text="#{dashboard.gender.female}">Female</option>
-                            <option value="other" th:text="#{dashboard.gender.other}">Other</option>
+                            <option value="male" th:text="#{dashboard.gender.male}"></option>
+                            <option value="female" th:text="#{dashboard.gender.female}"></option>
+                            <option value="other" th:text="#{dashboard.gender.other}"></option>
                         </select>
                     </div>
                 
                     <!-- Bio -->
                     <div class="mb-4">
-                        <label for="bio" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.bio.title}">Bio</label>
+                        <label for="bio" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.bio.title}"></label>
                         <textarea id="bio" rows="3" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
                     </div>
                 
                     <!-- Birthdate -->
                     <div class="mb-4">
-                        <label for="birthdate" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.birthdate.title}">Birthdate</label>
+                        <label for="birthdate" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.birthdate.title}"></label>
                         <input type="date" id="birthdate" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
                 
                     <!-- Status -->
                     <div class="mb-4">
-                        <label for="status" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.status.title}">Status</label>
+                        <label for="status" class="block text-sm font-medium text-gray-700" th:text="#{dashboard.status.title}"></label>
                         <select id="status" class="block w-full bg-white border-gray-300 p-2 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="active" th:text="#{dashboard.status.active}">Active</option>
-                            <option value="banned" th:text="#{dashboard.status.banned}">Banned</option>
+                            <option value="active" th:text="#{dashboard.status.active}"></option>
+                            <option value="banned" th:text="#{dashboard.status.banned}"></option>
                         </select>
                     </div>
                 </form>
@@ -201,7 +191,7 @@
                 <div class="text-right">
                     <button id="saveUserBtn"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                        th:text="#{dashboard.save_button.title}">Save</button>
+                        th:text="#{dashboard.save_button.title}"></button>
                 </div>
             </div>
         </div>

@@ -18,7 +18,7 @@ document.getElementById('btnSignIn')
         if (!response.ok) {
             const message = data.message || 'Sign in failed';
             popupError(message);
-            if (data.errors) validationForm("formSignIn", data.errors);
+            validationForm("formSignIn", data.errors);
 
         } else {
             const { accessToken, refreshToken } = data.tokensResponse;

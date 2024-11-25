@@ -27,13 +27,13 @@
                     <p class="text-gray-500" th:text="#{forgot.instructions.title}"></p>
                 </div>
 
-                <form id="forgot-password-form">
+                <form id="formForgot">
                     <!-- Email Field with Send Button -->
                     <div class="mb-4 relative">
                         <input type="email" id="email" name="email" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                            placeholder="Enter your email">
-                        <button type="button"
+                               th:placeholder="#{forgot.email.title}">
+                        <button id="btnSendMail" type="button"
                             class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white p-2 rounded-full hover:bg-gray-800"
                             aria-label="Send">
                             <svg height="24px" width="24px" viewBox="0 0 512.001 512.001"
@@ -63,7 +63,7 @@
                                l-25.107-122.718l275.105-178.042L162.72,316.936z M359.507,419.194l-177.284-97.307L485.928,66.574L359.507,419.194z" />
                             </svg>
                         </button>
-
+                        <p id="emailError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Verification Code Field -->
@@ -71,6 +71,7 @@
                         <input type="text" id="verifyCode" name="verifyCode" required
                             class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             th:placeholder="#{forgot.verify_code.title}">
+                        <p id="codeError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- New Password Field -->
@@ -84,6 +85,7 @@
                                 th:data-hidden-path="@{/image/login/hidden.png}" alt="Toggle Password"
                                 id="newPasswordIcon" class="w-6 h-6">
                         </span>
+                        <p id="passwordError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Confirm New Password Field -->
@@ -97,6 +99,7 @@
                                 th:data-hidden-path="@{/image/login/hidden.png}" alt="Toggle Password"
                                 id="confirmNewPasswordIcon" class="w-6 h-6">
                         </span>
+                        <p id="passwordConfirmationError" class="errorFields hidden mt-1 text-sm text-red-600"></p>
                     </div>
 
                     <!-- Submit Button -->
@@ -105,6 +108,14 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <div id="loading" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div id="error" class="hidden fixed bottom-4 right-4 bg-red-100 text-red-600 p-3 rounded shadow-lg">
+        Lỗi xảy ra!
     </div>
 
     <script th:src="@{/js/utils.js}"></script>

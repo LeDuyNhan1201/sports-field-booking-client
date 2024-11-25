@@ -56,6 +56,9 @@ public class SecurityConfiguration {
                 "/sports-field/**",
                 "/booking",
                 "/account",
+                "/my-bookings",
+                "/user-info",
+                "/my-sports-field",
                 "/dashboard/file-storage",
 
                 // Frontend Resources

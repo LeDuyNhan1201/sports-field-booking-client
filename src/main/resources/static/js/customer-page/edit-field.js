@@ -226,11 +226,11 @@ editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEv
     let closingTimeElementValue = editFieldContainer.querySelector("#new_field\\.availability\\.closingTime").value;
     let priceElementValue = editFieldContainer.querySelector("#new_field\\.availability\\.price").value;
 
-    if (openingTimeElementValue == "" || closingTimeElementValue == "") {
+    if (openingTimeElementValue === "" || closingTimeElementValue === "") {
         alert("Vui lòng nhập giờ");
         return;
     }
-    if (priceElementValue == "") {
+    if (priceElementValue === "") {
         alert("Vui lòng nhập giá");
         return;
     }
@@ -245,7 +245,7 @@ editFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEv
         return;
     }
 
-    if (closingTime.getTime() == openingTime.getTime()) {
+    if (closingTime.getTime() === openingTime.getTime()) {
         console.log("Thời gian hoạt động phải lớn hơn không");
         return;
     }
@@ -373,12 +373,13 @@ editFieldContainer.querySelector("#new_field\\.create_field").addEventListener("
         } else {
             newSportsField = await response.json();
 
-            newImages.forEach(async (image, index) => {
+            for (const image of newImages) {
+                const index = newImages.indexOf(image);
                 if (image != null) {
                     await deleteImages(newSportsField.id, index);
                     await uploadPicture(image, newSportsField.id);
                 }
-            });
+            }
 
             alert("Create sports field successfully");
             document.location.reload(true);

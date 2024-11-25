@@ -2,11 +2,6 @@ let bookings = [];
 
 async function fetchBookingHistory() {
     try {
-        const token = getCookie('accessToken');
-        if (!token) {
-            throw new Error('No auth token found');
-        }
-
         const selectElement = document.getElementById('booking-type-select');
         const bookingType = selectElement.value;
         const endpoint = bookingType === 'my-upcoming' ? 'my-upcoming' : 'my-bookings';
@@ -14,7 +9,7 @@ async function fetchBookingHistory() {
         const response = await fetch(`${SERVER_DOMAIN}/booking/${endpoint}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${getAccessTokenFromCookie()}`,
                 'Content-Type': 'application/json'
             }
         });

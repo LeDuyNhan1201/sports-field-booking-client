@@ -1,5 +1,4 @@
-<div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml">
-    <script th:src="@{/js/utils.js}"></script>
+<div th:fragment="mainContent" th:switch="${content}">
 
     <div th:case="'home'">
         <div th:replace="~{/components/customer-page/home :: home}"></div>
@@ -37,6 +36,12 @@
         <div th:replace="~{/components/customer-page/reset-password :: changePassword}"></div>
     </div>
 
-    <div id="loading"></div>
+    <div id="loading" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <div id="error" class="hidden fixed bottom-4 right-4 bg-red-100 text-red-600 p-3 rounded shadow-lg">
+        Lỗi xảy ra!
+    </div>
 
 </div>

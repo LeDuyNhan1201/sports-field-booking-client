@@ -150,7 +150,7 @@ document.getElementById('btnSignUp')
         } else {
             const message = data.message || 'Sign up failed';
             popupError(message);
-            if (data.errors) validationForm("formSignUp", data.errors);
+            validationForm("formSignUp", data.errors);
         }
     } catch (error) {
         console.error('Error signing up:', error);

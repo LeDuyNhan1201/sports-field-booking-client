@@ -245,7 +245,7 @@ async function appendBookingDetail(field) {
         const bookingItems = await response.json();
         const sportFieldData = await sportFieldResponse.json();
 
-        field.fieldAvailabilities.forEach(async (fieldAvailability) => {
+        for (const fieldAvailability of field.fieldAvailabilities) {
             const startTime = formatHour(fieldAvailability.startTime);
             const endTime = formatHour(fieldAvailability.endTime);
 
@@ -286,7 +286,7 @@ async function appendBookingDetail(field) {
                     `;
                 }
 
-                // check locked field availability 
+                // check locked field availability
                 const fieldAvailabilityResponse = await fetch(`${SERVER_DOMAIN}/field-availability-access/sports-field?sportsFieldID=${sportFieldID}`)
                 const fieldAvailabilityData = await fieldAvailabilityResponse.json();
 
@@ -351,7 +351,7 @@ async function appendBookingDetail(field) {
 
                 fieldAvailabilitiesElement.appendChild(element);
             }
-        });
+        }
 
     } catch (error) {
         console.error("Error fetching booking items:", error);

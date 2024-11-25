@@ -20,15 +20,20 @@ function popupError(message = "Đã xảy ra lỗi!", timeout = 3000) {
 function validationForm(formId, errors) {
     const form = document.getElementById(formId);
     const errorFields = form.querySelectorAll('.errorFields');
-    errorFields.forEach(field => {
-        const fieldName = field.id.replace('Error', '');
-        showValidationError(errors, fieldName);
-    });
+    if (errors) {
+        errorFields.forEach(field => {
+            const fieldName = field.id.replace('Error', '');
+            showValidationError(errors, fieldName);
+        });
+    } else {
+        errorFields.forEach(field => {
+            field.innerText = '';
+        });
+    }
 }
 
 function showValidationError(errors, field) {
     const error = errors[field];
-    console.log(error);
     const errorElement = document.getElementById(`${field}Error`);
     if (error) {
         errorElement.textContent
