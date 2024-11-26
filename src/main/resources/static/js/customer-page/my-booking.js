@@ -44,7 +44,14 @@ async function fetchBookingHistory() {
                 const totalPrice = booking.bookingItems.reduce((sum, item) => {
                     const startTime = new Date(item.startTime);
                     const endTime = new Date(item.endTime);
-                    const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
+
+                    const startTimeHour = formatHour(startTime);
+                    const endTimeHour = formatHour(endTime);
+
+                    const startTimeInHours = parseTimeToHours(startTimeHour);
+                    const endTimeInHours = parseTimeToHours(endTimeHour);
+
+                    const durationInHours = (endTimeInHours - startTimeInHours);
                     return sum + (durationInHours * item.price);
                 }, 0);
 
@@ -165,13 +172,19 @@ async function viewBookingDetails(bookingId) {
             minute: '2-digit',
             hour12: false
         });
-    
-        const durationInHours = (endTime - startTime) / (1000 * 60 * 60);
+
+        const startTimeHour = formatHour(startTime);
+        const endTimeHour = formatHour(endTime);
+
+        const startTimeInHours = parseTimeToHours(startTimeHour);
+        const endTimeInHours = parseTimeToHours(endTimeHour);
+
+        const durationInHours = (endTimeInHours - startTimeInHours);
         const itemTotalPrice = durationInHours * item.price;
         totalPrice += itemTotalPrice;
-    
+
         const ratingValue = await loadRating(item.id);
-    
+
         const itemElement = document.createElement('div');
         itemElement.classList.add('border', 'p-4', 'rounded', 'bg-gray-100', 'mb-2');
         itemElement.innerHTML = `
@@ -202,8 +215,7 @@ async function viewBookingDetails(bookingId) {
                 <span class="font-semibold mt-2">Star rating:</span>
                 <fieldset class="rating">
                     ${[5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1, 0.5].map(rating => `
-                        <input type="radio" id="star${rating}-${item.id}" name="rating-${item.id}" value="${rating}" ${
-                            rating === ratingValue ? "checked" : ""} 
+                        <input type="radio" id="star${rating}-${item.id}" name="rating-${item.id}" value="${rating}" ${rating === ratingValue ? "checked" : ""} 
                             ${ratingValue !== null ? "disabled" : ""} />
                         <label for="star${rating}-${item.id}" class="${rating % 1 === 0.5 ? 'half' : 'full'}" title="${rating}"></label>
                     `).join('')}
@@ -308,7 +320,7 @@ async function createRating(ratingPoint, userId, sportsFieldId, bookingItemId) {
         });
 
         console.log(response);
-        
+
         if (!response.ok) {
             throw new Error(`Failed to create rating: ${response.statusText}`);
         }
@@ -319,7 +331,7 @@ async function createRating(ratingPoint, userId, sportsFieldId, bookingItemId) {
             sportsFieldId: sportsFieldId,
             bookingItemId: bookingItemId
         });
-        
+
 
         alert('Your rating has been submitted!');
         window.location.reload();
