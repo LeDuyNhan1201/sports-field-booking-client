@@ -132,11 +132,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchData(endpoint, method = 'GET', id = null, body = null, OFFSET = 0, LIMIT = 10000) {
     try {
-        const token = getAccessTokenFromCookie();
-        if (!token) {
-            throw new Error('Authorization token is missing');
-        }
-
         let url = `${SERVER_DOMAIN}/${endpoint}`;
         if (id && (method === 'PUT' || method === 'DELETE')) {
             url += `/${id}`;
@@ -147,7 +142,6 @@ async function fetchData(endpoint, method = 'GET', id = null, body = null, OFFSE
         const options = {
             method,
             headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             }
         };

@@ -1,15 +1,15 @@
 <div th:fragment="mainContent" th:switch="${content}">
 
     <div th:case="'home'">
-        <div th:replace="~{/components/customer-page/home :: home}"></div>
+        <div th:replace="~{/components/customer/home :: home}"></div>
     </div>
 
     <div th:case="'sportsField'">
-        <div th:replace="~{/components/customer-page/sports-field.html :: sportsField}"></div>
+        <div th:replace="~{/components/customer/sports-field.html :: sportsField}"></div>
     </div>
 
     <div th:case="'booking'">
-        <div th:replace="~{/components/customer-page/user-booking :: userBooking}"></div>
+        <div th:replace="~{/components/customer/user-booking :: userBooking}"></div>
     </div>
 
     <div th:case="'login'">
@@ -17,23 +17,23 @@
     </div>
 
     <div th:case="'userInfo'">
-        <div th:replace="~{/components/customer-page/user-info :: userInfo}"></div>
+        <div th:replace="~{/components/customer/user-info :: userInfo}"></div>
     </div>
 
     <div th:case="'fieldDetail'">
-        <div th:replace="~{/components/customer-page/sports-field/field-detail :: fieldDetail}"></div>
+        <div th:replace="~{/components/customer/sports-field/field-detail :: fieldDetail}"></div>
     </div>
 
     <div th:case="'bookingHistory'">
-        <div th:replace="~{/components/customer-page/my-booking :: bookingHistory}"></div>
+        <div th:replace="~{/components/customer/my-booking :: bookingHistory}"></div>
     </div>
 
     <div th:case="'orderHistory'">
-        <div th:replace="~{/components/customer-page/order :: orderHistory}"></div>
+        <div th:replace="~{/components/customer/order :: orderHistory}"></div>
     </div>
 
     <div th:case="'changePassword'">
-        <div th:replace="~{/components/customer-page/reset-password :: changePassword}"></div>
+        <div th:replace="~{/components/customer/reset-password :: changePassword}"></div>
     </div>
 
     <div id="loading" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">

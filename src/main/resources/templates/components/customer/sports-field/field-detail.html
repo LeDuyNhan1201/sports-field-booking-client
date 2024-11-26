@@ -75,20 +75,20 @@
 
         <div th:switch="${subContent}">
             <div th:case="'detailTab'">
-                <div th:replace="~{/components/customer-page/sports-field/tab-detail}"></div>
+                <div th:replace="~{/components/customer/sports-field/tab-detail}"></div>
             </div>
 
             <div th:case="'reviewTab'">
-                <div th:replace="~{/components/customer-page/sports-field/tab-review}"></div>
+                <div th:replace="~{/components/customer/sports-field/tab-review}"></div>
             </div>
         </div>
     </div>
 
     <div class="absolute w-full h-full top-0 hidden bg-gray-200 bg-opacity-50" id="booking-detail">
-        <div th:replace="~{/components/customer-page/sports-field/booking-detail :: bookingDetail}"></div>
+        <div th:replace="~{/components/customer/sports-field/booking-detail :: bookingDetail}"></div>
     </div>
 
-    <div th:replace="~{/components/customer-page/sports-field/new-field}"></div>
+    <div th:replace="~{/components/customer/sports-field/new-field}"></div>
 
 
     <script th:src="@{/js/customer-page/booking-detail.js}"></script>

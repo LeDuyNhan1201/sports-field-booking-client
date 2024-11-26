@@ -111,4 +111,9 @@ public class CustomerController {
         model.addAttribute("content", "changePassword");
         return "pages/customer";
     }
+
+    @GetMapping("/payment/momo/callback")
+    public String momoCallback() {
+        return "pages/momo-callback";
+    }
 }

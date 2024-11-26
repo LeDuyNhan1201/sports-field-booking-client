@@ -83,6 +83,38 @@ document.getElementById('btnGoogle')
         }
     });
 
+document.getElementById('btnFacebook')
+    .addEventListener('click', async (event) => {
+        event.preventDefault();
+        showLoading(true);
+
+        try {
+            const response = await fetchCustom({
+                url: SERVER_DOMAIN + '/auth/social',
+                method: 'GET',
+                queryParams: { provider: 'facebook' }
+            });
+
+            if (!response.ok) {
+                const message = data.message || 'Sign in failed';
+                popupError(message);
+            }
+
+            const data = await response.json();
+            console.log(data);
+            const { url } = data;
+
+            window.location.href = url;
+
+        } catch (error) {
+            console.error('Error signing in:', error);
+            popupError(error.message);
+
+        } finally {
+            showLoading(false);
+        }
+    });
+
 // document.getElementById('refresh-btn').addEventListener('click', async (event) => {
 //     event.preventDefault();
 //     await refreshToken();
