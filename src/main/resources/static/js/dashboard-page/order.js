@@ -9,7 +9,6 @@ async function loadImage(id) {
 
         return avatarData.results || "/sports-field-booking/image/user-info/user-info.png";
     } catch (error) {
-
         return "/sports-field-booking/image/user-info/user-info.png";
     }
 }

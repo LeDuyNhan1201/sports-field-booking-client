@@ -1,4 +1,18 @@
 const currentUser = localStorage.getItem('current-user');
+const userAvatar = document.getElementById('avatar');
+const usernameElement = document.getElementById('username');
+
+if (localStorage.getItem('current-user') !== null) {
+    const defaultAvatarUrl = document.getElementById('avatar').getAttribute('src');
+
+    if (currentUser) {
+        const user = JSON.parse(currentUser)
+
+        userAvatar.src = user.avatar || defaultAvatarUrl
+        usernameElement.textContent = user.username || "John doe"
+
+    }
+}
 
 if (localStorage.getItem('current-user') !== null) {
     if (currentUser) {
@@ -21,9 +35,33 @@ if (localStorage.getItem('current-user') !== null) {
             orderMenu.classList.remove('hidden')
         }
 
-    } else {
-        loginSection.classList.remove('hidden');
-        userInfoSection.classList.add
     }
 }
+
+document.getElementById('btn-sign-out').addEventListener('click', async (event) => {
+    event.preventDefault();
+    showLoading(true);
+
+    try {
+        const response = await fetchCustom({
+            url: SERVER_DOMAIN + '/auth/sign-out',
+            method: 'POST',
+            body: {
+                "accessToken": getAccessTokenFromCookie(),
+                "refreshToken": getRefreshTokenFromCookie()
+            }
+        });
+
+        if (!response.ok) showError("Failed to refresh token");
+
+        localStorage.removeItem('current-user');
+        window.location.href = CLIENT_DOMAIN + "/sign-out";
+
+    } catch (error) {
+        console.error('Error refreshing token:', error);
+    }
+    finally {
+        showLoading(false);
+    }
+});
 
