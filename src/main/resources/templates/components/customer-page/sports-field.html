@@ -29,11 +29,16 @@
                 <span class="text-lg text-gray-600">View as</span>
                 <i class="fa-solid fa-table-cells p-2 ml-5 border-2 rounded-md cursor-pointer" id="sportsField.button-tab-grid"></i>
                 <i class="fa-solid fa-list p-2 border-2 ml-1 rounded-md cursor-pointer" id="sportsField.button-tab-list"></i>
+
+                <select id='sportsField.select_category' class="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-md font-semibold rounded-md focus:ring-blue-500 focus:border-blue-500 block h-10 px-2">
+                    <option value='0'>Categories</option>
+                </select>
+
                 <span class="ml-5 pl-5 text-lg text-gray-600 border-l-2">Sort By</span>
                 <i id='sportsField.button_sortDirection' class="fa-solid fa-arrow-down-long px-2 ml-2 bg-gray-50 border border-gray-300 cursor-pointer h-10 flex items-center cursor-pointer transform transition-transform duration-300"></i>
                 <select id='sportsField.select_colSort' class="bg-gray-50 border border-gray-300 text-gray-900 text-md font-semibold rounded-r-md focus:ring-blue-500 focus:border-blue-500 block h-10 px-2">
-                    <option selected value='rating'>Rating</option>
-                    <option value='name'>Name</option>
+                    <option value='rating'>Rating</option>
+                    <option selected value='name'>Name</option>
                     <option value='category.id'>Category</option>
                 </select>
             </div>

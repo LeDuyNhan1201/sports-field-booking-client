@@ -1,17 +1,9 @@
 async function fetchCategories() {
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/category/all?colSort=rating&sortDirection=-1&offset=0&limit=4`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        const data = await fetch(`${SERVER_DOMAIN}/category?offset=0&limit=100`);
+        const categories = await data.json()
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        return await response.json();
+        return categories.items;
     } catch (error) {
         console.error('Error fetching categories:', error);
         return [];
