@@ -77,7 +77,7 @@ async function fetchBookingHistory() {
                 row.innerHTML = `
                     <td class="border px-4 py-2 text-center">${index + 1}</td>
                     <td class="border px-4 py-2 text-center">${booking.user.username}</td>
-                    <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)} đ</td>
+                    <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)}$</td>
                     <td class="border px-4 py-2 text-center ${statusClass}">${booking.status}</td>
                     <td class="border px-4 py-2 text-center">
                         <button class="view-details-button bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700" data-booking-id="${booking.id}">View Detail</button>
@@ -211,7 +211,7 @@ async function viewBookingDetails(bookingId) {
             </div>
             <div class="flex justify-between">
                 <span class="font-semibold">Total Price:</span>
-                <span class="text-gray-700">${itemTotalPrice.toFixed(2)} đ</span>
+                <span class="text-gray-700">${itemTotalPrice.toFixed(2)}$</span>
             </div>
             ${booking.status === 'ACCEPTED' ? `
             <div class="booking-item flex justify-between" booking-item-id=${item.id} sports-field-id=${item.sportField.id}>
@@ -228,7 +228,7 @@ async function viewBookingDetails(bookingId) {
         bookingItemsContainer.appendChild(itemElement);
     });
 
-    detailTotalPrice.textContent = totalPrice.toFixed(2) + ' đ';
+    detailTotalPrice.textContent = totalPrice.toFixed(2) + ' $';
 
     modal.classList.remove('hidden');
 
