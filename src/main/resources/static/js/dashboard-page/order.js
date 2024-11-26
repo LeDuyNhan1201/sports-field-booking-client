@@ -44,7 +44,18 @@ async function renderOrders(orders, page = 1) {
         let totalPrice = 0;
         if (order.bookingItems && order.bookingItems.length > 0) {
             for (const bookingItem of order.bookingItems) {
-                totalPrice += bookingItem.price;
+                console.log(bookingItem);
+                
+                const startTimeHour = formatHour(bookingItem.startTime);
+                const endTimeHour = formatHour(bookingItem.endTime);
+
+                const startTimeInHours = parseTimeToHours(startTimeHour);
+                const endTimeInHours = parseTimeToHours(endTimeHour);
+
+                const durationInHours = (endTimeInHours - startTimeInHours);
+                const itemTotalPrice = durationInHours * bookingItem.price;
+
+                totalPrice += itemTotalPrice;
             }
         }
 
