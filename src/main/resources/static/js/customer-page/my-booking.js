@@ -50,6 +50,8 @@ async function fetchBookingHistory() {
 
                     const startTimeInHours = parseTimeToHours(startTimeHour);
                     const endTimeInHours = parseTimeToHours(endTimeHour);
+                    console.log(item.price);
+                    
 
                     const durationInHours = (endTimeInHours - startTimeInHours);
                     return sum + (durationInHours * item.price);
@@ -157,7 +159,7 @@ async function viewBookingDetails(bookingId) {
     bookingItemsContainer.innerHTML = '';
 
     let totalPrice = 0;
-
+    
     booking.bookingItems.forEach(async (item, index) => {
         const startTime = new Date(item.startTime);
         const endTime = new Date(item.endTime);
@@ -211,6 +213,7 @@ async function viewBookingDetails(bookingId) {
                 <span class="font-semibold">Total Price:</span>
                 <span class="text-gray-700">${itemTotalPrice.toFixed(2)} đ</span>
             </div>
+            ${booking.status === 'ACCEPTED' ? `
             <div class="booking-item flex justify-between" booking-item-id=${item.id} sports-field-id=${item.sportField.id}>
                 <span class="font-semibold mt-2">Star rating:</span>
                 <fieldset class="rating">
@@ -220,7 +223,7 @@ async function viewBookingDetails(bookingId) {
                         <label for="star${rating}-${item.id}" class="${rating % 1 === 0.5 ? 'half' : 'full'}" title="${rating}"></label>
                     `).join('')}
                 </fieldset>
-            </div>
+            </div>` : ''}
         `;
         bookingItemsContainer.appendChild(itemElement);
     });
