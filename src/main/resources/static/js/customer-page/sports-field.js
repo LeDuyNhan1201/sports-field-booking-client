@@ -13,13 +13,28 @@ let sportsFieldContainer = document.getElementById("sportsField.container");
 let colSort = document.getElementById("sportsField.select_colSort").value;
 let currentCategory = sportsFieldContainer.querySelector("#sportsField\\.select_category").value;
 
+//Lấy value từ search Params
+const url = new URL(window.location.href);
+const searchParams = url.searchParams;
+if (searchParams.get("categoryId")) {
+    currentCategory = searchParams.get("categoryId");
+}
+if (searchParams.get("searchText")) {
+    searchValue = searchParams.get("searchText");
+}
+if (searchParams.get("maxPrice")) {
+    maxPrice = searchParams.get("maxPrice");
+}
+if (searchParams.get("minPrice")) {
+    minPrice = searchParams.get("minPrice");
+}
 
 let sportFieldList = document.getElementById("sportsField.list");
 let sportFieldGrid = document.getElementById("sportsField.grid");
 
 let buttonNewField = sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField");
 
-async function loadSportFieldList(tab, currentOffset, searchValue) {
+async function loadSportFieldList(tab, offset, searchValue) {
     const endPath = window.location.pathname.split("/")[2];
     try {
         let response;
@@ -28,21 +43,10 @@ async function loadSportFieldList(tab, currentOffset, searchValue) {
             // xử lý do quản lý sân
             let user = JSON.parse(localStorage.getItem("current-user"));
             if (user.roles[0] === "FIELD_OWNER") {
-                
-                if (!searchValue) {
-                    if(currentCategory == 0){
-                        response = await fetch(`${SERVER_DOMAIN}/sports-field/management/${user.id}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
-                    }
-                    else {
-                        response = await fetch(
-                            `${SERVER_DOMAIN}/sports-field/management/${user.id}/category?categoryId=${currentCategory}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}`
-                        );
-                    }
-                } else {
-                    response = await fetch(
-                        `${SERVER_DOMAIN}/sports-field/management/${user.id}/search/${searchValue}?categoryId=${currentCategory}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}`
-                    );
-                }
+                if (!searchValue) searchValue = " ";
+                response = await fetch(
+                    `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=1000&minPrice=1&categoryId=${currentCategory}`
+                );
 
                 // xử lý khi user không có quyền
             } else {
@@ -51,26 +55,21 @@ async function loadSportFieldList(tab, currentOffset, searchValue) {
             }
         } else {
             // xử lý cho danh sách sân
-            if (searchValue === "" || !searchValue) {
-                if(currentCategory == 0){
-                    response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
-                }
-                else {
-                    response = await fetch(
-                        `${SERVER_DOMAIN}/sports-field/category?categoryId=${currentCategory}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=100000&minPrice=1`
-                    );
-                }
-            } else {
-                
-                response = await fetch(
-                    `${SERVER_DOMAIN}/sports-field/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryCol=${currentCategory}`
-                );
-            }
+            if (!searchValue) searchValue = " ";
+            response = await fetch(
+                `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=1000&minPrice=1&categoryId=${currentCategory}`
+            );
         }
-        const data = await response.json();        
-        if (tab === "grid") await appendFieldGrid(data.items);
-        else await appendFieldList(data.items);
-        loadPage(currentOffset);
+        const data = await response.json();
+
+        if (data.items.length > 0) {
+            currentOffset = offset
+            loadPage(offset);
+            if (tab === "grid") await appendFieldGrid(data.items);
+            else await appendFieldList(data.items);
+        } else {
+            alert("Không tìm thấy kết quả");
+        }
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }
@@ -98,7 +97,7 @@ async function appendFieldGrid(data) {
                 <img src="${field.images[0]}" alt="Sport field image" class="w-full h-[260px]" />
                 <div class="p-4">
                     <h4 class="font-bold text-xl">${field.name}</h4>
-                    <p class="text-red-600">24.000/đ</p>
+                    <p class="text-red-600">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$ - ${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</p>
                     <textarea class="text-gray-500 w-full resize-none overflow-hidden" rows='1' readonly >${field.location}</textarea>
                     <div class="mt-2 flex space-x-2">
                         <span>⭐ ${field.rating}/5</span>
@@ -166,12 +165,12 @@ function loadPage(offset) {
 
 //action next page
 document.getElementById("sportsField.nextPage").addEventListener("click", () => {
-    currentOffset += 1;
-    loadSportFieldList(currentTab, currentOffset, searchValue);
+    let newOffset = currentOffset + 1;
+    loadSportFieldList(currentTab, newOffset, searchValue);
 });
 document.getElementById("sportsField.backPage").addEventListener("click", () => {
-    currentOffset -= 1;
-    loadSportFieldList(currentTab, currentOffset, searchValue);
+    let newOffset = currentOffset - 1;
+    loadSportFieldList(currentTab, newOffset, searchValue);
 });
 
 // thêm các thuộc tính trong category select
@@ -193,10 +192,11 @@ async function appendCategory(data) {
         let option = document.createElement("option");
         option.value = category.id;
         option.text = category.name.charAt(0).toUpperCase() + category.name.slice(1).toLowerCase();
+        if (currentCategory == category.id) option.selected = true;
         selectContainer.appendChild(option);
     });
     selectContainer.addEventListener("change", () => {
-        actionSearch()
+        actionSearch();
     });
 }
 
@@ -212,6 +212,11 @@ document.getElementById("sportsField.search_value").addEventListener("keydown", 
 });
 
 async function actionSearch() {
+    //xóa search Param
+    const url = new URL(window.location.href);
+    url.search = "";
+    window.history.pushState({}, "", url.toString());
+
     searchValue = document.getElementById("sportsField.search_value").value;
     currentCategory = sportsFieldContainer.querySelector("#sportsField\\.select_category").value;
     currentOffset = 0;
@@ -241,9 +246,16 @@ document.getElementById("sportsField.button_sortDirection").addEventListener("cl
 // sport field quantityAll
 async function sportsFieldQuantityAll() {
     try {
-        let response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=name&sortDirection=1&offset=0&limit=100`);
+        let response;
+        let userId = 0;
+        if (endPath.localeCompare("my-sports-field") === 0) {
+            let user = JSON.parse(localStorage.getItem("current-user"));
+            if (user.roles[0] === "FIELD_OWNER") {
+                userId = user.id;
+            }
+        }
+        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0`);
         const data = await response.json();
-
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
     } catch (error) {
         console.error("Error fetching sport field:", error);

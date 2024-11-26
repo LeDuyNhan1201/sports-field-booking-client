@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             categorySection.innerHTML = '';
             categories.slice(0, 4).forEach(category => {
                 const categoryElement = document.createElement('a');
-                categoryElement.href = `#`;
+                categoryElement.href = `${CLIENT_DOMAIN}/sports-field?${new URLSearchParams({categoryId: category.id}).toString()}`;
                 const imageUrl = category.imageUrl || '/sports-field-booking/image/category/ball.png';
                 categoryElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40';
                 categoryElement.innerHTML = `
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (searchButton) {
             searchButton.addEventListener('click', () => {
                 const selectedCategory = categorySelect.value;
-                const location = document.querySelector('#locationInput').value.trim();
+                const search = document.querySelector('#searchInput').value.trim();
                 const minPrice = document.querySelector('#minPriceInput').value.trim();
                 const maxPrice = document.querySelector('#maxPriceInput').value.trim();
 
@@ -113,13 +113,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const searchParams = new URLSearchParams({
                     categoryId: selectedCategory,
-                    location: location,
+                    searchText: search,
                     minPrice: minPrice,
                     maxPrice: maxPrice,
-                    colSort: 'rating',
-                    sortDirection: '-1',
-                    offset: '0',
-                    limit: '100'
                 });
                 window.location.href = `${CLIENT_DOMAIN}/sports-field?${searchParams.toString()}`;
             });
