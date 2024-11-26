@@ -42,39 +42,60 @@ function updateImagePreview() {
 editButtons.forEach(button => {
     button.addEventListener('click', function () {
         modal.classList.remove('hidden');
-        
+
         document.querySelector('.modal-title').textContent = 'Edit Sport Field';
-        
+
         // sport field information
     });
 });
 
 deleteButtons.forEach(button => {
     button.addEventListener('click', function () {
-        if(confirm('Do you want to delete this sport field')) {
+        if (confirm('Do you want to delete this sport field')) {
             alert('ok')
         }
     });
 });
 
-window.onload = function () {
+window.onload = async function () {
     // Fetching data from an API
-    fetchCustom({
-        url: 'http://localhost:8888/sports-field-booking/api/v1/sports-field'
-    })
-        .then(response => {
-            // Check if the response is ok (status in the range 200-299)
-            if (!response.ok) showError('Network response was not ok');
+    // fetchCustom({
+    //     url: `${SERVER_DOMAIN}/sports-field`,
+    // })
+    //     .then(response => {            
+    //         // Check if the response is ok (status in the range 200-299)
+    //         if (!response.ok) showError('Network response was not ok');
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         console.log(data); // Handle the data
+    //         document.getElementById('data').innerHTML = JSON.stringify(data);
+    //     })
+    //     .catch(error => {
+    //         console.log("test: "+error);
+
+    //         console.error('There has been a problem with your fetch operation:', error);
+    //     })
+    //     .finally(() => {
+    //         showLoading(false);
+    //     });
+
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        })  
+
+        const data = await response.json();
+
+        if (!data) {    
+            showError('Network response was not ok');
             return response.json();
-        })
-        .then(data => {
-            console.log(data); // Handle the data
-            document.getElementById('data').innerHTML = JSON.stringify(data);
-        })
-        .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-        })
-        .finally(() => {
-            showLoading(false);
-        });
+        }
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
 };
