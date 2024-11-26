@@ -30,6 +30,7 @@ if (localStorage.getItem('current-user') !== null) {
         usernameElement.textContent = user.username
 
         if (user.roles && user.roles.includes('FIELD_OWNER')) {
+            window.location.href = CLIENT_DOMAIN + '/dashboard';
             fieldManagement.classList.remove('hidden')
         } else {
             fieldManagement.classList.add('hidden')
