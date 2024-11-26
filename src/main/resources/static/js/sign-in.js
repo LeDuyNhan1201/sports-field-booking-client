@@ -103,6 +103,14 @@ togglePassword.addEventListener('click', () => {
     passwordIcon.src = isPasswordHidden ? eyePath : hiddenPath;
 });
 
+document.getElementById('formSignIn').addEventListener('keydown', async (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+
+        document.getElementById('btnSignIn').click();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const rememberMeCheckbox = document.getElementById('rememberMe');
     const toggleBackground = rememberMeCheckbox.nextElementSibling;
