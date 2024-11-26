@@ -4,34 +4,43 @@ const limit = 12;
 let endPath = window.location.pathname.split("/")[2];
 let currentTab = endPath.localeCompare("my-sports-field") === 0 ? "list" : "grid";
 let searchValue = " ";
-let colSort = document.getElementById("sportsField.select_colSort").value;
 let sortDirection = -1;
+let minPrice = 1;
+let maxPrice = 10000;
 
-let sportsFieldContainer = document.getElementById('sportsField.container')
+let sportsFieldContainer = document.getElementById("sportsField.container");
+
+let colSort = document.getElementById("sportsField.select_colSort").value;
+let currentCategory = sportsFieldContainer.querySelector("#sportsField\\.select_category").value;
+
 
 let sportFieldList = document.getElementById("sportsField.list");
 let sportFieldGrid = document.getElementById("sportsField.grid");
 
 let buttonNewField = sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField");
 
-
 async function loadSportFieldList(tab, currentOffset, searchValue) {
     const endPath = window.location.pathname.split("/")[2];
-
     try {
         let response;
-        
+
         if (endPath.localeCompare("my-sports-field") === 0) {
             // xử lý do quản lý sân
             let user = JSON.parse(localStorage.getItem("current-user"));
             if (user.roles[0] === "FIELD_OWNER") {
                 
-                if (searchValue === "" || searchValue) {
-                    response = await fetch(`${SERVER_DOMAIN}/sports-field/management/${user.id}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
-                    
+                if (!searchValue) {
+                    if(currentCategory == 0){
+                        response = await fetch(`${SERVER_DOMAIN}/sports-field/management/${user.id}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+                    }
+                    else {
+                        response = await fetch(
+                            `${SERVER_DOMAIN}/sports-field/management/${user.id}/category?categoryId=${currentCategory}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}`
+                        );
+                    }
                 } else {
                     response = await fetch(
-                        `${SERVER_DOMAIN}/sports-field/management/${user.id}/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`
+                        `${SERVER_DOMAIN}/sports-field/management/${user.id}/search/${searchValue}?categoryId=${currentCategory}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}`
                     );
                 }
 
@@ -42,19 +51,26 @@ async function loadSportFieldList(tab, currentOffset, searchValue) {
             }
         } else {
             // xử lý cho danh sách sân
-            if (searchValue === "") {
-                response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+            if (searchValue === "" || !searchValue) {
+                if(currentCategory == 0){
+                    response = await fetch(`${SERVER_DOMAIN}/sports-field?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+                }
+                else {
+                    response = await fetch(
+                        `${SERVER_DOMAIN}/sports-field/category?categoryId=${currentCategory}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=100000&minPrice=1`
+                    );
+                }
             } else {
-                response = await fetch(`${SERVER_DOMAIN}/sports-field/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}`);
+                
+                response = await fetch(
+                    `${SERVER_DOMAIN}/sports-field/search/${searchValue}?colSort=${colSort}&sortDirection=${sortDirection}&offset=${currentOffset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryCol=${currentCategory}`
+                );
             }
         }
-        const data = await response.json();
-
-        if (data.items.length) {            
-            if (tab === "grid") await appendFieldGrid(data.items);
-            else await appendFieldList(data.items);
-            loadPage(currentOffset);
-        }
+        const data = await response.json();        
+        if (tab === "grid") await appendFieldGrid(data.items);
+        else await appendFieldList(data.items);
+        loadPage(currentOffset);
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }
@@ -75,7 +91,7 @@ async function appendFieldGrid(data) {
         const fieldElement = document.createElement("div");
         fieldElement.innerHTML = `
             <a
-                href="/sports-field-booking/${endPath.localeCompare("my-sports-field")===0 ? "my-" : ""}sports-field/${field.id}/details"
+                href="/sports-field-booking/${endPath.localeCompare("my-sports-field") === 0 ? "my-" : ""}sports-field/${field.id}/details"
                 class='bg-white shadow-lg rounded-lg overflow-hidden block cursor-pointer'
                 xmlns:th="http://www.w3.org/1999/xhtml"
             >
@@ -120,7 +136,7 @@ async function appendFieldList(data) {
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
                     </td>
                     <td class="p-4">
-                        <a  href="/sports-field-booking/${endPath.localeCompare("my-sports-field")===0 ? "my-" : ""}sports-field/${field.id}/details">
+                        <a  href="/sports-field-booking/${endPath.localeCompare("my-sports-field") === 0 ? "my-" : ""}sports-field/${field.id}/details">
                             <i class="fa-solid fa-share-from-square text-green-500"></i>
                         </a>
                     </td>
@@ -158,6 +174,32 @@ document.getElementById("sportsField.backPage").addEventListener("click", () => 
     loadSportFieldList(currentTab, currentOffset, searchValue);
 });
 
+// thêm các thuộc tính trong category select
+
+async function loadCategory() {
+    try {
+        const data = await fetch(`${SERVER_DOMAIN}/category?offset=0&limit=100`);
+        const categories = await data.json();
+        appendCategory(categories.items);
+    } catch (error) {
+        console.error("Error fetching category data:", error);
+    }
+}
+
+async function appendCategory(data) {
+    let selectContainer = sportsFieldContainer.querySelector("#sportsField\\.select_category");
+
+    data.forEach((category) => {
+        let option = document.createElement("option");
+        option.value = category.id;
+        option.text = category.name.charAt(0).toUpperCase() + category.name.slice(1).toLowerCase();
+        selectContainer.appendChild(option);
+    });
+    selectContainer.addEventListener("change", () => {
+        actionSearch()
+    });
+}
+
 //search
 document.getElementById("sportsField.button_search").addEventListener("click", function (e) {
     actionSearch();
@@ -171,6 +213,7 @@ document.getElementById("sportsField.search_value").addEventListener("keydown", 
 
 async function actionSearch() {
     searchValue = document.getElementById("sportsField.search_value").value;
+    currentCategory = sportsFieldContainer.querySelector("#sportsField\\.select_category").value;
     currentOffset = 0;
     loadSportFieldList(currentTab, currentOffset, searchValue);
 }
@@ -217,7 +260,7 @@ function appendButtonNew() {
 // mở modal thêm sân mới
 
 buttonNewField.addEventListener("click", () => {
-    sportsFieldContainer.querySelector('#new_field\\.container').classList.remove('hidden')
+    sportsFieldContainer.querySelector("#new_field\\.container").classList.remove("hidden");
 });
 
 appendButtonNew();

@@ -226,6 +226,11 @@ function formatHour(dateString) {
     return `${hours}:${minutes}`;
 }
 
+function parseTimeToHours(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours + minutes / 60;
+}
+
 function formatHourToDate(time) {
     let [hours, minutes] = time.split(":").map(Number);
 

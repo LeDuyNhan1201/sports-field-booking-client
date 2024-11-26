@@ -125,9 +125,9 @@ function changeImageElement(element) {
 
 async function loadCategory() {
     try {
-        const data = await fetch(`${SERVER_DOMAIN}/category/all?offset=0&limit=100`);
+        const data = await fetch(`${SERVER_DOMAIN}/category?offset=0&limit=100`);
         const categories = await data.json();
-        appendCategory(categories);
+        appendCategory(categories.items);
     } catch (error) {
         console.error("Error fetching category data:", error);
     }
@@ -158,11 +158,11 @@ newFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEve
     let closingTimeElementValue = newFieldContainer.querySelector("#new_field\\.availability\\.closingTime").value;
     let priceElementValue = newFieldContainer.querySelector("#new_field\\.availability\\.price").value;
 
-    if (openingTimeElementValue === "" || closingTimeElementValue === "") {
+    if (openingTimeElementValue == "" || closingTimeElementValue == "") {
         alert("Vui lòng nhập giờ");
         return;
     }
-    if (priceElementValue === "") {
+    if (priceElementValue == "") {
         alert("Vui lòng nhập giá");
         return;
     }
@@ -177,7 +177,7 @@ newFieldContainer.querySelector("#new_field\\.button_add_availabilities").addEve
         return;
     }
 
-    if (closingTime.getTime() === openingTime.getTime()) {
+    if (closingTime.getTime() == openingTime.getTime()) {
         console.log("Thời gian hoạt động phải lớn hơn không");
         return;
     }
@@ -304,9 +304,9 @@ document.getElementById("new_field.create_field").addEventListener("click", asyn
                     console.error("Failed to create sports field:", response.status, errorText);
                 } else {
                     newSportsField = await response.json();
-                    for (const image of newImages) {
+                    newImages.forEach(async (image) => {
                         await uploadPicture(image, newSportsField.id);
-                    }
+                    });
                     newAvailabilities.forEach((availability) => {
                         createFieldAvailability(availability, newSportsField.id);
                     });
