@@ -88,8 +88,6 @@ async function loadDetail() {
 
         const field = await fieldRes.json();
 
-        console.log(field);
-
         await appendDetail(field);
         await tab_detail(field);
         await appendBookingDetail(field);
@@ -146,8 +144,7 @@ async function appendDetail(field) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    let id = fieldDetailContainer.getAttribute("fieldId");
-
+    let id = fieldDetailContainer.getAttribute("fieldId");    
     await loadDetail(id);
 });
 

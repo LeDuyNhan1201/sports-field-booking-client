@@ -1,0 +1,27 @@
+/* Thiết lập chiều cao cho thanh slider */
+input[type="range"].slider {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    height: 1px; /* Chiều cao thanh slider */
+    background: #d1d5db; /* Màu nền thanh slider */
+    border-radius: 0;
+    width: 100%; /* Chiều rộng của slider */
+}
+
+/* Điều chỉnh thumb cho các trình duyệt webkit (Chrome, Safari) */
+input[type="range"]::-webkit-slider-thumb {
+    width: 4px;
+    height: 16px;
+    background: #19d90b;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+/* Điều chỉnh thumb cho Firefox */
+input[type="range"]::-moz-range-thumb {
+    width: 4px;
+    height: 16px;
+    background: #19d90b;
+    cursor: pointer;
+}

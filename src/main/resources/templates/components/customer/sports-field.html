@@ -4,7 +4,7 @@
     </div>
     <div class="mx-20">
         <div class="flex items-center border-2 rounded-md p-5 justify-between mt-16">
-            <div class='flex items-center flex-1'>
+            <div class='flex items-center w-1/3'>
                 <a class="text-xl font-bold mr-5 cursor-pointer"><span class="text-green-500 font-lg" id='sportsField.quantity.value'>400</span> Sport fields</a>
                 <div class="max-w-md flex-1">
                     <div for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</div>
@@ -29,6 +29,19 @@
                 <span class="text-lg text-gray-600">View as</span>
                 <i class="fa-solid fa-table-cells p-2 ml-5 border-2 rounded-md cursor-pointer" id="sportsField.button-tab-grid"></i>
                 <i class="fa-solid fa-list p-2 border-2 ml-1 rounded-md cursor-pointer" id="sportsField.button-tab-list"></i>
+
+                <div class="flex items-center w-32 ml-5">
+                    <span class="mr-2 text-yellow-500" id="sportsField.minPrice.value">0$</span>
+                    <div class="flex flex-col">
+                        <div class="flex items-center mb-3">
+                            <input id="sportsField.minPrice" type="range" class="slider appearance-none bg-gray-300 rounded-none rounded-r-lg" value="1" min="1" step="1"/>
+                        </div>
+                        <div class="flex items-center">
+                            <input id="sportsField.maxPrice" type="range" class="slider appearance-none bg-gray-300 rounded-none rounded-r-lg" value="0" min="0" step="1"/>
+                        </div>
+                    </div>
+                    <span class="ml-2 text-yellow-500" id="sportsField.maxPrice.value">0$</span>
+                </div>  
 
                 <select id='sportsField.select_category' class="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-md font-semibold rounded-md focus:ring-blue-500 focus:border-blue-500 block h-10 px-2">
                     <option value='0'>Categories</option>
