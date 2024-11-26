@@ -77,6 +77,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
 document.addEventListener("DOMContentLoaded", function () {
     loadSportFieldList(currentTab, 0, searchValue);
+    loadCategory()
 });
 
 async function appendFieldGrid(data) {
