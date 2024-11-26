@@ -12,15 +12,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const ratingData = await ratingResponse.json();
-        console.log(ratingData);
-        
 
         const ratingSection = document.getElementById('ratingSection');
         if (ratingSection) {
             ratingSection.innerHTML = '';
 
-            for(let field of data.items) {                                                
-                field.rating = ratingData[field.id] || 0;                
+            for (let field of data.items) {
+                field.rating = ratingData[field.id] || 0;
             }
 
             data.items.sort((a, b) => {
@@ -32,8 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .sort((a, b) => b.rating - a.rating)
                 .slice(0, 3);
 
-                console.log(openFields);
-                
             openFields.forEach(field => {
                 const prices = field.fieldAvailabilities.map(availability => availability.price);
                 const minPrice = prices.length > 0 ? Math.min(...prices) : null;
@@ -67,7 +63,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        const categories = await fetchCategories();
+        const categories = await fetchData('category', 'GET', null, null, OFFSET, LIMIT);
+
         const categorySection = document.querySelector('#categorySection');
         if (categorySection) {
             categorySection.innerHTML = '';
@@ -124,7 +121,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     offset: '0',
                     limit: '100'
                 });
-                console.log(searchParams.toString());
                 window.location.href = `${CLIENT_DOMAIN}/sports-field?${searchParams.toString()}`;
             });
         }

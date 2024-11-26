@@ -35,21 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCategoryButton.addEventListener('click', async () => {
         const categoryData = {
             name: document.getElementById('categoryName').value,
-            description: document.getElementById('categoryDescription').value,
-            status: document.getElementById('categoryStatus').value,
-            isConfirmed: true
         };
 
         const method = isEditing ? 'PUT' : 'POST';
-        await fetchData('categories', method, currentCategoryId, categoryData);
+        await fetchData('category', method, currentCategoryId, categoryData);
         categoryModal.classList.add('hidden');
         loadCategories(currentPage - 1, itemsPerPage);
     });
 
     async function loadCategories(OFFSET = 0, LIMIT = 10000) {
         try {
-            const categories = await fetchData('categories', 'GET', null, null, OFFSET, LIMIT);
-            const allCategories = await fetchData('categories');
+            const categories = await fetchData('category', 'GET', null, null, OFFSET, LIMIT);
+            const allCategories = await fetchData('category');
 
             if (!Array.isArray(categories)) {
                 console.error('Invalid categories data format');
@@ -91,15 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
             row.querySelector('.edit-button').addEventListener('click', () => {
                 isEditing = true;
                 currentCategoryId = category.id;
+                console.log(category.id);
                 categoryModalTitle.textContent = 'Edit Category';
                 document.getElementById('categoryName').value = category.name;
-                document.getElementById('categoryDescription').value = category.description;
-                document.getElementById('categoryStatus').value = category.status;
                 categoryModal.classList.remove('hidden');
             });
 
             row.querySelector('.text-red-500').addEventListener('click', async () => {
-                await fetchData('categories', 'DELETE', category.id);
+                await fetchData('category', 'DELETE', category.id);
                 loadCategories(currentPage - 1, itemsPerPage);
             });
         });
@@ -171,11 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return button;
     }
 
-    document.getElementById('search-btn').addEventListener('click', () => {
-        isSearch = true;
-        currentPage = 1;
-        searchCategories();
-    });
+    // document.getElementById('search-btn').addEventListener('click', () => {
+    //     isSearch = true;
+    //     currentPage = 1;
+    //     searchCategories();
+    // });
 
     document.getElementById('search').addEventListener('input', () => {
         const keyword = document.getElementById('search').value;
@@ -191,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function searchCategories() {
         const keyword = document.getElementById('search').value || '';
-        const status = document.getElementById('status').value.toUpperCase() || '';
 
         const queryParamSearchCurrentPage = new URLSearchParams({
             keyword,
@@ -204,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         try {
 
-            const response = await fetch(`${SERVER_DOMAIN}/categories/search?${queryParamSearchCurrentPage}`, {
+            const response = await fetch(`${SERVER_DOMAIN}/category/search?${queryParamSearchCurrentPage}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -212,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            const allCategorySearch = await fetch(`${SERVER_DOMAIN}/categories/search?${queryParams}`, {
+            const allCategorySearch = await fetch(`${SERVER_DOMAIN}/category/search?${queryParams}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

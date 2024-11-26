@@ -22,7 +22,7 @@
 
     <!-- Search Section -->
     <div class="mb-6 flex justify-between">
-        <!-- Search and Status Select -->
+        <!-- Search  -->
         <div class="flex items-center space-x-4 w-2/3">
             <!-- Search Input -->
             <div class="flex w-full">
@@ -30,44 +30,15 @@
                     class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     th:placeholder="#{dashboard.category_search.placeholder}" placeholder="Search categories...">
             </div>
-
-            <!-- Status Select -->
-            <div>
-                <select id="status"
-                    class="block w-64 bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    <option value="" th:text="#{dashboard.category_searchStatus.title}" class="w-full">All statuses
-                    </option>
-                    <option value="active" th:text="#{dashboard.category_status.active}" class="w-full">Active</option>
-                    <option value="inactive" th:text="#{dashboard.category_status.inactive}" class="w-full">Inactive
-                    </option>
-                </select>
-            </div>
         </div>
 
-        <!-- Date Range -->
-        <div class="flex items-center space-x-4">
-            <!-- From Date -->
-            <div>
-                <label for="from-date" class="block text-sm font-medium text-gray-700"
-                    th:text="#{dashboard.category_fromDate.title}">From Date</label>
-                <input type="date" id="from-date"
-                    class="mt-1 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-
-            <!-- To Date -->
-            <div>
-                <label for="to-date" class="block text-sm font-medium text-gray-700"
-                    th:text="#{dashboard.category_toDate.title}">To Date</label>
-                <input type="date" id="to-date"
-                    class="mt-1 block w-full bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-
-            <!-- Search Button -->
+        <!-- <div class="flex items-center space-x-4">
+            Search Button
             <div class="flex items-end">
                 <button id="search-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     th:text="#{dashboard.category_searchButton.title}">Search</button>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Categories Table -->
@@ -77,8 +48,6 @@
                 <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.category_id.title}">ID</th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.category_name.title}">Name
                 </th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.category_status.title}">
-                    Status</th>
                 <th class="p-4" th:text="#{dashboard.category_action.title}">Actions</th>
             </tr>
         </thead>
@@ -87,10 +56,6 @@
             <tr class="border-b">
                 <td class="p-4">#101</td>
                 <td class="p-4">Holiday Sale</td>
-                <td class="p-4">
-                    <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.category_status.active}">Active</span>
-                </td>
                 <td class="p-4">
                     <button class="edit-button text-blue-500 hover:text-blue-700">
                         <i class="fas fa-edit"></i>
@@ -104,10 +69,6 @@
             <tr class="border-b">
                 <td class="p-4">#102</td>
                 <td class="p-4">Holy moly</td>
-                <td class="p-4">
-                    <span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs"
-                        th:text="#{dashboard.category_status.inactive}">Inactive</span>
-                </td>
                 <td class="p-4">
                     <button class="edit-button text-blue-500 hover:text-blue-700">
                         <i class="fas fa-edit"></i>
@@ -163,14 +124,14 @@
                         <input type="text" id="categoryName"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
-                    <div class="mb-4">
+                    <!-- <div class="mb-4">
                         <label for="categoryDescription"
                             class="block text-sm font-medium text-gray-700">Description</label>
                         <input type="text" id="categoryDescription"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    </div>
+                    </div> -->
 
-                    <div class="mb-4">
+                    <!-- <div class="mb-4">
                         <label for="discountPercentage" class="block text-sm font-medium text-gray-700">Discount
                             Percentage</label>
                         <input type="number" id="discountPercentage" step="0.01" min="0" max="100"
@@ -187,16 +148,7 @@
                         <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
                         <input type="date" id="endDate"
                             class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="categoryStatus" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select id="categoryStatus"
-                            class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="ACTIVE">Active</option>
-                            <option value="INACTIVE">Inactive</option>
-                        </select>
-                    </div>
+                    </div> -->
                 </form>
 
                 <div class="text-right">
