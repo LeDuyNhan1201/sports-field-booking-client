@@ -170,20 +170,62 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     document.querySelectorAll('.delete-order-btn').forEach(orderDeleteButton => {
-        orderDeleteButton.addEventListener('click', () => {
+        orderDeleteButton.addEventListener('click', async () => {            
             const sportFieldID = orderDeleteButton.getAttribute('data-sport-field-id');
-            removeDataFromLocalStorage(sportFieldID, 'sportFieldID');
-            alert('Delete successfully');
-            location.reload();
+
+            const data = JSON.parse(localStorage.getItem("data")) || [];
+            
+            const validItems = data.filter(item => item.sportFieldID === sportFieldID);
+            
+            const fieldAvailabilityIDs = validItems.map(item => item.fieldAvailabilityID);
+
+            try {
+                await Promise.all(fieldAvailabilityIDs.map(async (item) => {
+                    const response = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${item}?status=AVAILABLE`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to update status for ID: ${item.fieldAvailabilityID} with status ${response.status}`);
+                    }
+
+                }));
+                
+                removeDataFromLocalStorage(sportFieldID, 'sportFieldID');
+                alert('Delete successfully');
+                location.reload();
+            } catch (error) {
+                console.error("Error updating field availabilities: ", error);
+            }
         });
     });
 
     document.querySelectorAll('.delete-field-availability-btn').forEach(fieldDeleteButton => {
-        fieldDeleteButton.addEventListener('click', () => {
+        fieldDeleteButton.addEventListener('click', async () => {
             const fieldAvailabilityID = fieldDeleteButton.getAttribute('data-id');
-            removeDataFromLocalStorage(fieldAvailabilityID, 'fieldAvailabilityID');
-            alert('Delete successfully');
-            location.reload();
+            try {
+                const response = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${fieldAvailabilityID}?status=AVAILABLE`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to update status for ID: ${item.fieldAvailabilityID} with status ${response.status}`);
+                }
+
+                removeDataFromLocalStorage(fieldAvailabilityID, 'fieldAvailabilityID');
+                alert('Delete successfully');
+                location.reload();
+            } catch (error) {
+                console.error("Error updating field availabilities: ", error);
+            }
         });
     });
 
