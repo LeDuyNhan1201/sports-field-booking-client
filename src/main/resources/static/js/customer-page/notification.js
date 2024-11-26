@@ -135,8 +135,9 @@ async function displayAllNotifications(token, notificationContainer) {
 
 function createNotificationElement(notification, token) {
     const notificationElement = document.createElement('a');
+
     if (notification.type === 'COMMENT_FEEDBACK') {
-        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.review.sportsField.id}/reviews`;
+        notificationElement.href = `${CLIENT_DOMAIN}/sports-field/${notification.review.sportField.id}/reviews`;
     } else if (notification.type === 'ORDER_STATUS_UPDATE') {
         notificationElement.href = `${CLIENT_DOMAIN}/my-booking?bookingId=${notification.booking.id}`;
     } else {
