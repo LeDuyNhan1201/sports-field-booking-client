@@ -124,7 +124,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     offset: '0',
                     limit: '100'
                 });
-                console.log(searchParams.toString());
                 window.location.href = `${CLIENT_DOMAIN}/sports-field?${searchParams.toString()}`;
             });
         }
