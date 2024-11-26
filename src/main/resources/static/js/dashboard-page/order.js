@@ -89,8 +89,8 @@ async function renderOrders(orders, page = 1) {
                     <button class="delete-button text-red-500 hover:text-red-700" data-id=${order.id}>
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                    <button class="detail-button text-blue-500 hover:text-blue-700" data-id=${order.id}>
-                        <i class="fas fa-edit"></i>
+                    <button class="detail-button text-blue-500 hover:text-blue-700 ml-8" data-id=${order.id}>
+                        <i class="fa-solid fa-circle-info"></i>
                     </button>
                 </td>
             </tr>
