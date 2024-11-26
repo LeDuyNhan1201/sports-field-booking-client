@@ -9,7 +9,7 @@
         <div class="text-white text-xl font-bold mb-8">Main</div>
         <nav>
             <ul>
-                <li class="mb-4 text-2xl mt-8">
+                <li id="dashboard-menu" class="mb-4 text-2xl mt-8 hidden">
                     <a th:text="#{dashboard.home.title}" th:href="@{/dashboard}"
                         th:class="${content == 'home'} ? 'text-white flex items-center space-x-2' : 'text-white flex items-center space-x-2 opacity-70'"
                         aria-current="page">
@@ -17,33 +17,33 @@
                     </a>
                 </li>
 
-                <li class="mb-4 text-2xl mt-8">
+                <li id="promotion-menu" class="mb-4 text-2xl mt-8 hidden">
                     <a th:text="#{dashboard.promotion.title}" th:href="@{/dashboard/promotion}"
                         th:class="${content == 'promotion'} ? 'text-white' : 'text-white'">
                         Promotion
                     </a>
                 </li>
 
-                <li class="mb-4 text-2xl mt-8">
+                <li id="user-menu" class="mb-4 text-2xl mt-8 hidden">
                     <a th:text="#{dashboard.user_heading.title}" th:href="@{/dashboard/user}"
                         th:class="${content == 'user'} ? 'text-white' : 'text-white'">
                         User
                     </a>
                 </li>
 
-                <li class="mb-4 text-2xl mt-8">
+                <li id="order-menu" class="mb-4 text-2xl mt-8 hidden">
                     <a th:text="#{dashboard.order.title}" th:href="@{/dashboard/order}"
                         th:class="${content == 'order'} ? 'text-white' : 'text-white'">
                         Order
                     </a>
 
-                <li class="mb-4 text-2xl mt-8">
+                <li id="sport-field-menu" class="mb-4 text-2xl mt-8 hidden">
                     <a th:text="#{dashboard.sports_field.title}" th:href="@{/dashboard/sport-field}"
                         th:class="${content == 'sportField'} ? 'text-white' : 'text-white'">
                         Sport fields
                     </a>
                 </li>
-                <li class="mb-4 text-2xl mt-8">
+                <li id="category-menu" class="mb-4 text-2xl mt-8 hidden">
                     <a th:text="#{dashboard.category.title}" th:href="@{/dashboard/category}"
                         th:class="${content == 'category'} ? 'text-white' : 'text-white'">
                         Category
@@ -56,4 +56,5 @@
     <div class="mb-4">
         <a href="#" class="text-white text-2xl" th:text="#{dashboard.logout.title}" id="btn-sign-out">Log out</a>
     </div>
+    <script th:src="@{/js/dashboard-page/nav-bar.js}"></script>
 </div>

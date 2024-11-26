@@ -3,6 +3,8 @@ package org.jakartaee5g23.sports_field_booking_client.controllers;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import static org.jakartaee5g23.sports_field_booking_client.components.Translato
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DashboardController {
     @GetMapping
+    @PreAuthorize("hasRole('FIELD_OWNER')")
     public String homePage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.home.title"));
         model.addAttribute("content", "home");
@@ -23,6 +26,7 @@ public class DashboardController {
     }
 
     @GetMapping("/sport-field")
+    @PreAuthorize("hasRole('FIELD_OWNER')")
     public String sportFieldPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.sports_field.title"));
         model.addAttribute("content", "sportsField");
@@ -44,6 +48,7 @@ public class DashboardController {
     }
 
     @GetMapping("/promotion")
+    @PreAuthorize("hasRole('FIELD_OWNER')")
     public String promotionPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.promotion.title"));
         model.addAttribute("content", "promotion");
@@ -51,6 +56,7 @@ public class DashboardController {
     }
 
     @GetMapping("/order")
+    @PreAuthorize("hasRole('FIELD_OWNER')")
     public String orderPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.order.title"));
         model.addAttribute("content", "order");
@@ -58,6 +64,7 @@ public class DashboardController {
     }
 
     @GetMapping("/user")
+    @PreAuthorize("hasRole('ADMIN')")
     public String userPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.user_heading.title"));
         model.addAttribute("content", "user");
@@ -65,6 +72,7 @@ public class DashboardController {
     }
 
     @GetMapping("/category")
+    @PreAuthorize("hasRole('ADMIN')")
     public String categoryPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.category.title"));
         model.addAttribute("content", "category");

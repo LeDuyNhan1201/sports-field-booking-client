@@ -11,9 +11,9 @@ async function loadUserAvatar() {
     try {
         const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${JSON.parse(currentUser).id}`);
         const avatarData = await avatarResponse.json();
-        
+
         userAvatar.src = avatarData.results ? avatarData.results : '/sports-field-booking/image/user-info/user-info.png';
-    } catch (error) {                
+    } catch (error) {
         userAvatar.src = '/sports-field-booking/image/user-info/user-info.png';
     }
 }
@@ -21,12 +21,12 @@ async function loadUserAvatar() {
 if (localStorage.getItem('current-user') !== null) {
     if (currentUser) {
         const user = JSON.parse(currentUser)
-        
+
         loginSection.classList.add('hidden');
         notificationSection.classList.remove('hidden');
         orderSection.classList.remove('hidden');
         userInfoSection.classList.remove('hidden');
-        
+
         usernameElement.textContent = user.username
 
         if (user.roles && user.roles.includes('FIELD_OWNER')) {
@@ -36,10 +36,10 @@ if (localStorage.getItem('current-user') !== null) {
         }
 
         if (user.roles && user.roles.includes('ADMIN')) {
-            window.location.href = CLIENT_DOMAIN + '/dashboard';
+            window.location.href = CLIENT_DOMAIN + '/dashboard/user';
         }
 
-    } else {        
+    } else {
         loginSection.classList.remove('hidden');
         userInfoSection.classList.add('hidden');
     }
@@ -52,27 +52,27 @@ function switchLanguage(lang) {
 
 document.getElementById('btnSignOut')
     .addEventListener('click', async (event) => {
-    event.preventDefault();
-    try {
-        const response = await fetchCustom({
-            url: SERVER_DOMAIN + '/auth/sign-out',
-            method: 'POST',
-            body: {
-                "accessToken": getAccessTokenFromCookie(),
-                "refreshToken": getRefreshTokenFromCookie()
-            }
-        });
+        event.preventDefault();
+        try {
+            const response = await fetchCustom({
+                url: SERVER_DOMAIN + '/auth/sign-out',
+                method: 'POST',
+                body: {
+                    "accessToken": getAccessTokenFromCookie(),
+                    "refreshToken": getRefreshTokenFromCookie()
+                }
+            });
 
-        if (!response.ok) showError("Failed to refresh token");
-        else window.location.href = `${CLIENT_DOMAIN}/auth`;
+            if (!response.ok) showError("Failed to refresh token");
+            else window.location.href = `${CLIENT_DOMAIN}/auth`;
 
-        localStorage.removeItem('current-user');
-    } catch (error) {
-        console.error('Error refreshing token:', error);
-    }
-    finally {
-    }
-});
+            localStorage.removeItem('current-user');
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+        }
+        finally {
+        }
+    });
 
 window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -86,7 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
             history.replaceState(null, '', window.location.pathname);
 
             localStorage.removeItem('data');
-    
+
             sessionStorage.removeItem('paymentStatus');
         } else {
             alert("Thanh toán thất bại. Vui lòng thử lại.");
