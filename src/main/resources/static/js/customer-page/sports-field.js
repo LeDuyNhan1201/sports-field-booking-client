@@ -45,7 +45,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
             if (user.roles[0] === "FIELD_OWNER") {
                 if (!searchValue) searchValue = " ";
                 response = await fetch(
-                    `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=1000&minPrice=1&categoryId=${currentCategory}`
+                    `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
                 );
 
                 // xử lý khi user không có quyền
@@ -57,13 +57,13 @@ async function loadSportFieldList(tab, offset, searchValue) {
             // xử lý cho danh sách sân
             if (!searchValue) searchValue = " ";
             response = await fetch(
-                `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=1000&minPrice=1&categoryId=${currentCategory}`
+                `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
             );
         }
         const data = await response.json();
 
         if (data.items.length > 0) {
-            currentOffset = offset
+            currentOffset = offset;
             loadPage(offset);
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
@@ -77,6 +77,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
 document.addEventListener("DOMContentLoaded", function () {
     loadSportFieldList(currentTab, 0, searchValue);
+    loadCategory()
 });
 
 async function appendFieldGrid(data) {
@@ -200,6 +201,39 @@ async function appendCategory(data) {
     });
 }
 
+// load max min price
+async function appendPrice(sportsField) {
+    let minPriceElement = sportsFieldContainer.querySelector("#sportsField\\.minPrice");
+    let maxPriceElement = sportsFieldContainer.querySelector("#sportsField\\.maxPrice");
+    let minPriceValueElement = sportsFieldContainer.querySelector("#sportsField\\.minPrice\\.value");
+    let maxPriceValueElement = sportsFieldContainer.querySelector("#sportsField\\.maxPrice\\.value");
+
+    let maxSportFieldPrice = Math.max(...sportsField.map((field) => field.fieldAvailabilities.map((avail) => avail.price)).flat());
+
+    minPriceElement.max = maxSportFieldPrice
+    maxPriceElement.max = maxSportFieldPrice;
+
+    minPriceElement.value = 1
+    maxPriceElement.value = maxSportFieldPrice
+
+    maxPriceValueElement.textContent = maxSportFieldPrice + "$"
+
+    minPriceElement.addEventListener("input", (e) => {
+        if (Number(e.target.value) > maxPriceElement.value) {
+            minPriceElement.value = maxPriceElement.value; 
+        }
+        minPriceValueElement.textContent =  Number(minPriceElement.value).toFixed(0) + "$"
+        minPrice = Number(minPriceElement.value).toFixed(0)
+    });
+    maxPriceElement.addEventListener("input", (e) => {
+        if (Number(e.target.value) < minPriceElement.value) {
+            maxPriceElement.value = minPriceElement.value; 
+        }
+        maxPriceValueElement.textContent =  Number(maxPriceElement.value).toFixed(0) + "$"
+        maxPrice = Number(maxPriceElement.value).toFixed(0)
+    });
+}
+
 //search
 document.getElementById("sportsField.button_search").addEventListener("click", function (e) {
     actionSearch();
@@ -210,6 +244,8 @@ document.getElementById("sportsField.search_value").addEventListener("keydown", 
         actionSearch();
     }
 });
+
+
 
 async function actionSearch() {
     //xóa search Param
@@ -257,6 +293,8 @@ async function sportsFieldQuantityAll() {
         response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0`);
         const data = await response.json();
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
+
+        await appendPrice(data.items)
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }

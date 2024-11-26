@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 scheduleList.innerHTML += `
-                    <div class="flex justify-between w-full field-availability-item" data-sports-field="${order.sportFieldID}">
+                    <div class="flex justify-between w-full field-availability-item" data-sports-field="${order.sportFieldID}" data-availability-id="${fieldAvailabilityData.id}">
                         <div class="flex w-full items-end">
                             <p class="text-lg pl-4 start-time" data-original="${fieldAvailabilityData.startTime}">
                                 ${formatTime(fieldAvailabilityData.startTime)}
@@ -270,10 +270,27 @@ document.getElementById('paymentButton').addEventListener('click', async functio
     const paymentMethod = selectedPaymentMethod.id;
 
     try {
-        const bookingID = await createBooking();
-        if (bookingID) {
-            await createBookingItems(bookingID);
-            await processPayment(bookingID, paymentMethod);
+        const bookingsData = await createBooking();
+        if (bookingsData && bookingsData.length > 0) {
+            await createBookingItems(bookingsData);
+            
+            const totalAmount = bookingsData.reduce((total, booking) => {
+                const bookingItems = document.querySelectorAll(`.field-availability-item[data-sports-field="${booking.sportFieldID}"]`);
+                const bookingTotal = Array.from(bookingItems).reduce((subtotal, item) => {
+                    let priceElement = item.querySelector('.text-green-500');
+                    let price;
+                    if (priceElement) {
+                        price = parseFloat(priceElement.textContent.replace('$', ''));
+                    } else {
+                        priceElement = item.querySelector('.font-semibold:not(.text-green-500)');
+                        price = parseFloat(priceElement.textContent.replace('$', ''));
+                    }
+                    return subtotal + price;
+                }, 0);
+                return total + bookingTotal;
+            }, 0);
+
+            await processPayment(bookingsData[0].bookingID, paymentMethod, totalAmount);
         }
     } catch (error) {
         console.error("Lỗi khi thực hiện thanh toán:", error);
@@ -282,15 +299,21 @@ document.getElementById('paymentButton').addEventListener('click', async functio
 });
 
 async function createBooking() {
+    const bookingIDs = [];
+
+    const sportFieldGroups = {};
     for (const item of fieldAvailabilityIDs) {
-        console.log(item);
-        
-        const { fieldAvailabilityID, sportFieldID } = item;
+        if (!sportFieldGroups[item.sportFieldID]) {
+            sportFieldGroups[item.sportFieldID] = [];
+        }
+        sportFieldGroups[item.sportFieldID].push(item);
+    }    
 
-        if (!validSportField.includes(sportFieldID)) {
-            validSportField.push(sportFieldID);
+    for (const sportFieldID in sportFieldGroups) {
+        const fieldAvailabilityGroup = sportFieldGroups[sportFieldID];
 
-            const response = await fetch(`${SERVER_DOMAIN}/booking/${fieldAvailabilityID}`, {
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/booking/${fieldAvailabilityGroup[0].fieldAvailabilityID}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -301,90 +324,123 @@ async function createBooking() {
 
             const data = await response.json();
             if (data && data.id) {
-                return data.id;
+                bookingIDs.push({
+                    bookingID: data.id,
+                    sportFieldID: sportFieldID,
+                    fieldAvailabilities: fieldAvailabilityGroup
+                });
             } else {
-                alert(`Can't create booking`);
+                alert("Can't create booking");
+            }
+        } catch (error) {
+            console.error("Error creating booking:", error);
+            alert("An error occurred while creating booking");
+        }
+    }
+
+    return bookingIDs;    
+    // for (const item of fieldAvailabilityIDs) {        
+    //     const { fieldAvailabilityID, sportFieldID } = item;
+
+    //     if (!validSportField.includes(sportFieldID)) {
+    //         validSportField.push(sportFieldID);
+
+    //         const response = await fetch(`${SERVER_DOMAIN}/booking/${fieldAvailabilityID}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+    //             },
+    //             body: JSON.stringify({ userID: currentUserID })
+    //         });
+
+    //         const data = await response.json();
+    //         if (data && data.id) {
+    //             return data.id;
+    //         } else {
+    //             alert(`Can't create booking`);
+    //         }
+    //     }
+    // }
+}
+
+async function createBookingItems(bookingsData) {
+    for (const bookingInfo of bookingsData) {
+        const { bookingID, sportFieldID, fieldAvailabilities } = bookingInfo;
+
+        for (const fieldAvailability of fieldAvailabilities) {
+            const fieldAvailabilityID = fieldAvailability.fieldAvailabilityID;
+            
+            const item = document.querySelector(`.field-availability-item[data-sports-field="${sportFieldID}"][data-availability-id="${fieldAvailabilityID}"]`);
+
+            const startTime = item.querySelector('.start-time').getAttribute('data-original');
+            const endTime = item.querySelector('.end-time').getAttribute('data-original');
+            const availableDate = item.querySelector('.available-date').getAttribute('data-original');
+
+            let priceElement = item.querySelector('.text-green-500');
+            let price;
+            if (priceElement) {
+                // have discount
+                price = priceElement.textContent.replace('$', '');
+            } else {
+                // don't have discount
+                priceElement = item.querySelector('.font-semibold:not(.text-green-500)');
+                price = priceElement.textContent.replace('$', '');
+            }
+            
+            try {
+                await fetch(`${SERVER_DOMAIN}/booking-items`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                    },
+                    body: JSON.stringify({
+                        orderId: bookingID,
+                        sportFieldID: sportFieldID,
+                        startTime: startTime,
+                        endTime: endTime,
+                        availableDate: convertDateFormat(availableDate),
+                        price: parseFloat(price)
+                    })
+                });
+            } catch (error) {
+                alert("Error happens. Please try again");
+                break;
             }
         }
     }
 }
 
-async function createBookingItems(bookingID) {
-    const fieldAvailabilityElements = document.querySelectorAll('.field-availability-item');
-    console.log(fieldAvailabilityElements);
 
-    for (const item of fieldAvailabilityElements) {
-        const sportFieldID = item.getAttribute('data-sports-field');
-        const startTime = item.querySelector('.start-time').getAttribute('data-original');
-        const endTime = item.querySelector('.end-time').getAttribute('data-original');
-
-        const availableDate = item.querySelector('.available-date').getAttribute('data-original');
-
-        let priceElement = item.querySelector('.text-green-500');
-        let price;
-        if (priceElement) {
-            // has discount
-            price = priceElement.textContent.replace('$', '');
-        } else {
-            // don't have discount
-            priceElement = item.querySelector('.font-semibold:not(.text-green-500)');
-            price = priceElement.textContent.replace('$', '');
-        }
-        
-        try {
-            const response = await fetch(`${SERVER_DOMAIN}/booking-items`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
-                },
-                body: JSON.stringify({
-                    orderId: bookingID,
-                    sportFieldID: sportFieldID,
-                    startTime: startTime,
-                    endTime: endTime,
-                    availableDate: convertDateFormat(availableDate),
-                    price: parseFloat(price)
-                })
-            });
-        } catch (error) {
-            alert("Error happens. Please try again");
-            break;
-        }
-    }
-}
-
-
-async function processPayment(bookingID, paymentMethod) {
-    const amount = parseFloat(document.getElementById('totalPrice').textContent.replace('$', '')) * 25000;
+function processPayment(bookingID, paymentMethod, amount) {
     const paymentUrl = paymentMethod === "vnpay" ? `${SERVER_DOMAIN}/payment/vnpay` : `${SERVER_DOMAIN}/payment`;
 
-    const response = await fetch(paymentUrl, {
+    return fetch(paymentUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': paymentMethod === "vnpay" ? 'Bearer ' + getAccessTokenFromCookie() : undefined
         },
-        body: JSON.stringify({ orderId: bookingID, amount: amount })
-    });
-
-    const paymentData = await response.json();
-
-    if (paymentMethod === "vnpay") {
-        if (paymentData.code === 'ok' && paymentData.paymentUrl) {
-            window.location.href = paymentData.paymentUrl;
+        body: JSON.stringify({ orderId: bookingID, amount: amount * 25000 })
+    })
+    .then(response => response.json())
+    .then(paymentData => {
+        if (paymentMethod === "vnpay") {
+            if (paymentData.code === 'ok' && paymentData.paymentUrl) {
+                window.location.href = paymentData.paymentUrl;
+            } else {
+                alert("URL payment does not exist");
+            }
+        } else if (paymentData) {
+            alert("Cash payment successfully");
+            localStorage.removeItem("data");
+            window.location.reload();
         } else {
-            alert("URL payment does not exist");
+            alert("Payment error happens. Please try again");
         }
-    } else if (paymentData) {
-        alert("Cash payment successfully");
-        localStorage.removeItem("data");
-        window.location.reload();
-    } else {
-        alert("Payment error happens. Please try again");
-    }
+    });
 }
-
 function removeDataFromLocalStorage(id, key) {
     const storedData = JSON.parse(localStorage.getItem("data")) || [];
 
