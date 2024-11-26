@@ -1,33 +1,33 @@
-<div th:fragment="mainContent" th:switch="${content}" xmlns:th="http://www.w3.org/1999/xhtml" class="w-full">
+<div th:fragment="mainContent" th:switch="${content}" class="w-full">
     <div th:case="'home'">
-        <div th:replace="~{/components/dashboard-page/home :: home}"></div>
+        <div th:replace="~{/components/dashboard/home :: home}"></div>
     </div>
 
     <div th:case="'sportsField'">
-        <div th:replace="~{/components/dashboard-page/sports-field :: sportsField}"></div>
+        <div th:replace="~{/components/dashboard/sports-field :: sportsField}"></div>
     </div>
 
     <div th:case="'userProfile'">
-        <div th:replace="~{/components/dashboard-page/user-profile :: userProfile}"></div>
+        <div th:replace="~{/components/dashboard/user-profile :: userProfile}"></div>
     </div>
 
     <div th:case="'fileStorage'">
-        <div th:replace="~{/components/dashboard-page/file-storage :: fileStorage}"></div>
+        <div th:replace="~{/components/dashboard/file-storage :: fileStorage}"></div>
     </div>
 
     <div th:case="'promotion'">
-        <div th:replace="~{/components/dashboard-page/promotion :: promotion}"></div>
+        <div th:replace="~{/components/dashboard/promotion :: promotion}"></div>
     </div>
 
     <div th:case="'order'">
-        <div th:replace="~{/components/dashboard-page/order :: order}"></div>
+        <div th:replace="~{/components/dashboard/order :: order}"></div>
     </div>
 
     <div th:case="'user'">
-        <div th:replace="~{/components/dashboard-page/user :: user}"></div>
+        <div th:replace="~{/components/dashboard/user :: user}"></div>
     </div>
     <div th:case="'category'">
-        <div th:replace="~{/components/dashboard-page/category :: category}"></div>
+        <div th:replace="~{/components/dashboard/category :: category}"></div>
     </div>
 
     <div id="loading"></div>

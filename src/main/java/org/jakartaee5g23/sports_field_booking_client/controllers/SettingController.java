@@ -31,7 +31,7 @@ public class SettingController {
                                  @RequestParam(name = "returnUrl", required = false) String returnUrl) {
         Locale locale = Locale.of(lang);
         localeResolver.setLocale(request, response, locale);
-        Cookie cookie = new Cookie("accept-language", lang);
+        Cookie cookie = new Cookie("acceptLanguage", lang);
         cookie.setPath("/");
         cookie.setDomain("localhost"); // Thiết lập domain nếu cần
         response.addCookie(cookie);

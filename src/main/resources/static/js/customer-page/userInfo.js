@@ -218,7 +218,13 @@ document.getElementById('deleteAccountBtn').addEventListener('click', async () =
 
 async function loadUserInfo(userID) {
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/users/${userID}`)
+        const response = await fetch(`${SERVER_DOMAIN}/users/${userID}`,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            }
+        });
         const data = await response.json()
 
         const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${userID}`);

@@ -61,6 +61,17 @@ function setCookie(name, value, path = '/', domain = 'localhost', expires = '', 
     document.cookie = `${name}=${value}; path=${path}; domain=${domain}; expires=${expires}; SameSite=${sameSite}`;
 }
 
+function getAcceptLanguageFromCookie() {
+    const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+        const [name, value] = cookie.split('=');
+        acc[name] = value;
+        return acc;
+    }, {});
+
+    return cookies.acceptLanguage || null;
+}
+
+
 function getAccessTokenFromCookie() {
     const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
         const [name, value] = cookie.split('=');
@@ -144,6 +155,7 @@ async function fetchCustom({
     const headers = {
         'Content-Type': 'application/json',
         'Accept': '*/*',
+        'Accept-Language': getAcceptLanguageFromCookie(),
     };
 
     if (withAuth) {

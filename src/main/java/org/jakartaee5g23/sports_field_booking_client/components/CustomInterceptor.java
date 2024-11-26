@@ -22,7 +22,7 @@ public class CustomInterceptor implements HandlerInterceptor {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("accept-language".equals(cookie.getName())) {
+                if ("acceptLanguage".equals(cookie.getName())) {
                     Locale locale = Locale.of(cookie.getValue());
                     localeResolver.setLocale(request, response, locale);
                 }
