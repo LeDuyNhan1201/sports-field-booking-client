@@ -103,11 +103,10 @@ async function appendFieldList(data) {
                     </td>
                     <td class="p-4">${field.location}</td>
                     <td class="p-4">${field.category}</td>
-                    <td class="p-4">${field.opacity}</td>
                     <td class="p-4">${field.owner.firstName + " " + field.owner.lastName}</td>
                     <td class="p-4">${formatHour(field.openingTime)}</td>
                     <td class="p-4">${formatHour(field.closingTime)}</td>
-                    <td class="p-4">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$ ${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</td>
+                    <td class="p-4">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$-${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</td>
                     <td class="p-4">
                         <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
@@ -116,7 +115,7 @@ async function appendFieldList(data) {
                         <i class="fa-solid fa-share-from-square text-green-500 cursor-pointer"></i>
                     </td>
             `;
-            fieldElement.addEventListener("click", () => {
+            fieldElement.querySelector('i').addEventListener("click", () => {
                 editField(field.id);
             });
             sportFieldTable.appendChild(fieldElement);
