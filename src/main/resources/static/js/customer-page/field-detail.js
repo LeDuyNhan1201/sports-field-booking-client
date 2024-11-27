@@ -241,11 +241,15 @@ async function appendBookingDetail(field) {
                 element.dataset.availabilityId = fieldAvailability.id;
 
                 const isOrdered = bookingItems.some((item) => {
-                    return formatHour(item.startTime) === startTime && formatHour(item.endTime) === endTime && convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
+                    return formatHour(item.startTime) === startTime && 
+                    formatHour(item.endTime) === endTime && 
+                    convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString())
+                    && item.status === "PENDING";
                 });
 
                 const fieldResponse = await fetch(`${SERVER_DOMAIN}/field-availability/${fieldAvailability.id}`);
                 const result = await fieldResponse.json();
+                console.log(result);
                 const isBooked = result.status === "BOOKED";
 
                 // Check promotion
@@ -288,6 +292,8 @@ async function appendBookingDetail(field) {
                     }
                 });
 
+                console.log(isOrdered+" "+isBooked+" "+isLocked);
+                
                 if (isOrdered || isBooked || isLocked) {
                     element.innerHTML = `
                         <div class="flex flex-1 justify-between">

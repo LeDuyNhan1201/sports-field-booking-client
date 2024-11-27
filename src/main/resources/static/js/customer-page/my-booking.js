@@ -115,7 +115,7 @@ async function cancelBooking(bookingId) {
         if (!token) {
             throw new Error('No auth token found');
         }
-
+   
         const response = await fetch(`${SERVER_DOMAIN}/booking/${bookingId}/cancel`, {
             method: 'POST',
             headers: {
@@ -128,6 +128,51 @@ async function cancelBooking(bookingId) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
 
+        const bookingResponse = await fetch(`${SERVER_DOMAIN}/booking/${bookingId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!bookingResponse.ok) {
+            throw new Error('Failed to fetch booking details: ' + bookingResponse.statusText);
+        }
+
+        const bookingData = await bookingResponse.json();
+        
+        if (bookingData.bookingItems && bookingData.bookingItems.length > 0) {
+            for (const item of bookingData.bookingItems) {
+                const completeResponse = await fetch(`${SERVER_DOMAIN}/booking-items/update-status/${item.id}?status=COMPLETE`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+        
+                if (!completeResponse.ok) {
+                    throw new Error(`Failed to update booking item status to COMPLETE for item ID ${item.id}: ${completeResponse.statusText}`);
+                }
+
+                const fieldAvailabilities = item.sportField.fieldAvailabilities;
+                for (const availability of fieldAvailabilities) {
+                    const updateResponse = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${availability.id}?status=AVAILABLE`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+    
+                    if (!updateResponse.ok) {
+                        throw new Error(`Failed to update field status for availability ID ${availability.id}: ${updateResponse.statusText}`);
+                    }
+                }
+            }
+        }
+        
         alert('Booking cancelled successfully.');
         fetchBookingHistory();
     } catch (error) {
