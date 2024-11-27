@@ -70,6 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderUsers(users) {
         const usersTableBody = document.querySelector('tbody');
+        const userQuantity = document.getElementById('user-quantity');
+        userQuantity.textContent = totalItems;
         usersTableBody.innerHTML = '';
         users.forEach(async (user) => {
             const image = await loadImage(user.id);
