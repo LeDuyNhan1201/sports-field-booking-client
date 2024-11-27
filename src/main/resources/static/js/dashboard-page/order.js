@@ -475,29 +475,37 @@ document.getElementById('search-btn').addEventListener('click', () => {
 });
 
 window.addEventListener('DOMContentLoaded', async () => {
+    const fromDateInput = document.getElementById('from-date');
+    const toDateInput = document.getElementById('to-date');
+    const statusSelect = document.getElementById('status');
+    const today = new Date();
+    const currentYear = today.getFullYear();
+
+    fromDateInput.value = new Date(currentYear, 0, 2).toISOString().split('T')[0];
+    toDateInput.value = new Date(currentYear, 11, 32).toISOString().split('T')[0];
+
     isSearch = false;
 
-    await fetchOrders();
-
-    const statusSelect = document.getElementById('status');
-
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/booking/booking-status`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const statusResponse = await fetch(`${SERVER_DOMAIN}/booking/booking-status`);
+        if (!statusResponse.ok) {
+            throw new Error(`Failed to fetch booking statuses: ${statusResponse.status}`);
         }
-        const listStatus = await response.json();
+        const listStatus = await statusResponse.json();
+
         listStatus.forEach((status) => {
             const option = document.createElement('option');
             option.value = status;
             option.textContent = status;
-            statusSelect.appendChild(option)
-        })
+            statusSelect.appendChild(option);
+        });
 
+        await searchOrders();
     } catch (error) {
-        console.error("Failed to fetch booking statuses:", error);
+        console.error("Error during initialization:", error);
     }
 });
+
 
 async function loadRating(itemId) {
     try {
