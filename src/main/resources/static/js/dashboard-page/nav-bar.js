@@ -27,6 +27,8 @@ if (localStorage.getItem('current-user') !== null) {
         if (user.roles && user.roles.includes('ADMIN')) {
             userMenu.classList.remove('hidden')
             categoryMenu.classList.remove('hidden')
+            sportFieldMenu.classList.remove('hidden')
+            promotionMenu.classList.remove('hidden')
         }
         else if (user.roles && user.roles.includes('FIELD_OWNER')) {
             sportFieldMenu.classList.remove('hidden')

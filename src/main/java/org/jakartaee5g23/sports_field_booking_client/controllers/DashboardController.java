@@ -26,7 +26,7 @@ public class DashboardController {
     }
 
     @GetMapping("/sport-field")
-    @PreAuthorize("hasRole('FIELD_OWNER')")
+    @PreAuthorize("hasRole('FIELD_OWNER') or hasRole('ADMIN')")
     public String sportFieldPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.sports_field.title"));
         model.addAttribute("content", "sportsField");
@@ -48,7 +48,7 @@ public class DashboardController {
     }
 
     @GetMapping("/promotion")
-    @PreAuthorize("hasRole('FIELD_OWNER')")
+    @PreAuthorize("hasRole('FIELD_OWNER') or hasRole('ADMIN')")
     public String promotionPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.promotion.title"));
         model.addAttribute("content", "promotion");
