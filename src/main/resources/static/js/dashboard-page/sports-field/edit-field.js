@@ -132,6 +132,17 @@ async function appendImagesEditField(images) {
     });
 }
 
+// Xử lý khi xóa tất cả ảnh
+editFieldContainer.querySelector("#edit_field\\.clear_image").addEventListener("click", () => {
+    let imageElements = Array.from(editFieldContainer.querySelectorAll(".edit_field\\.image"));
+
+    imageElements.forEach((element) => {
+        changeImageElement(element);
+    });
+
+    newEditImages = [];
+    appendSelectImage();
+});
 // Hàm xử lý tải lên file
 function handleFileUpload(file, element, index) {
     if (file) {
@@ -267,37 +278,37 @@ editFieldContainer.querySelector("#edit_field\\.button_add_availabilities").addE
     let duplicate = true;
 
     if (closingTime.getTime() < openingTime.getTime()) {
-        console.log("Giờ mở cửa không thể lớn hơn giờ đóng cửa");
+        alert("Giờ mở cửa không thể lớn hơn giờ đóng cửa")
         return;
     }
 
     if (closingTime.getTime() === openingTime.getTime()) {
-        console.log("Thời gian hoạt động phải lớn hơn không");
+        alert("Thời gian hoạt động phải lớn hơn không")
         return;
     }
 
     if (editAvailabilities.length > 0) {
         for (const availability of editAvailabilities) {
             if (availability.openingTime.getTime() === openingTime.getTime()) {
-                console.log("Giờ mở cửa không thể trùng");
+                alert("Giờ mở cửa không thể trùng")
                 duplicate = false;
                 break;
             }
 
             if (availability.closingTime.getTime() === closingTime.getTime()) {
-                console.log("giờ đóng cửa không thể trùng");
+                alert("giờ đóng cửa không thể trùng")
                 duplicate = false;
                 break;
             }
 
             if (isTimeBetween(openingTime.getTime(), availability.openingTime.getTime(), availability.closingTime.getTime())) {
-                console.log("giờ mở cửa không hợp lệ");
+                alert("giờ mở cửa không hợp lệ")
                 duplicate = false;
                 break;
             }
 
             if (isTimeBetween(closingTime.getTime(), availability.openingTime.getTime(), availability.closingTime.getTime())) {
-                console.log("giờ đóng cửa không hợp lệ");
+                alert("giờ đóng cửa không hợp lệ")
                 duplicate = false;
                 break;
             }

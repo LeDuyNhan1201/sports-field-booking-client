@@ -10,7 +10,7 @@
 
         <ul class="flex space-x-4">
             <li class="relative group flex items-center">
-                <select id="languageSelect" class="bg-transparent text-white font-bold border-none p-0 appearance-none text-lg"
+                <select id="languageSelect" class="bg-transparent text-white font-semibold border-none p-0 appearance-none text-lg"
                 onchange="switchLanguage(this.value)">
                 <option value="" disabled selected class="text-white text-xl" th:text="#{homepage.language.label}"></option>
                 <option value="en" class="text-black text-xl" th:text="#{homepage.english.title}"></option>
@@ -18,7 +18,7 @@
             </select>
             </li>
 
-            <li class="relative group flex items-center text-lg text-gray-500 font-bold">
+            <li class="relative group flex items-center text-lg text-white font-semibold">
                 <a href="#" th:href="@{/sports-field}"
                     th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'"
                     aria-current="page" th:text="#{homepage.sports_list.title}"></a>
