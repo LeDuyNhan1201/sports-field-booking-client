@@ -172,6 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadUsers(currentPage - 1, itemsPerPage);
                 }
             });
+            if (i === currentPage) {
+                pageButton.classList.add('bg-blue-600', 'text-white');
+                pageButton.classList.remove('hover:text-blue-700');
+            } else {
+                pageButton.classList.add('hover:text-blue-700', 'hover:bg-gray-200');
+            }
             paginationContainer.appendChild(pageButton);
         }
         if (currentPage < totalPages) {
@@ -205,5 +211,58 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             success.classList.add("hidden");
         }, timeout);
+    }
+
+    document.getElementById("userSearchInput").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            searchUsers();
+        }
+    });
+
+    async function searchUsers() {
+        const keyword = document.getElementById("userSearchInput").value || "";
+
+        const queryParamSearchCurrentPage = new URLSearchParams({
+            keyword,
+            offset: currentPage - 1,
+            limit: itemsPerPage,
+        });
+
+        const queryParams = new URLSearchParams({
+            keyword,
+        });
+
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/users/search?${queryParamSearchCurrentPage}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+                },
+            });
+
+            const allUsersResponse = await fetch(`${SERVER_DOMAIN}/users/search?${queryParams}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+                },
+            });
+
+            if (response.ok && allUsersResponse.ok) {
+                const data = await response.json();
+                const allUsers = await allUsersResponse.json();
+
+                totalItems = allUsers.items.length;
+                renderUsers(data.items);
+                updatePagination();
+            } else {
+                console.error("Failed to search users:", response.status);
+                popupError("Không thể tìm kiếm người dùng!", 3000);
+            }
+        } catch (error) {
+            console.error("Error during user search:", error.message || error);
+            popupError("Đã xảy ra lỗi khi tìm kiếm người dùng!", 3000);
+        }
     }
 });
