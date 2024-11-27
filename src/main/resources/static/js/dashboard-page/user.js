@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             row.innerHTML = `
                 <td class="p-4">${user.id}</td>
                 <td class="p-4">
-                    <img src="${image}" alt="User Image" />
+                    <img src="${image}" class="w-20 h-20 rounded-full" alt="User Image" />
                 </td>
                 <td class="p-4">${user.username}</td>
                 <td class="p-4">${user.email}</td>
