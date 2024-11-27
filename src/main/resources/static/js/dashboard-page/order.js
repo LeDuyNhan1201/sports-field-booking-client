@@ -3,6 +3,8 @@ let currentPage = 1;
 let isSearch = false;
 let totalItems = 0;
 
+const orderQuantity = document.getElementById('order-quantity');
+
 async function loadImage(id) {
     try {
         const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${id}`);
@@ -34,7 +36,6 @@ async function fetchOrders(page) {
 }
 
 async function renderOrders(orders, page = 1) {
-    const orderQuantity = document.getElementById('order-quantity');
     orderQuantity.textContent = totalItems;
 
     const offset = (page - 1) * ORDER_PER_PAGE;
@@ -453,7 +454,8 @@ async function searchOrders(page = 1) {
         });
 
         if (response.ok) {
-            const data = await response.json();            
+            const data = await response.json();   
+            totalItems = data.items.length;         
             renderOrders(data, page);
             setupPagination(data.items.length);
         } else {
