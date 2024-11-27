@@ -26,7 +26,7 @@ if (localStorage.getItem('current-user') !== null) {
         notificationSection.classList.remove('hidden');
         orderSection.classList.remove('hidden');
         userInfoSection.classList.remove('hidden');
-
+        
         usernameElement.textContent = user.username
 
         if (user.roles && user.roles.includes('FIELD_OWNER')) {
