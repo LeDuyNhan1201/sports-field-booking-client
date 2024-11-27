@@ -1,5 +1,7 @@
 let currentAvailability = null;
 let bannedDateElement = editFieldContainer.querySelector("#edit-field\\.banned-time\\.list");
+let fieldAvailabilityDateBanned = editFieldContainer.querySelector("#edit-field\\.banned-time\\.container");
+
 //xử lý mở
 async function loadFieldAvailabilityBanned(availability) {
     let currentAvailabilityAccess = [];

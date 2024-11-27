@@ -3,14 +3,8 @@ let editFieldContainer = document.getElementById("edit_field.container")
 
 let fieldId = 0;
 
-const url = new URL(window.location.href);
-const searchParams = url.searchParams;
-if (searchParams.get("id")) {
-    fieldId = searchParams.get("id");
-}
 
 let fieldAvailabilitiesElement = editFieldContainer.querySelector("#edit_field\\.availability\\.container");
-let fieldAvailabilityDateBanned = editFieldContainer.querySelector("#edit-field\\.banned-time\\.container");
 let editAvailabilities = [];
 let newEditImages = [null, null, null];
 
@@ -26,19 +20,23 @@ let currentEditSportsField = null;
 let changeAvailability = false;
 
 // thêm các thuộc tính trong category select
-async function loadCategory(currentCategory) {
+async function loadEditCategory(currentCategory) {    
+    console.log(currentCategory);
+        
     try {
-        const data = await fetch(`${SERVER_DOMAIN}/category/all?offset=0&limit=100`);
+        const data = await fetch(`${SERVER_DOMAIN}/category?offset=0&limit=100`);
         const categories = await data.json();
-        appendCategory(categories, currentCategory);
+                
+        await appendEditCategory(categories.items, currentCategory);
     } catch (error) {
         console.error("Error fetching category data:", error);
     }
 }
 
-async function appendCategory(data, currentCategory) {
+async function appendEditCategory(data, currentCategory) {
     let selectContainer = editFieldContainer.querySelector("#edit_field\\.category");
 
+    
     selectContainer.innerHTML = "";
     data.forEach((category) => {
         let option = document.createElement("option");
@@ -52,13 +50,18 @@ async function appendCategory(data, currentCategory) {
 // đóng modal
 editFieldContainer.querySelector("#edit_field\\.closeModal").addEventListener("click", () => {
     editFieldContainer.classList.add("hidden");
+    const url = new URL(window.location.href);
+    url.search = "";
+    window.history.pushState({}, "", url.toString());
 });
 
 //inner value
-async function loadEditValue() {
+async function loadEditValue(id) {
     try {
-        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${fieldId}`);
+        const fieldRes = await fetch(`${SERVER_DOMAIN}/sports-field/${id}`);
         const field = await fieldRes.json();
+
+        fieldId = id;
 
         currentEditSportsField = field;
         await appendEditValue(field);
@@ -73,9 +76,9 @@ async function appendEditValue(field) {
     editField_opacity.placeholder = field.opacity;
 
     editFieldContainer.querySelector("#edit_field\\.button_remove_all_availabilities").classList.add("hidden");
-
-    loadCategory(field.category);
-
+        
+    await loadEditCategory(field.category);
+    
     appendImagesEditField(field.images);
     appendFieldAvailabilityEditField(field.fieldAvailabilities);
 }
@@ -86,7 +89,7 @@ async function appendImagesEditField(images) {
     inputImagesElement.forEach((element, index) => {
         const newElement = document.createElement("div");
         newElement.className = "edit_field.image";
-
+        
         newElement.innerHTML = `
             <img 
                 src="${images[index]}" 
@@ -115,9 +118,6 @@ async function appendImagesEditField(images) {
     });
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
-    await loadEditValue();
-});
 
 // Hàm xử lý tải lên file
 function handleFileUpload(file, element, index) {
@@ -369,6 +369,7 @@ async function appendAvailabilityElement(availability, index) {
 
 // action sửa
 editFieldContainer.querySelector("#edit_field\\.create_field").addEventListener("click", async () => {
+    
     let name = editFieldContainer.querySelector("#edit_field\\.name").value == "" ? currentEditSportsField.name : editFieldContainer.querySelector("#edit_field\\.name").value;
     let location = editFieldContainer.querySelector("#edit_field\\.location").value == "" ? currentEditSportsField.location : editFieldContainer.querySelector("#edit_field\\.location").value;
     let opacity = editFieldContainer.querySelector("#edit_field\\.opacity").value == "" ? currentEditSportsField.opacity : editFieldContainer.querySelector("#edit_field\\.opacity").value;

@@ -38,7 +38,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
         // xử lý cho danh sách sân
         if (!searchValue) searchValue = " ";
         response = await fetch(
-            `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
+            `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}&onlyActiveStatus=1`
         );
 
         const data = await response.json();
@@ -258,7 +258,7 @@ async function sportsFieldQuantityAll() {
     try {
         let response;
         let userId = 0;
-        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0`);
+        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text=%20&colSort=name&sortDirection=1&offset=0&limit=100&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=1`);
         const data = await response.json();
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 

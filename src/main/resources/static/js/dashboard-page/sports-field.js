@@ -26,7 +26,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
         if (user.roles[0] === "FIELD_OWNER") {
             if (!searchValue) searchValue = " ";
             response = await fetch(
-                `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
+                `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}&onlyActiveStatus=0`
             );
 
             // xử lý khi user không có quyền
@@ -34,7 +34,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
             // xử lý cho danh sách sân
             if (!searchValue) searchValue = " ";
             response = await fetch(
-                `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
+                `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}&onlyActiveStatus=0`
             );
         }
         const data = await response.json();
@@ -258,7 +258,7 @@ async function sportsFieldQuantityAll() {
         if (user.roles[0] === "FIELD_OWNER") {
             userId = user.id;
         }
-        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0`);
+        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=0`);
         const data = await response.json();
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 
@@ -274,12 +274,14 @@ async function sportsFieldQuantityAll() {
 buttonNewField.addEventListener("click", () => {
     sportsFieldContainer.querySelector("#new_field\\.container").classList.remove("hidden");
 });
-function editField(id) {
+async function editField(id) {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set("id", id);
     window.history.pushState({}, "", currentUrl);
 
     sportsFieldContainer.querySelector("#edit_field\\.container").classList.remove("hidden");
+    await loadEditValue(id);
+
 }
 
 function loadPage(data) {
