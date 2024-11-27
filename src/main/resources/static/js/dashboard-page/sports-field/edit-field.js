@@ -228,7 +228,7 @@ async function appendFieldAvailabilityEditField(fieldAvailabilities) {
             price: availability.price,
         };
         editAvailabilities.push(availability);
-
+        fieldAvailabilitiesElement.innerHTML = "";
         appendAvailabilityElement(availability, index);
     });
 }
