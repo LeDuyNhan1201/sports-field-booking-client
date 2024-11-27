@@ -144,6 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const endItem = Math.min(currentPage * itemsPerPage, totalItems);
         document.getElementById('show-item-of-page-user').textContent = `Showing ${startItem} to ${endItem} of ${totalItems}`;
         paginationContainer.innerHTML = '';
+
+        if (totalPages <= 1) {
+            return;
+        }
+
         if (currentPage < 1) {
             currentPage = 1;
             if (isSearch) {
@@ -159,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadUsers(currentPage - 1, itemsPerPage);
             }
         }
+
         if (currentPage > 1) {
             const prevButton = createPaginationButton('Previous', () => {
                 currentPage--;
@@ -170,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             paginationContainer.appendChild(prevButton);
         }
+
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = createPaginationButton(i, () => {
                 currentPage = i;
@@ -187,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             paginationContainer.appendChild(pageButton);
         }
+
         if (currentPage < totalPages) {
             const nextButton = createPaginationButton('Next', () => {
                 currentPage++;
@@ -224,6 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === "Enter") {
             isSearch = true;
             searchUsers();
+        }
+    });
+
+    // change user search input == '' => load all users
+    document.getElementById("userSearchInput").addEventListener("input", function () {
+        if (this.value === "") {
+            isSearch = false;
+            loadUsers(currentPage - 1, itemsPerPage);
         }
     });
 
