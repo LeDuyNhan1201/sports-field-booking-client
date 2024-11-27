@@ -97,3 +97,22 @@ async function fetchData(endpoint, method = 'GET', id = null, body = null, OFFSE
         return [];
     }
 }
+
+function createPaginationButton(text, onClick) {
+    const button = document.createElement('button');
+    button.textContent = text;
+    button.className = 'px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-200';
+    button.addEventListener('click', onClick);
+    return button;
+}
+
+async function loadImage(id) {
+    try {
+        const avatarResponse = await fetch(`${SERVER_DOMAIN}/file/metadata-by-user?userId=${id}`);
+        const avatarData = await avatarResponse.json();
+
+        return avatarData.results || "/sports-field-booking/image/user-info/user-info.png";
+    } catch (error) {
+        return "/sports-field-booking/image/user-info/user-info.png";
+    }
+}
