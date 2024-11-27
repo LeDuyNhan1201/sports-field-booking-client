@@ -131,6 +131,7 @@ async function appendFieldList(data) {
                     <td class="p-4">${field.owner.firstName + " " + field.owner.lastName}</td>
                     <td class="p-4">${formatHour(field.openingTime)}</td>
                     <td class="p-4">${formatHour(field.closingTime)}</td>
+                    <td class="p-4">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$ ${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</td>
                     <td class="p-4">
                         <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
