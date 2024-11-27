@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             categorySection.innerHTML = '';
             categories.slice(0, 4).forEach(category => {
                 const categoryElement = document.createElement('a');
-                categoryElement.href = `${CLIENT_DOMAIN}/sports-field?${new URLSearchParams({categoryId: category.id}).toString()}`;
+                categoryElement.href = `${CLIENT_DOMAIN}/sports-field?${new URLSearchParams({ categoryId: category.id }).toString()}`;
                 const imageUrl = category.imageUrl || '/sports-field-booking/image/category/ball.png';
                 categoryElement.className = 'bg-white shadow-lg rounded-lg overflow-hidden block relative w-60 h-40';
                 categoryElement.innerHTML = `
@@ -101,12 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const minPrice = document.querySelector('#minPriceInput').value.trim();
                 const maxPrice = document.querySelector('#maxPriceInput').value.trim();
 
-                if ((!minPrice || parseFloat(minPrice) <= 0) || (!maxPrice || parseFloat(maxPrice) <= 0)) {
-                    alert('Please enter valid values for both minimum and maximum price!');
-                    return;
-                }
-
-                if (parseFloat(maxPrice) < parseFloat(minPrice)) {
+                if (minPrice && maxPrice && parseFloat(maxPrice) < parseFloat(minPrice)) {
                     alert('Maximum price cannot be less than minimum price!');
                     return;
                 }
