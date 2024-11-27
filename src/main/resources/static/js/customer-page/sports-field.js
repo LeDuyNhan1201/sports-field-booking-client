@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function appendFieldGrid(data) {
-
     sportFieldList.className = "hidden w-full text-left border-collapse";
     sportFieldGrid.style.display = "grid";
 
@@ -111,7 +110,11 @@ async function appendFieldList(data) {
                     <td class="p-4">${field.owner.firstName + " " + field.owner.lastName}</td>
                     <td class="p-4">${formatHour(field.openingTime)}</td>
                     <td class="p-4">${formatHour(field.closingTime)}</td>
-                    <td class="p-4">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$-${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</td>
+                    <td class="p-4 w-44 text-red-500">${
+                        Math.min(...field.fieldAvailabilities.map((a) => a.price)) == Math.max(...field.fieldAvailabilities.map((a) => a.price))
+                            ? Math.max(...field.fieldAvailabilities.map((a) => a.price)) + "$"
+                            : Math.min(...field.fieldAvailabilities.map((a) => a.price)) + "$ - " + Math.max(...field.fieldAvailabilities.map((a) => a.price)) + "$"
+                    }</td>
                     <td class="p-4">
                         <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
@@ -257,7 +260,9 @@ async function sportsFieldQuantityAll() {
     try {
         let response;
         let userId = 0;
-        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text=%20&colSort=name&sortDirection=1&offset=0&limit=100&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=1`);
+        response = await fetch(
+            `${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text=%20&colSort=name&sortDirection=1&offset=0&limit=100&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=1`
+        );
         const data = await response.json();
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 
