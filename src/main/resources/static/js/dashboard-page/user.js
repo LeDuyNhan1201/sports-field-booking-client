@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const image = await loadImage(user.id);
             const row = document.createElement('tr');
             row.className = 'border-b';
-            console.log(user);
             row.innerHTML = `
                 <td class="p-4">${user.id}</td>
                 <td class="p-4">
@@ -147,10 +146,18 @@ document.addEventListener('DOMContentLoaded', () => {
         paginationContainer.innerHTML = '';
         if (currentPage < 1) {
             currentPage = 1;
-            loadUsers(currentPage - 1, itemsPerPage);
+            if (isSearch) {
+                searchUsers();
+            } else {
+                loadUsers(currentPage - 1, itemsPerPage);
+            }
         } else if (currentPage > totalPages) {
             currentPage = totalPages;
-            loadUsers(currentPage - 1, itemsPerPage);
+            if (isSearch) {
+                searchUsers();
+            } else {
+                loadUsers(currentPage - 1, itemsPerPage);
+            }
         }
         if (currentPage > 1) {
             const prevButton = createPaginationButton('Previous', () => {
@@ -215,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById("userSearchInput").addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
+            isSearch = true;
             searchUsers();
         }
     });
@@ -224,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const queryParamSearchCurrentPage = new URLSearchParams({
             keyword,
-            offset: currentPage - 1,
+            offset: (currentPage - 1),
             limit: itemsPerPage,
         });
 
