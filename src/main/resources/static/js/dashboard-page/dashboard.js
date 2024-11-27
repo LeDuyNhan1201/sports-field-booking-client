@@ -8,6 +8,9 @@ document.getElementById('to-date').addEventListener('change', updateColumnChart)
 document.getElementById('month-fromDate').addEventListener('change', updateGoalsChart);
 document.getElementById('month-toDate').addEventListener('change', updateGoalsChart);
 
+let userID = JSON.parse(currentUser).id;
+
+
 document.addEventListener('DOMContentLoaded', async function () {
     await updateRevenueChart();
     await updateGoalsChart();
@@ -24,14 +27,19 @@ function convertToGMT7(dateString) {
 }
 
 async function fetchCurrentWeekData() {
-    const response = await fetch(`${SERVER_DOMAIN}/booking/current-week`);
-    const data = await response.json();
+    const response = await fetch(`${SERVER_DOMAIN}/booking/current-week?userId=${userID}`);
+    const data = await response.json();    
     const weeklyData = Array(7).fill(0);
 
-    for (let item of data) {
+    console.log(data);
+    
+            
+    for (let item of data) {                
         if (item.bookingItems && item.bookingItems.length > 0) {
             let totalPrice = 0;
             for (let bookingItem of item.bookingItems) {
+                console.log(bookingItem.price);
+                
                 currentRevenueTotal += bookingItem.price
 
                 const date = new Date(item.createdAt);
@@ -47,7 +55,7 @@ async function fetchCurrentWeekData() {
 }
 
 async function fetchPreviousWeekData() {
-    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-week`);
+    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-week?userId=${userID}`);
     const data = await response.json();
     const weeklyData = Array(7).fill(0);
 
@@ -69,30 +77,45 @@ async function fetchPreviousWeekData() {
     return weeklyData;
 }
 
-async function fetchCurrentMonthData() {
+async function fetchFromDateMonthData() {
     let fromDate = document.getElementById('month-fromDate').value;
 
     if (!fromDate) {
         const today = new Date();
         fromDate = today.toISOString().split('T')[0];
     }
+    
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/current-month?fromDate=${convertToGMT7(fromDate)}&userId=${userID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        });
 
-    const response = await fetch(`${SERVER_DOMAIN}/booking/current-month?fromDate=${fromDate}`);
-    const data = await response.json();
-    let total = 0;
-    for (let item of data) {
-        if (item.bookingItems && item.bookingItems.length > 0) {
-            for (let bookingItem of item.bookingItems) {
-                console.log(bookingItem.price);
-                
-                total += bookingItem.price;
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        let total = 0;
+        for (let item of data) {
+            if (item.bookingItems && item.bookingItems.length > 0) {
+                for (let bookingItem of item.bookingItems) {                    
+                    total += bookingItem.price || 0;
+                }
             }
         }
+        return total;
+    } catch (error) {
+        console.error("Error loading current month data: " + error);  
+        return 0;
     }
-    return total;
 }
 
-async function fetchPreviousMonthData() {
+async function fetchToDateMonthData() {
     let toDate = document.getElementById('month-toDate').value;
 
     if (!toDate) {
@@ -100,17 +123,34 @@ async function fetchPreviousMonthData() {
         toDate = today.toISOString().split('T')[0];
     }
 
-    const response = await fetch(`${SERVER_DOMAIN}/booking/previous-month?toDate=${toDate}`);
-    const data = await response.json();
-    let total = 0;
-    for (let item of data) {
-        if (item.bookingItems && item.bookingItems.length > 0) {
-            for (let bookingItem of item.bookingItems) {                
-                total += bookingItem.price;
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/previous-month?toDate=${toDate}&userId=${userID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        let total = 0;
+        for (let item of data) {
+            if (item.bookingItems && item.bookingItems.length > 0) {
+                for (let bookingItem of item.bookingItems) {
+                    total += bookingItem.price || 0;
+                }
             }
         }
+        return total;
+    } catch (error) {
+        console.error("Error loading previous month data: " + error);  
+        return 0;
     }
-    return total;
 }
 
 async function fetchFromYearData() {
@@ -121,23 +161,39 @@ async function fetchFromYearData() {
         fromDate = today.toISOString().split('T')[0];
     }
 
-    const response = await fetch(`${SERVER_DOMAIN}/booking/from-year?fromDate=${fromDate}`);
-    const data = await response.json();
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/from-year?fromDate=${fromDate}&userId=${userID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        });
 
-    const monthlyRevenue = Array(12).fill(0);
-    for (let item of data) {
-        if (item.bookingItems && item.bookingItems.length > 0) {            
-            for (let bookingItem of item.bookingItems) {                
-                const date = new Date(bookingItem.createdAt);                
-                const monthIndex = date.getMonth();   
-                             
-                monthlyRevenue[monthIndex] += bookingItem.price;                 
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const yearlyRevenue = Array(12).fill(0);
+        for (let item of data) {
+            if (item.bookingItems && item.bookingItems.length > 0) {            
+                for (let bookingItem of item.bookingItems) {                
+                    const date = new Date(item.createdAt);                
+                    const monthIndex = date.getMonth();   
+                                 
+                    yearlyRevenue[monthIndex] += bookingItem.price;                 
+                }
             }
         }
+        return yearlyRevenue;
+    } catch (error) {
+        console.error('Error fetching from year data:', error);
+        return Array(12).fill(0);
     }
-    
-    return monthlyRevenue;
 }
+
 
 async function fetchToYearData() {
     let toDate = document.getElementById('to-date').value;
@@ -147,22 +203,38 @@ async function fetchToYearData() {
         toDate = today.toISOString().split('T')[0];
     }
 
-    const response = await fetch(`${SERVER_DOMAIN}/booking/to-year?toDate=${toDate}`);
-    const data = await response.json();
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/to-year?toDate=${toDate}&userId=${userID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+            },
+        });
 
-    const monthlyRevenue = Array(12).fill(0);
-    for (let item of data) {
-        if (item.bookingItems && item.bookingItems.length > 0) {
-            for (let bookingItem of item.bookingItems) {
-                const date = new Date(bookingItem.createdAt);
-                const monthIndex = date.getMonth();                
-                monthlyRevenue[monthIndex] += bookingItem.price; 
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const yearlyRevenue = Array(12).fill(0);
+        for (let item of data) {
+            if (item.bookingItems && item.bookingItems.length > 0) {
+                for (let bookingItem of item.bookingItems) {
+                    const date = new Date(bookingItem.createdAt);
+                    const monthIndex = date.getMonth();                
+                    yearlyRevenue[monthIndex] += bookingItem.price; 
+                }
             }
         }
+        return yearlyRevenue;
+    } catch (error) {
+        console.error('Error fetching to year data:', error);
+        return Array(12).fill(0);
     }
-
-    return monthlyRevenue;
 }
+
 
 async function updateRevenueChart() {
     const currentWeekData = await fetchCurrentWeekData();
@@ -177,27 +249,22 @@ async function updateRevenueChart() {
 }
 
 async function updateGoalsChart() {
-    const currentMonthTotal = await fetchCurrentMonthData();
-    const previousMonthTotal = await fetchPreviousMonthData();
+    const currentMonthTotal = await fetchFromDateMonthData();
+    const previousMonthTotal = await fetchToDateMonthData();
 
-    console.log(currentMonthTotal, previousMonthTotal);
-    
     let percentageChange = 0;
     if (previousMonthTotal > 0) {
         percentageChange = ((currentMonthTotal - previousMonthTotal) / previousMonthTotal) * 100;
     } else if (currentMonthTotal > 0) {
-        percentageChange = 100; // previous month doesn't have data
+        percentageChange = 0; // previous month doesn't have data
     }
 
-    const total = currentMonthTotal + previousMonthTotal + Math.abs(percentageChange);
+    const total = currentMonthTotal + previousMonthTotal + Math.abs(percentageChange);    
 
     const normalizedCurrentMonth = (currentMonthTotal / total) * 100;
     const normalizedPreviousMonth = (previousMonthTotal / total) * 100;
     const normalizedPercentageChange = normalizedCurrentMonth - normalizedPreviousMonth;
-
-    console.log(normalizedCurrentMonth+" "+normalizedPreviousMonth);
     
-
     goalsChart.data.datasets[0].data = [
         normalizedCurrentMonth,
         normalizedPreviousMonth,
@@ -234,7 +301,7 @@ async function updateColumnChart() {
 
 async function fetchTopBuyers() {
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/booking`, {
+        const response = await fetch(`${SERVER_DOMAIN}/booking/top-orders`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -292,7 +359,7 @@ async function fetchTopProducts() {
         });
 
         const bookingItems = await response.json();
-
+        
         const sportsFieldCount = new Map();
         bookingItems.items.forEach(bookingItem => {
             const sportsFieldName = bookingItem.sportField.name;
@@ -497,8 +564,6 @@ function showMore(listId) {
     }
 
     var nextVisibleItems = currentVisibleItems + itemsToShow;
-    console.log(currentVisibleItems);
-    console.log(nextVisibleItems);
 
     for (var i = currentVisibleItems; i < nextVisibleItems && i < items.length; i++) {
         items[i].classList.remove('hidden');
