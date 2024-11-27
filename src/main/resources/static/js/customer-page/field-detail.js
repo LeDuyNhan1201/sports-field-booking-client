@@ -1,7 +1,7 @@
 let bookingDetail = document.getElementById("booking-detail");
 let buttonOrder = document.getElementById("buttonOrder");
 let buttonCloseBookingDetail = document.getElementById("buttonCloseBookingDetail");
-let fieldDetailContainer = document.getElementById('sportsField.field-detail')
+let fieldDetailContainer = document.getElementById("sportsField.field-detail");
 let currentDate = new Date();
 
 const selectQuantityAvailabilities = document.getElementById("booking_detail.select_quantity_availabilities");
@@ -46,10 +46,10 @@ function isTimeWithinRange(startTime, endTime, rangeStart, rangeEnd) {
     }
 }
 
-displayDate(currentDate)
+displayDate(currentDate);
 
 if (prevDateButton && nextDateButton) {
-    prevDateButton.addEventListener('click', async () => {
+    prevDateButton.addEventListener("click", async () => {
         const now = new Date();
         currentDate.setDate(currentDate.getDate() - 1);
         displayDate(currentDate);
@@ -67,7 +67,7 @@ if (prevDateButton && nextDateButton) {
         }
     });
 
-    nextDateButton.addEventListener('click', async () => {
+    nextDateButton.addEventListener("click", async () => {
         currentDate.setDate(currentDate.getDate() + 1);
         displayDate(currentDate);
 
@@ -80,7 +80,6 @@ if (prevDateButton && nextDateButton) {
         }
     });
 }
-
 
 async function loadDetail() {
     try {
@@ -111,16 +110,16 @@ async function appendDetail(field) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                Authorization: "Bearer " + getAccessTokenFromCookie(),
             },
         });
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error("Network response was not ok");
         }
         const averageRating = await response.json();
         document.getElementById("field_detail.rating").textContent = averageRating.toFixed(2);
     } catch (error) {
-        console.error('Error fetching rating:', error);
+        console.error("Error fetching rating:", error);
         document.getElementById("field_detail.rating").textContent = 0;
     }
     if (document.getElementById("field_detail.openingTime") && document.getElementById("field_detail.closingTime")) {
@@ -144,43 +143,33 @@ async function appendDetail(field) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    let id = fieldDetailContainer.getAttribute("fieldId");    
+    let id = fieldDetailContainer.getAttribute("fieldId");
     await loadDetail(id);
 });
 
 if (buttonOrder) {
-    const endPath = window.location.pathname.split("/")[2];
+    buttonOrder.addEventListener("click", async () => {
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
+            const field = await response.json();
 
-    if (endPath.localeCompare("my-sports-field") === 0) {
-        buttonOrder.addEventListener("click", () => {
-            let editFieldContainer = fieldDetailContainer.querySelector("#new_field\\.container")
-            editFieldContainer.classList.toggle('hidden')
-        });
-    } else {
-        buttonOrder.addEventListener("click", async () => {
-            try {
-                const response = await fetch(`${SERVER_DOMAIN}/sports-field/${getSportFieldIdFromPath()}`);
-                const field = await response.json();
-
-                if (field.status === "OPEN" || field.status === "CLOSED") {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth",
-                    });
-                    bookingDetail.style.display = "block";
-                    window.document.body.style.overflow = "hidden";
-                    bookingDetail.style.overflow = "auto";
-                } else {
-                    alert("Sân hiện không khả dụng");
-                }
-            } catch (error) {
-                console.error("Error fetching field data:", error);
-                alert("Có lỗi xảy ra khi tải thông tin sân.");
+            if (field.status === "OPEN" || field.status === "CLOSED") {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                });
+                bookingDetail.style.display = "block";
+                window.document.body.style.overflow = "hidden";
+                bookingDetail.style.overflow = "auto";
+            } else {
+                alert("Sân hiện không khả dụng");
             }
-        });
-    }
+        } catch (error) {
+            console.error("Error fetching field data:", error);
+            alert("Có lỗi xảy ra khi tải thông tin sân.");
+        }
+    });
 }
-
 
 if (buttonCloseBookingDetail) {
     buttonCloseBookingDetail.addEventListener("click", () => {
@@ -251,10 +240,8 @@ async function appendBookingDetail(field) {
                 element.className = "flex flex-row justify-between mt-3 cursor-pointer p-2 select-none border-b-2 border-green-400 border-l-0 field_availability";
                 element.dataset.availabilityId = fieldAvailability.id;
 
-                const isOrdered = bookingItems.some(item => {
-                    return formatHour(item.startTime) === startTime &&
-                        formatHour(item.endTime) === endTime &&
-                        convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
+                const isOrdered = bookingItems.some((item) => {
+                    return formatHour(item.startTime) === startTime && formatHour(item.endTime) === endTime && convertDateFormat(item.availableDate) === convertDateFormat(currentDate.toISOString());
                 });
 
                 const fieldResponse = await fetch(`${SERVER_DOMAIN}/field-availability/${fieldAvailability.id}`);
@@ -265,10 +252,13 @@ async function appendBookingDetail(field) {
                 let discountInfo = "";
                 let discountedPrice = fieldAvailability.price;
 
-                if (sportFieldData.promotion && (convertDateFormat(currentDate) >= convertDateFormat(sportFieldData.promotion.startDate) &&
-                    convertDateFormat(currentDate) <= convertDateFormat(sportFieldData.promotion.endDate))) {
+                if (
+                    sportFieldData.promotion &&
+                    convertDateFormat(currentDate) >= convertDateFormat(sportFieldData.promotion.startDate) &&
+                    convertDateFormat(currentDate) <= convertDateFormat(sportFieldData.promotion.endDate)
+                ) {
                     const discount = sportFieldData.promotion.discountPercentage;
-                    discountedPrice = fieldAvailability.price - (discount / 100 * fieldAvailability.price);
+                    discountedPrice = fieldAvailability.price - (discount / 100) * fieldAvailability.price;
                     discountInfo = `
                             <span class="text-lg flex-1">${startTime}</span>
                         <span class="text-lg flex-1 text-left">${endTime}</span>
@@ -284,23 +274,19 @@ async function appendBookingDetail(field) {
                 }
 
                 // check locked field availability
-                const fieldAvailabilityResponse = await fetch(`${SERVER_DOMAIN}/field-availability-access/sports-field?sportsFieldID=${sportFieldID}`)
+                const fieldAvailabilityResponse = await fetch(`${SERVER_DOMAIN}/field-availability-access/sports-field?sportsFieldID=${sportFieldID}`);
                 const fieldAvailabilityData = await fieldAvailabilityResponse.json();
 
                 let isLocked = false;
 
                 fieldAvailabilityData.forEach((item) => {
-                    const isDateInRange =
-                        convertDateFormat(currentDate) >= convertDateFormat(item.startDate) &&
-                        convertDateFormat(currentDate) <= convertDateFormat(item.endDate);
-                    const isTimeMatching =
-                        formatHour(item.startDate) === formatHour(fieldAvailability.startTime) &&
-                        formatHour(item.endDate) === formatHour(fieldAvailability.endTime);
+                    const isDateInRange = convertDateFormat(currentDate) >= convertDateFormat(item.startDate) && convertDateFormat(currentDate) <= convertDateFormat(item.endDate);
+                    const isTimeMatching = formatHour(item.startDate) === formatHour(fieldAvailability.startTime) && formatHour(item.endDate) === formatHour(fieldAvailability.endTime);
 
                     if (isDateInRange && isTimeMatching) {
                         isLocked = true;
                     }
-                })
+                });
 
                 if (isOrdered || isBooked || isLocked) {
                     element.innerHTML = `
@@ -320,11 +306,11 @@ async function appendBookingDetail(field) {
 
                 element.addEventListener("click", () => {
                     if (isOrdered || isBooked || isLocked) {
-                        alert('This field availability is not available');
+                        alert("This field availability is not available");
                         return;
                     }
 
-                    const itemIndex = selectedAvailabilities.findIndex(item => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
+                    const itemIndex = selectedAvailabilities.findIndex((item) => item.id === fieldAvailability.id && item.date === currentDate.toDateString());
 
                     if (element.style.borderLeft === "5px solid red") {
                         element.style.borderLeft = "none";
@@ -343,18 +329,15 @@ async function appendBookingDetail(field) {
 
                         selectPriceAvailabilities.innerText = newPrice.toFixed(2);
                     }
-
                 });
 
                 fieldAvailabilitiesElement.appendChild(element);
             }
         }
-
     } catch (error) {
         console.error("Error fetching booking items:", error);
     }
 }
-
 
 function getSportFieldIdFromPath() {
     const path = window.location.pathname;
@@ -362,11 +345,10 @@ function getSportFieldIdFromPath() {
     return segments[segments.length - 2]; // Assuming sportFieldId is the last part of the path
 }
 
-
 async function handleOrder() {
     const data = [];
 
-    selectedAvailabilities.forEach(item => {
+    selectedAvailabilities.forEach((item) => {
         data.push({
             sportFieldID: getSportFieldIdFromPath(),
             userID: JSON.parse(localStorage.getItem("current-user")).id,
@@ -377,11 +359,12 @@ async function handleOrder() {
 
     if (data.length > 0) {
         const existingData = JSON.parse(localStorage.getItem("data")) || [];
-        const newData = data.filter(item => !existingData.some(existingItem =>
-            existingItem.sportFieldID === item.sportFieldID &&
-            existingItem.fieldAvailabilityID === item.fieldAvailabilityID &&
-            existingItem.currentDate === item.currentDate
-        ));
+        const newData = data.filter(
+            (item) =>
+                !existingData.some(
+                    (existingItem) => existingItem.sportFieldID === item.sportFieldID && existingItem.fieldAvailabilityID === item.fieldAvailabilityID && existingItem.currentDate === item.currentDate
+                )
+        );
 
         if (newData.length === 0) {
             alert("You have already ordered this field availability.");
@@ -393,21 +376,23 @@ async function handleOrder() {
             localStorage.setItem("data", JSON.stringify(existingData));
 
             try {
-                await Promise.all(newData.map(async (item) => {
-                    const response = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${item.fieldAvailabilityID}?status=BOOKED`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json",
-                            'Authorization': 'Bearer ' + getAccessTokenFromCookie()
-                        },
-                    });
+                await Promise.all(
+                    newData.map(async (item) => {
+                        const response = await fetch(`${SERVER_DOMAIN}/field-availability/update-status/${item.fieldAvailabilityID}?status=BOOKED`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: "Bearer " + getAccessTokenFromCookie(),
+                            },
+                        });
 
-                    if (!response.ok) {
-                        throw new Error(`Failed to update status for ID: ${item.fieldAvailabilityID} with status ${response.status}`);
-                    }
+                        if (!response.ok) {
+                            throw new Error(`Failed to update status for ID: ${item.fieldAvailabilityID} with status ${response.status}`);
+                        }
 
-                    return response;
-                }));
+                        return response;
+                    })
+                );
 
                 console.log("All field availabilities updated successfully");
             } catch (error) {
@@ -417,10 +402,9 @@ async function handleOrder() {
     }
 }
 
-
-document.getElementById('orderButton').addEventListener('click', async (e) => {
-    const selectedElements = Array.from(document.querySelectorAll('.field_availability'))
-        .filter(element => element.style.borderLeft === "5px solid red"); console.log(selectedElements);
+document.getElementById("orderButton").addEventListener("click", async (e) => {
+    const selectedElements = Array.from(document.querySelectorAll(".field_availability")).filter((element) => element.style.borderLeft === "5px solid red");
+    console.log(selectedElements);
 
     if (selectedElements.length === 0) {
         e.preventDefault();
@@ -430,4 +414,3 @@ document.getElementById('orderButton').addEventListener('click', async (e) => {
         await handleOrder();
     }
 });
-

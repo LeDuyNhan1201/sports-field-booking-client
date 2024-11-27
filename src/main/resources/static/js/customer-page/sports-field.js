@@ -1,8 +1,7 @@
 let currentOffset = 0;
 const limit = 12;
 //nếu có cách lấy attribute hay nào đó hay hơn lấy path này ok
-let endPath = window.location.pathname.split("/")[2];
-let currentTab = endPath.localeCompare("my-sports-field") === 0 ? "list" : "grid";
+let currentTab = "grid";
 let searchValue = " ";
 let sortDirection = -1;
 let minPrice = 1;
@@ -32,39 +31,21 @@ if (searchParams.get("minPrice")) {
 let sportFieldList = document.getElementById("sportsField.list");
 let sportFieldGrid = document.getElementById("sportsField.grid");
 
-let buttonNewField = sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField");
-
 async function loadSportFieldList(tab, offset, searchValue) {
-    const endPath = window.location.pathname.split("/")[2];
     try {
         let response;
 
-        if (endPath.localeCompare("my-sports-field") === 0) {
-            // xử lý do quản lý sân
-            let user = JSON.parse(localStorage.getItem("current-user"));
-            if (user.roles[0] === "FIELD_OWNER") {
-                if (!searchValue) searchValue = " ";
-                response = await fetch(
-                    `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
-                );
+        // xử lý cho danh sách sân
+        if (!searchValue) searchValue = " ";
+        response = await fetch(
+            `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
+        );
 
-                // xử lý khi user không có quyền
-            } else {
-                console.log("bạn không có quyền");
-                return;
-            }
-        } else {
-            // xử lý cho danh sách sân
-            if (!searchValue) searchValue = " ";
-            response = await fetch(
-                `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=${offset}&limit=${limit}&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}`
-            );
-        }
         const data = await response.json();
 
         if (data.items.length > 0) {
             currentOffset = offset;
-            loadPage(offset);
+            changeCurrentPageColor(currentOffset);
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
         } else {
@@ -77,11 +58,11 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
 document.addEventListener("DOMContentLoaded", function () {
     loadSportFieldList(currentTab, 0, searchValue);
-    loadCategory()
+    loadCategory();
+    sportsFieldQuantityAll();
 });
 
 async function appendFieldGrid(data) {
-    const endPath = window.location.pathname.split("/")[2];
 
     sportFieldList.className = "hidden w-full text-left border-collapse";
     sportFieldGrid.style.display = "grid";
@@ -91,7 +72,7 @@ async function appendFieldGrid(data) {
         const fieldElement = document.createElement("div");
         fieldElement.innerHTML = `
             <a
-                href="/sports-field-booking/${endPath.localeCompare("my-sports-field") === 0 ? "my-" : ""}sports-field/${field.id}/details"
+                href="/sports-field-booking/sports-field/${field.id}/details"
                 class='bg-white shadow-lg rounded-lg overflow-hidden block cursor-pointer'
                 xmlns:th="http://www.w3.org/1999/xhtml"
             >
@@ -137,7 +118,7 @@ async function appendFieldList(data) {
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
                     </td>
                     <td class="p-4">
-                        <a  href="/sports-field-booking/${endPath.localeCompare("my-sports-field") === 0 ? "my-" : ""}sports-field/${field.id}/details">
+                        <a  href="/sports-field-booking/sports-field/${field.id}/details">
                             <i class="fa-solid fa-share-from-square text-green-500"></i>
                         </a>
                     </td>
@@ -158,12 +139,6 @@ document.getElementById("sportsField.button-tab-list").addEventListener("click",
     currentTab = "list";
     loadSportFieldList(currentTab, currentOffset, searchValue);
 });
-
-//change page
-
-function loadPage(offset) {
-    document.getElementById("sportsField.page").textContent = offset + 1;
-}
 
 //action next page
 document.getElementById("sportsField.nextPage").addEventListener("click", () => {
@@ -211,27 +186,27 @@ async function appendPrice(sportsField) {
 
     let maxSportFieldPrice = Math.max(...sportsField.map((field) => field.fieldAvailabilities.map((avail) => avail.price)).flat());
 
-    minPriceElement.max = maxSportFieldPrice
+    minPriceElement.max = maxSportFieldPrice;
     maxPriceElement.max = maxSportFieldPrice;
 
-    minPriceElement.value = 1
-    maxPriceElement.value = maxSportFieldPrice
+    minPriceElement.value = 1;
+    maxPriceElement.value = maxSportFieldPrice;
 
-    maxPriceValueElement.textContent = maxSportFieldPrice + "$"
+    maxPriceValueElement.textContent = maxSportFieldPrice + "$";
 
     minPriceElement.addEventListener("input", (e) => {
         if (Number(e.target.value) > maxPriceElement.value) {
-            minPriceElement.value = maxPriceElement.value; 
+            minPriceElement.value = maxPriceElement.value;
         }
-        minPriceValueElement.textContent =  Number(minPriceElement.value).toFixed(0) + "$"
-        minPrice = Number(minPriceElement.value).toFixed(0)
+        minPriceValueElement.textContent = Number(minPriceElement.value).toFixed(0) + "$";
+        minPrice = Number(minPriceElement.value).toFixed(0);
     });
     maxPriceElement.addEventListener("input", (e) => {
         if (Number(e.target.value) < minPriceElement.value) {
-            maxPriceElement.value = minPriceElement.value; 
+            maxPriceElement.value = minPriceElement.value;
         }
-        maxPriceValueElement.textContent =  Number(maxPriceElement.value).toFixed(0) + "$"
-        maxPrice = Number(maxPriceElement.value).toFixed(0)
+        maxPriceValueElement.textContent = Number(maxPriceElement.value).toFixed(0) + "$";
+        maxPrice = Number(maxPriceElement.value).toFixed(0);
     });
 }
 
@@ -245,8 +220,6 @@ document.getElementById("sportsField.search_value").addEventListener("keydown", 
         actionSearch();
     }
 });
-
-
 
 async function actionSearch() {
     //xóa search Param
@@ -285,33 +258,47 @@ async function sportsFieldQuantityAll() {
     try {
         let response;
         let userId = 0;
-        if (endPath.localeCompare("my-sports-field") === 0) {
-            let user = JSON.parse(localStorage.getItem("current-user"));
-            if (user.roles[0] === "FIELD_OWNER") {
-                userId = user.id;
-            }
-        }
         response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0`);
         const data = await response.json();
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 
-        await appendPrice(data.items)
+        await appendPrice(data.items);
+
+        loadPage(data.items);
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }
 }
-sportsFieldQuantityAll();
 
-//ẩn hiện nút thêm
-function appendButtonNew() {
-    if (endPath.localeCompare("my-sports-field") === 0) buttonNewField.classList.remove("hidden");
-    else buttonNewField.classList.add("hidden");
+function loadPage(data) {
+    let pageComponent = sportsFieldContainer.querySelector("#sportsField\\.page");
+
+    let pageNumber = 1;
+    for (let i = 1; i < data.length; i += limit) {
+        let element = document.createElement("span");
+        element.className = "text-lg text-center cursor-pointer mx-2 focus:text-blue-500 focus:text-xl sportsField.page";
+        element.innerHTML = pageNumber;
+
+        pageComponent.appendChild(element);
+        let currentPage = pageNumber - 1;
+        element.addEventListener("click", () => {
+            loadSportFieldList(currentTab, currentPage, searchValue);
+            changeCurrentPageColor(currentPage);
+        });
+        pageNumber += 1;
+    }
+    changeCurrentPageColor(0);
 }
 
-// mở modal thêm sân mới
+function changeCurrentPageColor(pageValue) {
+    const pages = sportsFieldContainer.querySelectorAll(".sportsField\\.page");
+    console.log(pages);
 
-buttonNewField.addEventListener("click", () => {
-    sportsFieldContainer.querySelector("#new_field\\.container").classList.remove("hidden");
-});
-
-appendButtonNew();
+    pages.forEach((page, index) => {
+        if (index == pageValue) {
+            page.className = "text-lg text-center cursor-pointer text-red-500 font-bold mx-2 focus:text-blue-500 focus:text-xl sportsField.page";
+        } else {
+            page.className = "text-lg text-center cursor-pointer mx-2 focus:text-blue-500 focus:text-xl sportsField.page";
+        }
+    });
+}
