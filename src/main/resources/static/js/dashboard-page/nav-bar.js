@@ -32,7 +32,6 @@ if (localStorage.getItem('current-user') !== null) {
         }
         else if (user.roles && user.roles.includes('FIELD_OWNER')) {
             sportFieldMenu.classList.remove('hidden')
-            promotionMenu.classList.remove('hidden')
             dashBoardMenu.classList.remove('hidden')
             orderMenu.classList.remove('hidden')
         }
