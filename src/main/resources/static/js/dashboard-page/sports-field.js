@@ -256,6 +256,7 @@ async function sportsFieldQuantityAll() {
         let user = JSON.parse(localStorage.getItem("current-user"));
         if (user.roles[0] === "FIELD_OWNER") {
             userId = user.id;
+            sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField").classList.remove('hidden')
         }
         response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=0`);
         const data = await response.json();
