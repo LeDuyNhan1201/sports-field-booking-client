@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             middleName: document.getElementById('middleName').value,
             lastName: document.getElementById('lastName').value,
             email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
+            mobileNumber: document.getElementById('phone').value,
             gender: document.getElementById('gender').value,
             birthdate: document.getElementById('birthdate').value,
             status: document.getElementById('status').value,
@@ -289,4 +289,94 @@ document.addEventListener('DOMContentLoaded', () => {
             popupError("Đã xảy ra lỗi khi tìm kiếm người dùng!", 3000);
         }
     }
+
+    async function deleteExistingAvatar(userID) {
+        try {
+            const response = await fetch(`${SERVER_DOMAIN}/file/delete-file/${userID}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                },
+            });
+
+            console.log(response);
+
+        } catch (error) {
+            console.error('Error deleting existing avatar:', error);
+        }
+    }
+
+    async function replaceUserImage() {
+        const changePictureInput = document.getElementById('changePictureInput');
+        changePictureInput.click();
+    }
+
+    async function clearUserImage() {
+        const userID = currentUserId;
+        await deleteExistingAvatar(userID);
+        document.getElementById('userImagePreview').src = '/sports-field-booking/image/user-info/user-info.png';
+    }
+
+    const changePictureInput = document.getElementById('changePictureInput');
+    changePictureInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const CHUNK_SIZE = 1024 * 1024;
+            let chunkStartByte = 0;
+            const fileMetadataId = crypto.randomUUID();
+
+            while (chunkStartByte < file.size) {
+                const chunk = file.slice(chunkStartByte, chunkStartByte + CHUNK_SIZE);
+                const chunkHash = await calculateFileHash(chunk);
+
+                const formData = new FormData();
+                formData.append('file', chunk);
+                const request = {
+                    "fileMetadataId": fileMetadataId,
+                    "chunkHash": chunkHash,
+                    "startByte": chunkStartByte,
+                    "totalSize": file.size,
+                    "contentType": file.type,
+                    "ownerId": currentUserId,
+                    "fileMetadataType": "USER_AVATAR"
+                };
+
+                formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+
+                try {
+                    const response = await fetch(`${SERVER_DOMAIN}/users/avatar`, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        chunkStartByte = data.results;
+
+                        if (chunkStartByte >= file.size)
+                            alert("Avatar uploaded successfully!");
+
+                    } else {
+                        const errorText = await response.text();
+                        console.error('Error uploading chunk:', errorText);
+                        throw new Error('Upload failed: ' + errorText);
+                    }
+                } catch (error) {
+                    console.error('Error uploading chunk:', error);
+                    break;
+                }
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                profilePictureData = reader.result;
+                document.getElementById('userImagePreview').src = profilePictureData;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('replace-avatar-btn').addEventListener('click', replaceUserImage);
+    document.getElementById('clear-avatar-btn').addEventListener('click', clearUserImage);
 });
