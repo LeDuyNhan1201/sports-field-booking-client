@@ -7,6 +7,8 @@ async function loadFieldAvailabilityBanned(availability) {
     editFieldContainer.querySelector("#edit-field\\.banned-time\\.start-time").textContent = formatHour(availability.openingTime);
     editFieldContainer.querySelector("#edit-field\\.banned-time\\.end-time").textContent = formatHour(availability.closingTime);
 
+    editFieldContainer.querySelector("#edit-field\\.banned-time\\.new-time").min = formatDateInputValue(new Date())
+
     currentAvailability = availability;
 
     try {
@@ -41,6 +43,7 @@ async function appendAvailabilityAccess(data) {
                 <span class="text-sm text-gray-400" >${index + 1}</span>
                 <input
                     type="date"
+                    min="${formatDateInputValue(new Date())}"
                     id="edit-field.banned-time.new-time"
                     value="${formatDateInputValue(item.startDate)}"
                     class="font-bold block px-2 p-2 bg-white w-full border-1 text-green-500 border-green-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

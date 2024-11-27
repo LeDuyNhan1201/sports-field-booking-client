@@ -1,0 +1,184 @@
+<div id="edit_field.container" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+    <!-- Overlay background -->
+    <div id="overlay" class="fixed inset-0 bg-black opacity-50"></div>
+
+    <div class="bg-white p-5 rounded-lg shadow-lg relative w-4/5 flex flex-col">
+        <div class="flex justify-between around">
+            <span class="text-xl font-bold" th:text="${modal_title}"></span>
+            <i id="edit_field.closeModal" class="fa-solid fa-xmark cursor-pointer"></i>
+        </div>
+        <div class="flex p-8">
+            <div class="w-3/5">
+                <span class="block text-lg font-semibold text-green-700" th:text="#{dashboard.field_image.title}"></span>
+                <div class="flex my-4 h-80">
+                    <div class="mx-1">
+                        <form  id="edit_field.image.0" class="mt-8 space-y-3">
+                            <div class="flex items-center justify-center w-full">
+                                <label class="flex flex-col rounded-lg border-2 border-dashed w-full h-60 p-5 group text-center">
+                                    <div class="h-full w-full text-center flex flex-col items-center justify-center items-center">
+                                        <i class="fa-solid fa-upload text-3xl text-gray-400"></i>
+                                        <p class="pointer-none text-gray-500">
+                                            <span class="text-sm">Drag and drop</span> files here <br />
+                                            or <span class="text-blue-600 hover:underline">select a file</span>
+                                        </p>
+                                    </div>
+                                    <input type="file" class="edit_field.select_image hidden" accept=".png, .jpg, .jpeg" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mx-1">
+                        <form id="edit_field.image.1"  class="mt-8 space-y-3" action="#" method="POST">
+                            <div class="flex items-center justify-center w-full">
+                                <label class="flex flex-col rounded-lg border-2 border-dashed w-full h-60 p-5 group text-center">
+                                    <div class="h-full w-full text-center flex flex-col items-center justify-center items-center">
+                                        <i class="fa-solid fa-upload text-3xl text-gray-400"></i>
+                                        <p class="pointer-none text-gray-500">
+                                            <span class="text-sm">Drag and drop</span> files here <br />
+                                            or <a href="" class="text-blue-600 hover:underline">select a file</a>
+                                        </p>
+                                    </div>
+                                    <input type="file" class="edit_field.select_image hidden" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="mx-1">
+                        <form id="edit_field.image.2" class="mt-8 space-y-3" action="#" method="POST">
+                            <div class="flex items-center justify-center w-full">
+                                <label class="flex flex-col rounded-lg border-2 border-dashed w-full h-60 p-5 group text-center">
+                                    <div class="h-full w-full text-center flex flex-col items-center justify-center items-center">
+                                        <i class="fa-solid fa-upload text-3xl text-gray-400"></i>
+                                        <p class="pointer-none text-gray-500">
+                                            <span class="text-sm">Drag and drop</span> files here <br />
+                                            or <a href="" id="" class="text-blue-600 hover:underline">select a file</a>
+                                        </p>
+                                    </div>
+                                    <input type="file" class="edit_field.select_image hidden" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-300">
+                    <span>File type: png, jpg, jpeg</span>
+                </p>
+                <button
+                    type="submit"
+                    id="edit_field.clear_image"
+                    class="my-5 w-1/3 flex justify-center bg-blue-500 text-gray-100 p-1 rounded-full tracking-wide font-semibold focus:outline-none focus:shadow-outline hover:bg-blue-600 shadow-lg cursor-pointer transition ease-in duration-300"
+                >
+                    Refresh
+                </button>
+            </div>
+
+            <!-- Right Side: Form Fields -->
+            <div class="w-2/5 mx-3 px-3 shadow-lg">
+                <!-- Header with Save Options -->
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="block text-lg font-semibold text-green-700" th:text="#{dashboard.sportfield_modal.title}"></h2>
+                </div>
+
+                <form>
+                    <!-- Owner's Name -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700" th:text="#{dashboard.sportfield_name.title}"></label>
+                        <input type="text" id="edit_field.name" class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                    </div>
+
+                    <!-- Location -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700" th:text="#{dashboard.field_location.title}"></label>
+                        <input
+                            type="text"
+                            id="edit_field.location"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                    </div>
+
+                    <!-- Opacity -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700" th:text="#{dashboard.sportfield_opacity.title}"></label>
+                        <input
+                            type="number"
+                            id="edit_field.opacity"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                    </div>
+
+                    <!-- Field Category -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700" th:text="#{dashboard.field_category.title}"></label>
+                        <select id="edit_field.category" class="block w-full bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="-1" th:text="#{dashboard.field_category.valueDefauld}"></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="w-2/5">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="block text-lg font-semibold text-green-700" th:text="#{dashboard.sportfield_availability.title}"></h2>
+                </div>
+                <form>
+                    <!-- Opening Time -->
+                    <div class="mb-4 flex justify-center">
+                        <div class="flex-1 mr-3">
+                            <label class="block text-sm font-medium text-gray-700" th:text="#{dashboard.opening_time.title}"></label>
+                            <input
+                                type="time"
+                                id="edit_field.availability.openingTime"
+                                class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            />
+                        </div>
+                        <div class="flex-1 ml-3">
+                            <label class="block text-sm font-medium text-gray-700" th:text="#{dashboard.closing_time.title}"></label>
+                            <input
+                                type="time"
+                                id="edit_field.availability.closingTime"
+                                class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            />
+                        </div>
+                    </div>
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Price</label>
+                        <input
+                            type="number"
+                            min="0"
+                            id="edit_field.availability.price"
+                            class="mt-1 block w-full p-2 bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                    </div>
+                </form>
+                <div class="text-right">
+                    <button id="edit_field.button_remove_all_availabilities" class="bg-red-500 hover:bg-red-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.clear_button.title}">
+                        Clear
+                    </button>
+                    <button id="edit_field.button_add_availabilities" class="bg-green-500 hover:bg-green-700 text-white font-semibold w-16 py-1 rounded" th:text="#{dashboard.add_button.title}">
+                        Add
+                    </button>
+                </div>
+                <div class="flex flex-col mt-4">
+                    <div class="flex px-2 justify-between text-center bg-green-300 rounded-tr-md rounded-tl-md">
+                        <span class="w-1"></span>
+                        <span class="flex-1 font-semibold">Open</span>
+                        <span class="flex-1 font-semibold">Close</span>
+                        <span class="flex-1 font-semibold">Price</span>
+                        <span class="w-1"></span>
+                    </div>
+                    <div id="edit_field.availability.container" class="shadow-lg h-60 overflow-y-auto custom-scrollbar pt-1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="text-right">
+            <button id="edit_field.create_field" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" th:text="#{dashboard.save_button.title}"></button>
+        </div>
+    </div>
+
+    <!-- hiện những khung giờ đã khóa -->
+    <div id="edit-field.banned-time.container" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div th:replace="~{/components/customer/sports-field/banned-date}"></div>
+    </div>
+    <script th:src="@{/js/dashboard-page/sports-field/edit-field.js}"></script>
+
+</div>
