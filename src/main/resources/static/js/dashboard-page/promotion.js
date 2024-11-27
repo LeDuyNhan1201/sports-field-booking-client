@@ -43,11 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
             isConfirmed: true
         };
 
+        if (!validateDates(promotionData.startDate, promotionData.endDate)) {
+            alert('Invalid date range. Please ensure the start date is before the end date.');
+            return;
+        }
+
         const method = isEditing ? 'PUT' : 'POST';
         await fetchData('promotions', method, currentPromotionId, promotionData);
         promotionModal.classList.add('hidden');
         loadPromotions(currentPage - 1, itemsPerPage);
     });
+
+    function validateDates(startDate, endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        return start < end;
+    }
 
     async function loadPromotions(OFFSET = 0, LIMIT = 10000) {
         try {

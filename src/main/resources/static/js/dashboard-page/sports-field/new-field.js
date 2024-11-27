@@ -4,7 +4,7 @@ let newAvailabilities = [];
 let newFieldContainer = document.getElementById("new_field.container");
 let newAvailabilitiesElement = newFieldContainer.querySelector("#new_field\\.availability\\.container");
 
-function appendSelectImage() {
+async function appendSelectImage() {    
     let button_select_image = document.getElementsByClassName("new_field.select_image");
 
     Array.from(button_select_image).forEach((element) => {
@@ -13,7 +13,7 @@ function appendSelectImage() {
         // Xử lý sự kiện chọn file qua input
         element.addEventListener("change", (e) => {
             const file = e.target.files[0];
-            handleFileUpload(file, element, index);
+            handleFileUploadImages(file, element, index);
         });
 
         // Xử lý sự kiện kéo và thả (là thẻ label được dùng để thay thành ảnh)
@@ -33,24 +33,25 @@ function appendSelectImage() {
             e.preventDefault();
             dropZone.classList.remove("border-blue-600");
 
-            const file = e.dataTransfer.files[0];
-            handleFileUpload(file, element, index);
+            const file = e.dataTransfer.files[0];            
+            handleFileUploadImages(file, element, index);
         });
     });
+    await loadNewFieldCategory()
 }
 
-    appendSelectImage();
-    loadCategory();
-    loadNewFieldAvailability();
+appendSelectImage();
 
 // Hàm xử lý tải lên file
-function handleFileUpload(file, element, index) {
-    if (file) {
+function handleFileUploadImages(file, element, index) {    
+    if (file) {        
         const allowedTypes = ["image/png", "image/jpg", "image/jpeg"];
         if (allowedTypes.includes(file.type)) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 newImages[index] = file;
+                console.log(newImages);
+                
                 const newElement = document.createElement("div");
                 newElement.className = "new_field.image";
                 newElement.innerHTML = `
@@ -120,18 +121,17 @@ function changeImageElement(element) {
 }
 
 // thêm các thuộc tính trong category select
-
-async function loadCategory() {
+async function loadNewFieldCategory() {
     try {
-        const data = await fetch(`${SERVER_DOMAIN}/category?offset=0&limit=100`);
+        const data = await fetch(`http://localhost:8888/sports-field-booking/api/v1/category?offset=0&limit=100`);        
         const categories = await data.json();
-        appendCategory(categories.items);
+        appendNewFieldCategory(categories.items);
     } catch (error) {
         console.error("Error fetching category data:", error);
     }
 }
 
-async function appendCategory(data) {
+async function appendNewFieldCategory(data) {
     let selectContainer = newFieldContainer.querySelector("#new_field\\.category");
 
     data.forEach((category) => {
@@ -271,12 +271,15 @@ document.getElementById("new_field.create_field").addEventListener("click", asyn
     const minOpeningTime = Math.min(...newAvailabilities.map((a) => a.openingTime));
 
     const maxClosingTime = Math.max(...newAvailabilities.map((a) => a.closingTime));
+        
 
     let user = JSON.parse(localStorage.getItem("current-user"));
 
     let newSportsField = null;
 
+    console.log(new Date(maxClosingTime).toISOString());
     if (checkImages(newImages)) {
+        
         if (confirm("Bạn có chắc chắn tạo sân này không")) {
             try {
                 const response = await fetch(`${SERVER_DOMAIN}/sports-field`, {
@@ -289,10 +292,9 @@ document.getElementById("new_field.create_field").addEventListener("click", asyn
                         name: name,
                         location: location,
                         opacity: opacity,
-                        closingTime: maxClosingTime,
-                        openingTime: minOpeningTime,
+                        closingTime: new Date(maxClosingTime).toISOString(),
+                        openingTime: new Date(minOpeningTime).toISOString(),
                         categoryId: category,
-                        rating: 0,
                         userId: user.id,
                         isConfirmed: true,
                     }),
@@ -394,8 +396,6 @@ async function createFieldAvailability(availabilityValue, sportsFieldId) {
 }
 
 function checkImages(images) {
-    console.log(images.length);
-
     if (images.length < 3) return false;
 
     for (const image of images) {

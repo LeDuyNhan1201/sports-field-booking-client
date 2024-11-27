@@ -41,7 +41,7 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
         if (data.items.length > 0) {
             currentOffset = offset;
-            changeCurrentPageColor(currentOffset)
+            changeCurrentPageColor(currentOffset);
 
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
@@ -106,7 +106,11 @@ async function appendFieldList(data) {
                     <td class="p-4">${field.owner.firstName + " " + field.owner.lastName}</td>
                     <td class="p-4">${formatHour(field.openingTime)}</td>
                     <td class="p-4">${formatHour(field.closingTime)}</td>
-                    <td class="p-4">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$-${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</td>
+                    <td class="p-4 w-44 text-red-500">${
+                        Math.min(...field.fieldAvailabilities.map((a) => a.price)) == Math.max(...field.fieldAvailabilities.map((a) => a.price))
+                            ? Math.max(...field.fieldAvailabilities.map((a) => a.price)) + "$"
+                            : Math.min(...field.fieldAvailabilities.map((a) => a.price)) + "$ - " + Math.max(...field.fieldAvailabilities.map((a) => a.price))+"$"
+                    }</td>
                     <td class="p-4">
                         <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
                             th:text="#{dashboard.sportfield_status.active}">${field.status}</span>
@@ -115,7 +119,7 @@ async function appendFieldList(data) {
                         <i class="fa-solid fa-share-from-square text-green-500 cursor-pointer"></i>
                     </td>
             `;
-            fieldElement.querySelector('i').addEventListener("click", () => {
+            fieldElement.querySelector("i").addEventListener("click", () => {
                 editField(field.id);
             });
             sportFieldTable.appendChild(fieldElement);
@@ -256,8 +260,11 @@ async function sportsFieldQuantityAll() {
         let user = JSON.parse(localStorage.getItem("current-user"));
         if (user.roles[0] === "FIELD_OWNER") {
             userId = user.id;
+            sportsFieldContainer.querySelector("#sportsField\\.button_new_sportField").classList.remove("hidden");
         }
-        response = await fetch(`${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=0`);
+        response = await fetch(
+            `${SERVER_DOMAIN}/sports-field/search?userId=${userId}&text= &colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=1000&minPrice=1&categoryId=0&onlyActiveStatus=0`
+        );
         const data = await response.json();
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 
@@ -280,7 +287,6 @@ async function editField(id) {
 
     sportsFieldContainer.querySelector("#edit_field\\.container").classList.remove("hidden");
     await loadEditValue(id);
-
 }
 
 function loadPage(data) {
@@ -296,21 +302,21 @@ function loadPage(data) {
         let currentPage = pageNumber - 1;
         element.addEventListener("click", () => {
             loadSportFieldList(currentTab, currentPage, searchValue);
-            changeCurrentPageColor(currentPage)
+            changeCurrentPageColor(currentPage);
         });
         pageNumber += 1;
     }
 
-    changeCurrentPageColor(0)
+    changeCurrentPageColor(0);
 }
 
 function changeCurrentPageColor(pageValue) {
     const pages = sportsFieldContainer.querySelectorAll(".sportsField\\.page");
     pages.forEach((page, index) => {
-        if(index == pageValue){
-            page.className =  "text-lg text-center cursor-pointer text-red-500 font-bold mx-2  sportsField.page";
+        if (index == pageValue) {
+            page.className = "text-lg text-center cursor-pointer text-red-500 font-bold mx-2  sportsField.page";
         } else {
-            page.className =  "text-lg text-center cursor-pointer mx-2 sportsField.page";
+            page.className = "text-lg text-center cursor-pointer mx-2 sportsField.page";
         }
     });
 }
