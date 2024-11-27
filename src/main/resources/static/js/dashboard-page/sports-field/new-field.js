@@ -39,11 +39,9 @@ function appendSelectImage() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", function () {
     appendSelectImage();
     loadCategory();
     loadNewFieldAvailability();
-});
 
 // Hàm xử lý tải lên file
 function handleFileUpload(file, element, index) {
