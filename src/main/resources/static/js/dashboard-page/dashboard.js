@@ -301,7 +301,7 @@ async function updateColumnChart() {
 
 async function fetchTopBuyers() {
     try {
-        const response = await fetch(`${SERVER_DOMAIN}/booking/top-orders`, {
+        const response = await fetch(`${SERVER_DOMAIN}/booking`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
