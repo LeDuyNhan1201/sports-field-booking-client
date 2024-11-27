@@ -75,7 +75,7 @@ async function fetchBookingHistory() {
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="border px-4 py-2 text-center">${index + 1}</td>
+                    <td class="border px-4 py-2 text-center">${booking.id}</td>
                     <td class="border px-4 py-2 text-center">${booking.user.username}</td>
                     <td class="border px-4 py-2 text-center">${totalPrice.toFixed(2)}$</td>
                     <td class="border px-4 py-2 text-center ${statusClass}">${booking.status}</td>
@@ -152,7 +152,8 @@ async function viewBookingDetails(bookingId) {
     const detailTotalPrice = document.getElementById('detail-total-price');
     const detailStatus = document.getElementById('detail-status');
 
-    detailNo.textContent = bookings.findIndex(b => b.id === bookingId) + 1;
+    // detailNo.textContent = bookings.findIndex(b => b.id === bookingId) + 1;
+    detailNo.textContent = bookingId;
     detailUser.textContent = booking.user.username;
     detailStatus.textContent = booking.status;
 
@@ -163,7 +164,10 @@ async function viewBookingDetails(bookingId) {
     booking.bookingItems.forEach(async (item, index) => {
         const startTime = new Date(item.startTime);
         const endTime = new Date(item.endTime);
-        const date = startTime.toLocaleDateString('en-US');
+
+        const availableDate = new Date(item.availableDate);
+        const date = availableDate.toLocaleDateString('en-US');
+        
         const formattedStartTime = startTime.toLocaleString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
