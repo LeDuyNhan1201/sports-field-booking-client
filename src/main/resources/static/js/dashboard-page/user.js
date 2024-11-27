@@ -347,6 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const response = await fetch(`${SERVER_DOMAIN}/users/avatar`, {
                         method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                        },
                         body: formData,
                     });
 
