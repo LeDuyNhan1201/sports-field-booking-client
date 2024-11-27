@@ -63,14 +63,18 @@ changePictureInput.addEventListener('change', async (e) => {
                 "contentType": file.type,
                 "ownerId": JSON.parse(currentUser).id,
                 "fileMetadataType": "USER_AVATAR"
-            };
+            };            
             //await deleteExistingAvatar(JSON.parse(currentUser).id)
             
             formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
-
+            console.log(formData);
+            
             try {
                 const response = await fetch(`${SERVER_DOMAIN}/users/avatar`, {
                     method: 'POST',
+                    headers: { 
+                        'Authorization': 'Bearer ' + getAccessTokenFromCookie()
+                    },
                     body: formData,
                 });
                 
