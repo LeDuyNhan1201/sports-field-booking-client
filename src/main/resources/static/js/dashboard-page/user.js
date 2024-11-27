@@ -40,16 +40,21 @@ document.addEventListener('DOMContentLoaded', () => {
             middleName: document.getElementById('middleName').value,
             lastName: document.getElementById('lastName').value,
             email: document.getElementById('email').value,
-            mobileNumber: document.getElementById('phone').value,
+            phone: document.getElementById('phone').value,
             gender: document.getElementById('gender').value,
             birthdate: document.getElementById('birthdate').value,
             status: document.getElementById('status').value,
         };
 
         const method = isEditing ? 'PUT' : 'POST';
-        await fetchData('users', method, currentUserId, userData);
-        userModal.classList.add('hidden');
-        loadUsers(currentPage - 1, itemsPerPage);
+        try {
+            await fetchData('users', method, currentUserId, userData);
+            userModal.classList.add('hidden');
+            popupSuccess(isEditing ? 'Sửa người dùng thành công!' : 'Thêm người dùng thành công!', 3000);
+            loadUsers(currentPage - 1, itemsPerPage);
+        } catch (error) {
+            popupError(isEditing ? 'Đã xảy ra lỗi khi sửa người dùng!' : 'Đã xảy ra lỗi khi thêm người dùng!', 3000);
+        }
     });
 
     async function loadUsers(OFFSET = 0, LIMIT = 10000) {
@@ -67,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderUsers(users);
         } catch (error) {
             console.error('Error loading users:', error);
+            popupError('Đã xảy ra lỗi khi tải người dùng!', 3000);
         }
     }
 
@@ -121,8 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 userModal.classList.remove('hidden');
             });
             row.querySelector('.text-red-500').addEventListener('click', async () => {
-                await fetchData('users', 'DELETE', user.id);
-                loadUsers(currentPage - 1, itemsPerPage);
+                try {
+                    await fetchData('users', 'DELETE', user.id);
+                    popupSuccess('Xóa người dùng thành công!', 3000);
+                    loadUsers(currentPage - 1, itemsPerPage);
+                } catch (error) {
+                    popupError('Đã xảy ra lỗi khi xóa người dùng!', 3000);
+                }
             });
         });
     }
@@ -174,5 +185,25 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             paginationContainer.appendChild(nextButton);
         }
+    }
+
+    function popupError(message = "Đã xảy ra lỗi!", timeout = 3000) {
+        const error = document.getElementById("error");
+        error.textContent = message;
+        error.classList.remove("hidden");
+
+        setTimeout(() => {
+            error.classList.add("hidden");
+        }, timeout);
+    }
+
+    function popupSuccess(message = "Thao tác thành công!", timeout = 3000) {
+        const success = document.getElementById("success");
+        success.textContent = message;
+        success.classList.remove("hidden");
+
+        setTimeout(() => {
+            success.classList.add("hidden");
+        }, timeout);
     }
 });
