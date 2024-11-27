@@ -14,7 +14,7 @@
     <!-- Orders Found -->
     <div class="flex justify-between items-center mb-6">
         <span class="flex text-gray-500">
-            <p class="mr-1">50</p>
+            <p class="mr-1" id="order-quantity">50</p>
             <span th:text="#{dashboard.order_found.title}"> đơn hàng được tìm thấy</span>
         </span>
     </div>
@@ -74,11 +74,9 @@
                 </th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.order_buyerName.title}">Tên
                     người mua</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.order_address.title}">Tên
-                </th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.order_date.title}">Ngày</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.order_price.title}">Giá</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.order_status.title}">Trạng
+                <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.order_date.title}">Ngày</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.order_price.title}">Giá</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.order_status.title}">Trạng
                     thái</th>
                 <th class="p-4" th:text="#{dashboard.order_action.title}">Thao tác</th>
             </tr>

@@ -1,6 +1,7 @@
 const ORDER_PER_PAGE = 8;
 let currentPage = 1;
 let isSearch = false;
+let totalItems = 0;
 
 async function loadImage(id) {
     try {
@@ -24,6 +25,7 @@ async function fetchOrders(page) {
 
     if (response.ok) {
         const data = await response.json();
+        totalItems = data.items.length        
         renderOrders(data, page);
         setupPagination(data.items.length);
     } else {
@@ -32,19 +34,21 @@ async function fetchOrders(page) {
 }
 
 async function renderOrders(orders, page = 1) {
+    const orderQuantity = document.getElementById('order-quantity');
+    orderQuantity.textContent = totalItems;
+
     const offset = (page - 1) * ORDER_PER_PAGE;
     const limit = ORDER_PER_PAGE;
 
     const ordersToRender = orders.items.slice(offset, offset + limit);
     const tbody = document.querySelector("tbody");
-    tbody.innerHTML = "";
 
+    tbody.innerHTML = "";
+    
     for (const order of ordersToRender) {
         let totalPrice = 0;
         if (order.bookingItems && order.bookingItems.length > 0) {
-            for (const bookingItem of order.bookingItems) {
-                console.log(bookingItem);
-                
+            for (const bookingItem of order.bookingItems) {                
                 const startTimeHour = formatHour(bookingItem.startTime);
                 const endTimeHour = formatHour(bookingItem.endTime);
 
@@ -58,7 +62,7 @@ async function renderOrders(orders, page = 1) {
             }
         }
 
-        const image = await loadImage(order.user.id);
+        // const image = await loadImage(order.user.id);
 
         let statusClass = "py-1 px-3 rounded-full text-xs";
 
@@ -86,10 +90,8 @@ async function renderOrders(orders, page = 1) {
             <tr class="border-b">
                 <td class="p-4">${order.id}</td>
                 <td class="p-4 flex items-center">
-                    <img src="${image}" alt="User Avatar" class="w-8 h-8 rounded-full mr-2">
                     <span>${order.user.username}</span>
                 </td>
-                <td class="p-4">${order.user.username}</td>
                 <td class="p-4">${new Date(order.createdAt).toLocaleDateString()}</td>
                 <td class="p-4">$${totalPrice.toFixed(2)}</td>
                 <td class="p-4 status-cell" data-id="${order.id}">
@@ -107,7 +109,6 @@ async function renderOrders(orders, page = 1) {
         `;
         tbody.insertAdjacentHTML("beforeend", row);
     }
-
     await attachStatusHandlers();
     await deleteOrder();
     await detailOrder();
@@ -205,8 +206,6 @@ async function fetchBookingStatus() {
         return [];
     }
 }
-
-
 
 function setupPagination(pagination) {
     const totalPages = Math.ceil(pagination / ORDER_PER_PAGE);
@@ -434,19 +433,14 @@ async function searchOrders(page = 1) {
     const status = document.getElementById('status').value || '';
     const startDate = document.getElementById('from-date').value || '';
     const endDate = document.getElementById('to-date').value || '';
+    const userId = JSON.parse(currentUser).id;
 
     const queryParams = new URLSearchParams({
         keyword,
         status,
         startDate,
         endDate,
-    });
-
-    console.log({
-        keyword,
-        status,
-        startDate,
-        endDate,
+        userId
     });
 
     try {
@@ -459,7 +453,7 @@ async function searchOrders(page = 1) {
         });
 
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.json();            
             renderOrders(data, page);
             setupPagination(data.items.length);
         } else {
