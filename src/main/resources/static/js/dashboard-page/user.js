@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     saveUserButton.addEventListener('click', async () => {
-        const userData = {
+        const userData = isEditing ? {
             firstName: document.getElementById('firstName').value,
             middleName: document.getElementById('middleName').value,
             lastName: document.getElementById('lastName').value,
@@ -44,16 +44,51 @@ document.addEventListener('DOMContentLoaded', () => {
             gender: document.getElementById('gender').value,
             birthdate: document.getElementById('birthdate').value,
             status: document.getElementById('status').value,
+        } : {
+            firstName: document.getElementById('firstName').value,
+            middleName: document.getElementById('middleName').value,
+            lastName: document.getElementById('lastName').value,
+            username: document.getElementById('username-modal').value,
+            email: document.getElementById('email').value,
+            password: '123456',
+            passwordConfirmation: '123456',
+            mobileNumber: document.getElementById('phone').value,
+            gender: document.getElementById('gender').value,
+            birthdate: document.getElementById('birthdate').value,
+            isFieldOwner: true,
+            acceptTerms: true,
         };
 
         const method = isEditing ? 'PUT' : 'POST';
+        const url = isEditing ? 'users' : 'auth/sign-up';
+
         try {
-            await fetchData('users', method, currentUserId, userData);
-            userModal.classList.add('hidden');
-            popupSuccess(isEditing ? 'Sửa người dùng thành công!' : 'Thêm người dùng thành công!', 3000);
+            if (isEditing) {
+                await fetchData(url, method, currentUserId, userData);
+                userModal.classList.add('hidden');
+                popupSuccess('User updated successfully!', 3000);
+            } else {
+
+                const response = await fetchCustom({
+                    url: `${SERVER_DOMAIN}/auth/sign-up`,
+                    method: 'POST',
+                    body: userData
+                });
+                console.log('User Data:', userData);
+                const data = await response.json();
+                console.log(data);
+
+                if (response.ok) {
+                    popupSuccess('Sign up successful! Redirecting to login page...', 3000);
+                } else {
+                    const message = data.message || 'Sign up failed';
+                    popupError(message);
+                }
+            }
             loadUsers(currentPage - 1, itemsPerPage);
         } catch (error) {
-            popupError(isEditing ? 'Đã xảy ra lỗi khi sửa người dùng!' : 'Đã xảy ra lỗi khi thêm người dùng!', 3000);
+            console.error('Error:', error);
+            popupError(isEditing ? 'Error updating user!' : 'Error adding user!', 3000);
         }
     });
 
@@ -104,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button class="edit-button text-blue-500 hover:text-blue-700">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="text-red-500 hover:text-red-700">
+                    <button class="delete-button text-red-500 hover:text-red-700">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                 </td>
@@ -119,19 +154,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('middleName').value = user.middleName;
                 document.getElementById('lastName').value = user.lastName;
                 document.getElementById('email').value = user.email;
+                document.getElementById('username-modal').value = user.username;
                 document.getElementById('phone').value = user.mobileNumber;
                 document.getElementById('gender').value = user.gender;
                 document.getElementById('birthdate').value = user.birthdate;
                 document.getElementById('status').value = user.status;
                 userModal.classList.remove('hidden');
             });
-            row.querySelector('.text-red-500').addEventListener('click', async () => {
-                try {
-                    await fetchData('users', 'DELETE', user.id);
-                    popupSuccess('Xóa người dùng thành công!', 3000);
-                    loadUsers(currentPage - 1, itemsPerPage);
-                } catch (error) {
-                    popupError('Đã xảy ra lỗi khi xóa người dùng!', 3000);
+            row.querySelector('.delete-button').addEventListener('click', async () => {
+                if (confirm('Do you want to delete this user?')) {
+                    try {
+                        await fetchData('users/delete-user', 'DELETE', user.id, {
+                            accessToken: getAccessTokenFromCookie(),
+                            refreshToken: getRefreshTokenFromCookie()
+                        });
+                        popupSuccess('Xóa người dùng thành công!', 3000);
+                        loadUsers(currentPage - 1, itemsPerPage);
+                    } catch (error) {
+                        console.error('Error while deleting user:', error);
+                        popupError('Đã xảy ra lỗi khi xóa người dùng!', 3000);
+                    }
                 }
             });
         });
