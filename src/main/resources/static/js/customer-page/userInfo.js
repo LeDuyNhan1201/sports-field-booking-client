@@ -67,7 +67,6 @@ changePictureInput.addEventListener('change', async (e) => {
             //await deleteExistingAvatar(JSON.parse(currentUser).id)
             
             formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
-            console.log(formData);
             
             try {
                 const response = await fetch(`${SERVER_DOMAIN}/users/avatar`, {
@@ -136,7 +135,6 @@ saveBtn.addEventListener('click', async () => {
 
         console.log(response);
                 
-
         if (response.ok) {
             document.getElementById('firstnameDisplay').textContent = firstname;
             document.getElementById('lastnameDisplay').textContent = lastname;
@@ -196,7 +194,8 @@ document.getElementById('deleteAccountBtn').addEventListener('click', async () =
             const response = await fetch(`${SERVER_DOMAIN}/users/${userId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
                 },
                 body: JSON.stringify({
                     accessToken: getAccessTokenFromCookie(),
