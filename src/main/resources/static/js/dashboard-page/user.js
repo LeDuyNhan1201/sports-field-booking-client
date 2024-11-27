@@ -277,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // change user search input == '' => load all users
     document.getElementById("userSearchInput").addEventListener("input", function () {
         if (this.value === "") {
             isSearch = false;

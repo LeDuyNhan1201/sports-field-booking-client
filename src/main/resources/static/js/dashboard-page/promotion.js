@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loadPromotions(currentPage - 1, itemsPerPage);
                 }
             });
-            paginationContainer.appendChild(prevButton);
+            paginationContainer.prepend(prevButton);
         }
 
         for (let i = 1; i <= totalPages; i++) {
@@ -183,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paginationContainer.appendChild(nextButton);
         }
     }
+
     function createPaginationButton(text, onClick) {
         const button = document.createElement('button');
         button.textContent = text;
@@ -197,24 +198,26 @@ document.addEventListener('DOMContentLoaded', () => {
         searchPromotions();
     });
 
-    document.getElementById('search').addEventListener('input', () => {
-        const keyword = document.getElementById('search').value;
-        if (keyword.trim() === '') {
-            isSearch = false;
-            loadPromotions(currentPage - 1, itemsPerPage);
-        } else {
+    document.getElementById('search-promotion').addEventListener('keydown', (e) => {
+        if (e.key === "Enter") {
             isSearch = true;
             currentPage = 1;
             searchPromotions();
         }
     });
 
+    document.getElementById('search-promotion').addEventListener('input', (e) => {
+        if (e.target.value === '') {
+            isSearch = false;
+            loadPromotions(currentPage - 1, itemsPerPage);
+        }
+    });
+
     async function searchPromotions() {
-        const keyword = document.getElementById('search').value || '';
+        const keyword = document.getElementById('search-promotion').value || '';
         const status = document.getElementById('status').value.toUpperCase() || '';
         const startDate = document.getElementById('from-date').value || '';
         const endDate = document.getElementById('to-date').value || '';
-
 
         const queryParamSearchCurrentPage = new URLSearchParams({
             keyword,
@@ -232,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
             endDate
         });
         try {
-
             const response = await fetch(`${SERVER_DOMAIN}/promotions/search?${queryParamSearchCurrentPage}`, {
                 method: 'GET',
                 headers: {
