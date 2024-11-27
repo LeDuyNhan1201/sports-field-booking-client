@@ -132,6 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paginationContainer.innerHTML = '';
 
+        if (totalPages <= 1) {
+            return;
+        }
+
         if (currentPage < 1) {
             currentPage = 1;
             loadPromotions(currentPage - 1, itemsPerPage);
