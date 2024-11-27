@@ -1,8 +1,8 @@
 <!-- Header -->
-<header class="bg-green-800 text-white" th:fragment="header">
+<header class="bg-green-800" th:fragment="header">
     <div class="flex justify-between items-center py-4 px-16">
         <a th:href="@{/}"
-            th:class="${content == 'Sports booking'} ? 'nav active text-4xl font-bold flex items-center' : 'nav inactive flex items-center'"
+            th:class="${content == 'Sports booking'} ? 'nav active text-4xl font-bold flex items-center' : 'nav active text-4xl font-bold flex items-center'"
             aria-current="page">
             <span th:text="#{homepage.name.title}" class="text-xl"></span>
             <img th:src="@{/image/run.png}" alt="Run" class="ml-2 w-8 h-8">
@@ -10,7 +10,7 @@
 
         <ul class="flex space-x-4">
             <li class="relative group flex items-center">
-                <select id="languageSelect" class="bg-transparent border-none text-white p-0 appearance-none text-xl"
+                <select id="languageSelect" class="bg-transparent text-white font-bold border-none p-0 appearance-none text-lg"
                 onchange="switchLanguage(this.value)">
                 <option value="" disabled selected class="text-white text-xl" th:text="#{homepage.language.label}"></option>
                 <option value="en" class="text-black text-xl" th:text="#{homepage.english.title}"></option>
@@ -18,14 +18,14 @@
             </select>
             </li>
 
-            <li class="relative group flex items-center text-xl">
+            <li class="relative group flex items-center text-lg text-gray-500 font-bold">
                 <a href="#" th:href="@{/sports-field}"
                     th:class="${content == 'sportsField'} ? 'nav active hover:text-gray-300' : 'nav inactive'"
                     aria-current="page" th:text="#{homepage.sports_list.title}"></a>
             </li>
 
 
-            <li id="login-section" class="text-xl">
+            <li id="login-section" class="text-lg text-red-500 font-bold">
                 <a th:href="@{/auth}"
                     th:class="${content == 'signIn'} ? 'nav active bg-green-600 px-4 py-2 rounded hover:bg-green-700 font-bold' : 'nav inactive'"
                     th:text="#{homepage.login.title}"></a>

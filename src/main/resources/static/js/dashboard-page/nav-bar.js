@@ -9,7 +9,7 @@ if (localStorage.getItem('current-user') !== null) {
         const user = JSON.parse(currentUser)
 
         userAvatar.src = user.avatar || defaultAvatarUrl
-        usernameElement.textContent = user.username || "John doe"
+        usernameElement.textContent = user.firstName || "John doe"
 
     }
 }

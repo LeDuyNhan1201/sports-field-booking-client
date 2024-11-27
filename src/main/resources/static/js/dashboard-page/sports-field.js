@@ -41,8 +41,9 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
         if (data.items.length > 0) {
             currentOffset = offset;
-            changeCurrentPageColor(currentOffset);
 
+            await loadPage(searchValue)
+            changeCurrentPageColor(currentOffset);
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
         }
@@ -109,7 +110,7 @@ async function appendFieldList(data) {
                     <td class="p-4 w-44 text-red-500">${
                         Math.min(...field.fieldAvailabilities.map((a) => a.price)) == Math.max(...field.fieldAvailabilities.map((a) => a.price))
                             ? Math.max(...field.fieldAvailabilities.map((a) => a.price)) + "$"
-                            : Math.min(...field.fieldAvailabilities.map((a) => a.price)) + "$ - " + Math.max(...field.fieldAvailabilities.map((a) => a.price))+"$"
+                            : Math.min(...field.fieldAvailabilities.map((a) => a.price)) + "$ - " + Math.max(...field.fieldAvailabilities.map((a) => a.price)) + "$"
                     }</td>
                     <td class="p-4">
                         <span class="bg-green-100 text-green-600 py-1 px-3 rounded-full text-xs"
@@ -269,7 +270,6 @@ async function sportsFieldQuantityAll() {
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 
         await appendPrice(data.items);
-        loadPage(data.items);
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }
@@ -289,11 +289,28 @@ async function editField(id) {
     await loadEditValue(id);
 }
 
-function loadPage(data) {
+async function loadPage(searchValue) {
+    let response;
+    let user = JSON.parse(localStorage.getItem("current-user"));
+    if (user.roles[0] === "FIELD_OWNER") {
+        if (!searchValue) searchValue = " ";
+        response = await fetch(
+            `${SERVER_DOMAIN}/sports-field/search?userId=${user.id}&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=0&limit=1000&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}&onlyActiveStatus=0`
+        );
+
+    } else {
+        if (!searchValue) searchValue = " ";
+        response = await fetch(
+            `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=${colSort}&sortDirection=${sortDirection}&offset=0&limit=1000&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}&onlyActiveStatus=0`
+        );
+    }
+    const data = await response.json();
+
     let pageComponent = sportsFieldContainer.querySelector("#sportsField\\.page");
 
+    pageComponent.innerHTML=""
     let pageNumber = 1;
-    for (let i = 1; i < data.length; i += limit) {
+    for (let i = 1; i < data.items.length; i += limit) {
         let element = document.createElement("span");
         element.className = "text-lg text-center cursor-pointer mx-2 sportsField.page";
         element.innerHTML = pageNumber;
@@ -306,8 +323,6 @@ function loadPage(data) {
         });
         pageNumber += 1;
     }
-
-    changeCurrentPageColor(0);
 }
 
 function changeCurrentPageColor(pageValue) {

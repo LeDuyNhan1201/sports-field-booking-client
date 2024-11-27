@@ -45,7 +45,10 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
         if (data.items.length > 0) {
             currentOffset = offset;
+            sportsFieldQuantityAll();
+            
             changeCurrentPageColor(currentOffset);
+            await loadPage(searchValue)
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
         } else {
@@ -268,17 +271,24 @@ async function sportsFieldQuantityAll() {
 
         await appendPrice(data.items);
 
-        loadPage(data.items);
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }
 }
 
-function loadPage(data) {
+async function loadPage(searchValue) {
+    let response;
+    if (!searchValue) searchValue = " ";
+    response = await fetch(
+        `${SERVER_DOMAIN}/sports-field/search?userId=0&text=${searchValue}&colSort=name&sortDirection=1&offset=0&limit=1000&maxPrice=${maxPrice}&minPrice=${minPrice}&categoryId=${currentCategory}&onlyActiveStatus=1`
+    );
+    const data = await response.json();
+    
     let pageComponent = sportsFieldContainer.querySelector("#sportsField\\.page");
 
+    pageComponent.innerHTML = "";
     let pageNumber = 1;
-    for (let i = 1; i < data.length; i += limit) {
+    for (let i = 1; i < data.items.length; i += limit) {
         let element = document.createElement("span");
         element.className = "text-lg text-center cursor-pointer mx-2 focus:text-blue-500 focus:text-xl sportsField.page";
         element.innerHTML = pageNumber;
@@ -291,12 +301,10 @@ function loadPage(data) {
         });
         pageNumber += 1;
     }
-    changeCurrentPageColor(0);
 }
 
 function changeCurrentPageColor(pageValue) {
     const pages = sportsFieldContainer.querySelectorAll(".sportsField\\.page");
-    console.log(pages);
 
     pages.forEach((page, index) => {
         if (index == pageValue) {

@@ -60,6 +60,8 @@ async function loadEditValue(id) {
         fieldId = id;
 
         currentEditSportsField = field;
+        editAvailabilities = [];
+
         await appendEditValue(field);
     } catch (error) {
         console.error("Error fetching detail:", error);
@@ -229,7 +231,8 @@ function changeImageElement(element) {
 }
 
 //load field availability
-async function appendFieldAvailabilityEditField(fieldAvailabilities) {
+async function appendFieldAvailabilityEditField(fieldAvailabilities) {    
+    fieldAvailabilitiesElement.innerHTML = "";
     fieldAvailabilities.forEach((availability, index) => {
         availability = {
             id: availability.id,
@@ -239,7 +242,6 @@ async function appendFieldAvailabilityEditField(fieldAvailabilities) {
             price: availability.price,
         };
         editAvailabilities.push(availability);
-        fieldAvailabilitiesElement.innerHTML = "";
         appendAvailabilityElement(availability, index);
     });
 }

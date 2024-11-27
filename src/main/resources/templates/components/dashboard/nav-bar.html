@@ -1,59 +1,57 @@
 <div th:fragment="navBar" xmlns:th="http://www.w3.org/1999/xhtml"
-    class="w-1/5 bg-green-500 min-h-screen p-4 flex flex-col justify-between">
+    class="w-80 flex flex-col justify-between shadow-xl bg-green-200">
     <div>
-        <div class="flex items-center mb-8">
+        <div class="flex items-center mb-8 rounded-b-xl p-4 bg-green-400">
             <img class="w-10 h-10 rounded-full" alt="User Avatar" id="avatar">
-            <span class="text-white text-xl font-bold ml-4" id="username">John Doe</span>
+            <span class="text-xl font-bold ml-4" id="username">John Doe</span>
         </div>
-
-        <div class="text-white text-xl font-bold mb-8">Main</div>
-        <nav>
+        <nav class="px-4">
             <ul>
-                <li id="dashboard-menu" class="mb-4 text-2xl mt-8 hidden">
+                <li id="dashboard-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.home.title}" th:href="@{/dashboard}"
-                        th:class="${content == 'home'} ? 'text-white flex items-center space-x-2' : 'text-white flex items-center space-x-2 opacity-70'"
+                        th:class="${content == 'home'} ? 'text-black flex items-center space-x-2' : 'text-black flex items-center space-x-2 opacity-70'"
                         aria-current="page">
                         <span>🏠</span><span>Dashboard</span>
                     </a>
                 </li>
 
-                <li id="promotion-menu" class="mb-4 text-2xl mt-8 hidden">
+                <li id="promotion-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.promotion.title}" th:href="@{/dashboard/promotion}"
-                        th:class="${content == 'promotion'} ? 'text-white' : 'text-white'">
+                        th:class="${content == 'promotion'} ? 'text-black' : 'text-black'">
                         Promotion
                     </a>
                 </li>
 
-                <li id="user-menu" class="mb-4 text-2xl mt-8 hidden">
+                <li id="user-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.user_heading.title}" th:href="@{/dashboard/user}"
-                        th:class="${content == 'user'} ? 'text-white' : 'text-white'">
+                        th:class="${content == 'user'} ? 'text-black' : 'text-black'">
                         User
                     </a>
                 </li>
 
-                <li id="order-menu" class="mb-4 text-2xl mt-8 hidden">
+                <li id="order-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.order.title}" th:href="@{/dashboard/order}"
-                        th:class="${content == 'order'} ? 'text-white' : 'text-white'">
+                        th:class="${content == 'order'} ? 'text-black' : 'text-black'">
                         Order
                     </a>
 
-                <li id="sport-field-menu" class="mb-4 text-2xl mt-8 hidden">
+                <li id="sport-field-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.sports_field.title}" th:href="@{/dashboard/sport-field}"
-                        th:class="${content == 'sportField'} ? 'text-white' : 'text-white'">
+                        th:class="${content == 'sportField'} ? 'text-black' : 'text-black'">
                         Sport fields
                     </a>
                 </li>
-                <li id="category-menu" class="mb-4 text-2xl mt-8 hidden">
+                <li id="category-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.category.title}" th:href="@{/dashboard/category}"
-                        th:class="${content == 'category'} ? 'text-white' : 'text-white'">
+                        th:class="${content == 'category'} ? 'text-black' : 'text-black'">
                         Category
                     </a>
                 </li>
+                <div class="mb-4 mt-8">
+                    <a href="#" class="text-red-500 text-lg" th:text="#{dashboard.logout.title}" id="btn-sign-out">Log out</a>
+                </div>
             </ul>
         </nav>
-    </div>
-    <div class="mb-4">
-        <a href="#" class="text-white text-2xl" th:text="#{dashboard.logout.title}" id="btn-sign-out">Log out</a>
     </div>
     <script th:src="@{/js/dashboard-page/nav-bar.js}"></script>
 </div>
