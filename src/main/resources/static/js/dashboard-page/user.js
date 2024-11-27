@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveUserButton = document.getElementById('saveUserBtn');
     const userForm = document.querySelector('form');
     const userModalTitle = document.querySelector('#userModal h2');
+    const userImagePreview = document.getElementById('userImagePreview');
 
     let isEditing = false;
     let currentUserId = null;
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUserId = null;
         userModalTitle.textContent = 'Add User';
         userForm.reset();
+        userImagePreview.src = '/sports-field-booking/image/user-info/user-info.png';
         userModal.classList.remove('hidden');
     });
 
@@ -38,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             middleName: document.getElementById('middleName').value,
             lastName: document.getElementById('lastName').value,
             email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
+            mobileNumber: document.getElementById('phone').value,
             gender: document.getElementById('gender').value,
             birthdate: document.getElementById('birthdate').value,
             status: document.getElementById('status').value,
@@ -83,14 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="p-4">
                     <img src="${image}" alt="User Image" />
                 </td>
-                <td class="p-4">${user.birthdate}</td>
+                <td class="p-4">${user.username}</td>
                 <td class="p-4">${user.email}</td>
-                <td class="p-4">${user.firstName}</td>
-                <td class="p-4">${user.middleName}</td>
-                <td class="p-4">${user.lastName}</td>
                 <td class="p-4">${user.gender}</td>
                 <td class="p-4">${user.mobileNumber}</td>
-                <td class="p-4">${user.username}</td>
+                <td class="p-4">${user.birthdate}</td>
                 <td class="p-4">
                     <span class="${user.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-red-200 text-red-600'} py-1 px-3 rounded-full text-xs">
                         ${user.status === 'ACTIVE' ? 'ACTIVE' : 'BANNED'}
@@ -110,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isEditing = true;
                 currentUserId = user.id;
                 userModalTitle.textContent = 'Edit User';
-                document.getElementById('userImagePreview').src = image;
+                userImagePreview.src = image;
                 document.getElementById('firstName').value = user.firstName;
                 document.getElementById('middleName').value = user.middleName;
                 document.getElementById('lastName').value = user.lastName;
