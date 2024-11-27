@@ -314,3 +314,8 @@ function formatDateInputValue(dateString) {
     // Định dạng theo chuẩn YYYY-MM-DD
     return `${year}-${month}-${day}`;
 }
+
+function switchLanguage(lang) {
+    console.log('Switching language to ' + lang);
+    window.location.href = CLIENT_DOMAIN + '/settings/switch-language?lang=' + lang + '&returnUrl=' + window.location.pathname.replace('/sports-field-booking', '');
+}

@@ -67,7 +67,6 @@ changePictureInput.addEventListener('change', async (e) => {
             //await deleteExistingAvatar(JSON.parse(currentUser).id)
             
             formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
-            console.log(formData);
             
             try {
                 const response = await fetch(`${SERVER_DOMAIN}/users/avatar`, {
@@ -113,6 +112,7 @@ saveBtn.addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const birthday = document.getElementById('birthday').value;
     const gender = document.getElementById('gender').value;
+    const username = document.getElementById('username-input').value;
 
     const userData = {
         id: JSON.parse(currentUser).id,
@@ -122,6 +122,7 @@ saveBtn.addEventListener('click', async () => {
         email: email,
         birthdate: birthday,
         gender: gender,
+        username: username
     };
 
     try {
@@ -133,10 +134,7 @@ saveBtn.addEventListener('click', async () => {
             },
             body: JSON.stringify(userData), 
         });
-
-        console.log(response);
                 
-
         if (response.ok) {
             document.getElementById('firstnameDisplay').textContent = firstname;
             document.getElementById('lastnameDisplay').textContent = lastname;
@@ -144,13 +142,20 @@ saveBtn.addEventListener('click', async () => {
             document.getElementById('emailDisplay').textContent = email;
             document.getElementById('birthdayDisplay').textContent = birthday;
             document.getElementById('genderDisplay').textContent = gender === 'Male' ? genderMaleText : (gender === 'Female' ? genderFemaleText : genderOtherText);
-            
+            document.getElementById('usernameDisplay').textContent = username;
+
             inputFields.forEach(input => input.classList.add('hidden'));
             selectFields.forEach(select => select.classList.add('hidden'));
             displayFields.forEach(display => display.classList.remove('hidden'));
             saveBtn.classList.add('hidden');
+        
+            const user = JSON.parse(currentUser);
 
+            user.username = username;
+            localStorage.setItem('current-user', JSON.stringify(user));
+            
             alert('Save user information successfully');
+            window.location.reload();
         } else {
             alert('Failed to save user information successfully');
         }
@@ -196,7 +201,8 @@ document.getElementById('deleteAccountBtn').addEventListener('click', async () =
             const response = await fetch(`${SERVER_DOMAIN}/users/${userId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getAccessTokenFromCookie()
                 },
                 body: JSON.stringify({
                     accessToken: getAccessTokenFromCookie(),
@@ -254,14 +260,14 @@ async function loadUserInfo(userID) {
         }
 
         document.getElementById('genderDisplay').textContent = textGender;
-        // edit
+        // edit        
         document.getElementById('firstname').value = data.firstName;
         document.getElementById('lastname').value = data.lastName;
         document.getElementById('phone').value = data.mobileNumber;
         document.getElementById('email').value = data.email;
         document.getElementById('birthday').value = data.birthdate;
         document.getElementById('gender').value = data.gender;
-        document.getElementById('username').value = data.username;
+        document.getElementById('username-input').value = data.username;
     } catch (error) {
         console.error("Error loading user info:", error);
     }
