@@ -12,7 +12,6 @@ let sportsFieldContainer = document.getElementById("sportsField.container");
 let colSort = document.getElementById("sportsField.select_colSort").value;
 let currentCategory = sportsFieldContainer.querySelector("#sportsField\\.select_category").value;
 
-
 let sportFieldList = document.getElementById("sportsField.list");
 let sportFieldGrid = document.getElementById("sportsField.grid");
 
@@ -42,11 +41,10 @@ async function loadSportFieldList(tab, offset, searchValue) {
 
         if (data.items.length > 0) {
             currentOffset = offset;
-            loadPage(offset);
+            changeCurrentPageColor(currentOffset)
+
             if (tab === "grid") await appendFieldGrid(data.items);
             else await appendFieldList(data.items);
-        } else {
-            alert("Không tìm thấy kết quả");
         }
     } catch (error) {
         console.error("Error fetching sport field:", error);
@@ -81,9 +79,9 @@ async function appendFieldGrid(data) {
                 </div>
             </div>
             `;
-            fieldElement.addEventListener('click', ()=>{
-                editField(field.id)
-            })
+        fieldElement.addEventListener("click", () => {
+            editField(field.id);
+        });
         sportFieldGrid.appendChild(fieldElement);
     });
 }
@@ -118,9 +116,9 @@ async function appendFieldList(data) {
                         <i class="fa-solid fa-share-from-square text-green-500 cursor-pointer"></i>
                     </td>
             `;
-            fieldElement.addEventListener('click', ()=>{
-                editField(field.id)
-            })
+            fieldElement.addEventListener("click", () => {
+                editField(field.id);
+            });
             sportFieldTable.appendChild(fieldElement);
         });
     } catch (error) {
@@ -137,12 +135,6 @@ document.getElementById("sportsField.button-tab-list").addEventListener("click",
     currentTab = "list";
     loadSportFieldList(currentTab, currentOffset, searchValue);
 });
-
-//change page
-
-function loadPage(offset) {
-    document.getElementById("sportsField.page").textContent = offset + 1;
-}
 
 //action next page
 document.getElementById("sportsField.nextPage").addEventListener("click", () => {
@@ -271,6 +263,7 @@ async function sportsFieldQuantityAll() {
         document.getElementById("sportsField.quantity.value").textContent = data.items.length;
 
         await appendPrice(data.items);
+        loadPage(data.items);
     } catch (error) {
         console.error("Error fetching sport field:", error);
     }
@@ -283,8 +276,40 @@ buttonNewField.addEventListener("click", () => {
 });
 function editField(id) {
     const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('id', id); 
-    window.history.pushState({}, '', currentUrl);
+    currentUrl.searchParams.set("id", id);
+    window.history.pushState({}, "", currentUrl);
 
     sportsFieldContainer.querySelector("#edit_field\\.container").classList.remove("hidden");
+}
+
+function loadPage(data) {
+    let pageComponent = sportsFieldContainer.querySelector("#sportsField\\.page");
+
+    let pageNumber = 1;
+    for (let i = 1; i < data.length; i += limit) {
+        let element = document.createElement("span");
+        element.className = "text-lg text-center cursor-pointer mx-2 sportsField.page";
+        element.innerHTML = pageNumber;
+
+        pageComponent.appendChild(element);
+        let currentPage = pageNumber - 1;
+        element.addEventListener("click", () => {
+            loadSportFieldList(currentTab, currentPage, searchValue);
+            changeCurrentPageColor(currentPage)
+        });
+        pageNumber += 1;
+    }
+
+    changeCurrentPageColor(0)
+}
+
+function changeCurrentPageColor(pageValue) {
+    const pages = sportsFieldContainer.querySelectorAll(".sportsField\\.page");
+    pages.forEach((page, index) => {
+        if(index == pageValue){
+            page.className =  "text-lg text-center cursor-pointer text-red-500 font-bold mx-2  sportsField.page";
+        } else {
+            page.className =  "text-lg text-center cursor-pointer mx-2 sportsField.page";
+        }
+    });
 }
