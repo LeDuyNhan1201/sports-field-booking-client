@@ -1,8 +1,6 @@
-
-let editFieldContainer = document.getElementById("edit_field.container")
+let editFieldContainer = document.getElementById("edit_field.container");
 
 let fieldId = 0;
-
 
 let fieldAvailabilitiesElement = editFieldContainer.querySelector("#edit_field\\.availability\\.container");
 let editAvailabilities = [];
@@ -13,6 +11,7 @@ let editField_name = editFieldContainer.querySelector("#edit_field\\.name");
 let editField_location = editFieldContainer.querySelector("#edit_field\\.location");
 let editField_opacity = editFieldContainer.querySelector("#edit_field\\.opacity");
 let editField_category = editFieldContainer.querySelector("#edit_field\\.category");
+let editField_promotion = editFieldContainer.querySelector("#edit_field\\.promotion");
 
 let currentEditSportsField = null;
 
@@ -20,13 +19,11 @@ let currentEditSportsField = null;
 let changeAvailability = false;
 
 // thêm các thuộc tính trong category select
-async function loadEditCategory(currentCategory) {    
-    console.log(currentCategory);
-        
+async function loadEditCategory(currentCategory) {
     try {
         const data = await fetch(`${SERVER_DOMAIN}/category?offset=0&limit=100`);
         const categories = await data.json();
-                
+
         await appendEditCategory(categories.items, currentCategory);
     } catch (error) {
         console.error("Error fetching category data:", error);
@@ -36,7 +33,6 @@ async function loadEditCategory(currentCategory) {
 async function appendEditCategory(data, currentCategory) {
     let selectContainer = editFieldContainer.querySelector("#edit_field\\.category");
 
-    
     selectContainer.innerHTML = "";
     data.forEach((category) => {
         let option = document.createElement("option");
@@ -70,17 +66,33 @@ async function loadEditValue(id) {
     }
 }
 
-async function appendEditValue(field) {
+//box duyệt sân và sửa status
+async function statusElement(field) {
+    if (JSON.parse(localStorage.getItem("current-user")).roles[0] === "ADMIN") {
+        editFieldContainer.querySelector("#edit_field\\.button\\.openStatus").classList.remove("hidden");
+        editFieldContainer.querySelector("#edit_field\\.promotion").parentElement.classList.remove("hidden")
+        if (field.status == "PENDING") {
+            editFieldContainer.querySelector("#edit_field\\.acceptStatus").classList.remove("hidden");
+        } else {
+            editFieldContainer.querySelector("#edit_field\\.acceptStatus").classList.add("hidden");
+        }
+    }
+}
+
+async function appendEditValue(field) {    
     editField_name.placeholder = field.name;
     editField_location.placeholder = field.location;
     editField_opacity.placeholder = field.opacity;
+    editField_promotion.placeholder = field.promotion ? field.promotion.id : "";
 
     editFieldContainer.querySelector("#edit_field\\.button_remove_all_availabilities").classList.add("hidden");
-        
+
     await loadEditCategory(field.category);
-    
+
     appendImagesEditField(field.images);
     appendFieldAvailabilityEditField(field.fieldAvailabilities);
+
+    statusElement(field);
 }
 
 // tải ảnh lên form
@@ -89,7 +101,7 @@ async function appendImagesEditField(images) {
     inputImagesElement.forEach((element, index) => {
         const newElement = document.createElement("div");
         newElement.className = "edit_field.image";
-        
+
         newElement.innerHTML = `
             <img 
                 src="${images[index]}" 
@@ -117,7 +129,6 @@ async function appendImagesEditField(images) {
         });
     });
 }
-
 
 // Hàm xử lý tải lên file
 function handleFileUpload(file, element, index) {
@@ -369,7 +380,6 @@ async function appendAvailabilityElement(availability, index) {
 
 // action sửa
 editFieldContainer.querySelector("#edit_field\\.create_field").addEventListener("click", async () => {
-    
     let name = editFieldContainer.querySelector("#edit_field\\.name").value == "" ? currentEditSportsField.name : editFieldContainer.querySelector("#edit_field\\.name").value;
     let location = editFieldContainer.querySelector("#edit_field\\.location").value == "" ? currentEditSportsField.location : editFieldContainer.querySelector("#edit_field\\.location").value;
     let opacity = editFieldContainer.querySelector("#edit_field\\.opacity").value == "" ? currentEditSportsField.opacity : editFieldContainer.querySelector("#edit_field\\.opacity").value;
@@ -540,5 +550,86 @@ async function deleteAvailability(sportFieldId, index) {
     }
 }
 
+editFieldContainer.querySelector("#edit_field\\.button\\.acceptStatus").addEventListener("click", async () => {
+    if (confirm("Bạn có chắc duyệt sân này không")) {
+        await updateStatus("OPEN");
+    }
+});
 
+editFieldContainer.querySelector("#edit_field\\.button\\.bannedStatus").addEventListener("click", async () => {
+    if (confirm("Bạn có chắc khóa sân này không")) {
+        if (currentEditSportsField.status == "INACTIVE") {
+            alert("Sân này đang khóa");
+        } else {
+            await updateStatus("INACTIVE");
+        }
+    }
+});
+editFieldContainer.querySelector("#edit_field\\.button\\.maintenanceStatus").addEventListener("click", async () => {
+    if (confirm("Bạn có chắc bảo trì sân này không")) {
+        if (currentEditSportsField.status == "MAINTENANCE") {
+            alert("Sân này đang bảo trì");
+        } else {
+            await updateStatus("MAINTENANCE");
+        }
+    }
+});
 
+editFieldContainer.querySelector("#edit_field\\.button\\.openStatus").addEventListener("click", async () => {
+    if (confirm("Bạn có chắc bảo trì sân này không")) {
+        if (currentEditSportsField.status == "OPEN" || currentEditSportsField.status == "CLOSED") {
+            alert("Sân này đang hoạt động");
+        } else {
+            await updateStatus("OPEN");
+        }
+    }
+});
+
+async function updateStatus(status) {
+    try {
+        const response = await fetch(`${SERVER_DOMAIN}/sports-field/status/${fieldId}?status=${status}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getAccessTokenFromCookie(),
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Error update status sports field:", response.status, errorText);
+        } else {
+            alert("Thay đổi trạng thái thành công");
+            window.location.reload(true);
+        }
+    } catch (error) {
+        console.error("Error update status sports field:", error);
+    }
+}
+
+editFieldContainer.querySelector("#edit_field\\.promotion").addEventListener("blur", async (e) => {
+    await updatePromotion(e.target.vale)
+});
+editFieldContainer.querySelector("#edit_field\\.promotion").addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+        await updatePromotion(e.target.value)
+    }
+});
+
+async function updatePromotion(value) {
+    const response = await fetch(`${SERVER_DOMAIN}/sports-field/promotion/${currentEditSportsField.id}?promotionId=${value}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + getAccessTokenFromCookie(),
+        },
+    });
+
+    if (!response.ok) {
+        alert("Mã giảm giá không hợp lệ")
+        
+    } else {
+        alert("Thay đổi giảm giá thành");
+        window.location.reload(true);
+    }
+}

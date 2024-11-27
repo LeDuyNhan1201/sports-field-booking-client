@@ -48,7 +48,7 @@ public class DashboardController {
     }
 
     @GetMapping("/promotion")
-    @PreAuthorize("hasRole('FIELD_OWNER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public String promotionPage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.promotion.title"));
         model.addAttribute("content", "promotion");
