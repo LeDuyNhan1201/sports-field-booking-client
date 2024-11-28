@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userForm = document.querySelector('form');
     const userModalTitle = document.querySelector('#userModal h2');
     const userImagePreview = document.getElementById('userImagePreview');
+    const statusFilter = document.getElementById('status-filter');
 
     let isEditing = false;
     let currentUserId = null;
@@ -126,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${image}" class="w-20 h-20 rounded-full" alt="User Image" />
                 </td>
                 <td class="p-4">${user.username}</td>
-                <td class="p-4">${user.email}</td>
                 <td class="p-4">${user.gender}</td>
                 <td class="p-4">${user.mobileNumber}</td>
                 <td class="p-4">${user.birthdate}</td>
@@ -284,17 +284,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    statusFilter.addEventListener('change', () => {
+        let status = statusFilter.value || '';
+        if (status === 'allStatus') {
+            loadUsers(currentPage - 1, itemsPerPage);
+            return;
+        }
+        isSearch = true;
+        searchUsers();
+    });
+
     async function searchUsers() {
         const keyword = document.getElementById("userSearchInput").value || "";
+        let status = statusFilter.value || '';
 
         const queryParamSearchCurrentPage = new URLSearchParams({
             keyword,
+            status,
             offset: (currentPage - 1),
             limit: itemsPerPage,
         });
 
         const queryParams = new URLSearchParams({
             keyword,
+            status,
         });
 
         try {
