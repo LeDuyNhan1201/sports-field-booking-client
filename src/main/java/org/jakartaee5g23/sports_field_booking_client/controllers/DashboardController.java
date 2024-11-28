@@ -18,7 +18,7 @@ import static org.jakartaee5g23.sports_field_booking_client.components.Translato
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DashboardController {
     @GetMapping
-    @PreAuthorize("hasRole('FIELD_OWNER')")
+    //@PreAuthorize("hasRole('FIELD_OWNER') or hasRole('ADMIN')")
     public String homePage(Model model) {
         model.addAttribute("title", getLocalizedMessage("dashboard.home.title"));
         model.addAttribute("content", "home");

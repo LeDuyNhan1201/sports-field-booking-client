@@ -3,8 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const newPasswordInput = document.getElementById("new-password");
     const confirmPasswordInput = document.getElementById("confirm-password");
     const changePasswordForm = document.querySelector("form");
+    const changePasswordButton = document.getElementById("btnChangePassword");
 
-    changePasswordForm.addEventListener("submit", async (event) => {
+    changePasswordButton.addEventListener("click", async (event) => {
         event.preventDefault();
 
         const currentPassword = currentPasswordInput.value;
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             const response = await fetchCustom({
-                url: `${SERVER_DOMAIN}/users/${JSON.parse(currentUser).id}/password`,
+                url: `${SERVER_DOMAIN}/users/password`,
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 withAuth: true,
@@ -30,13 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!response.ok) {
                 const message = data.message || 'Failed to send email';
                 popupError(message); // Hiển thị lỗi qua popup
-                validationForm("formForgot", data.errors); // Hiển thị lỗi validation
+                validationForm("formChangePassword", data.errors); // Hiển thị lỗi validation
 
             } else {
                 alert('Password has been changed successfully');
             }
         } catch (error) {
-            console.error("Error:", error);
             popupError(error.message);
         }
     });
