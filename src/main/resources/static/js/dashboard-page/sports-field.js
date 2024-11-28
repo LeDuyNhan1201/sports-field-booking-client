@@ -69,7 +69,7 @@ async function appendFieldGrid(data) {
             <div
                 class='bg-white shadow-lg rounded-lg overflow-hidden block cursor-pointer'
             >
-                <img src="${field.images[0]}" alt="Sport field image" class="w-20 h-20 rounded-full" />
+                <img src="${field.images[0]}" alt="Sport field image"/>
                 <div class="p-4">
                     <h4 class="font-bold text-xl">${field.name}</h4>
                     <p class="text-red-600">${Math.min(...field.fieldAvailabilities.map((a) => a.price))}$ - ${Math.max(...field.fieldAvailabilities.map((a) => a.price))}$</p>
@@ -100,7 +100,7 @@ async function appendFieldList(data) {
                     <td class="p-4">${index + 1 + currentOffset * 12}</td>
                     <td class="p-4">${field.name}</td>
                     <td class="p-4">
-                        <img src="${field.images[0]}" alt="Stadium Image" class='w-20 h-20 rounded-full' />
+                        <img src="${field.images[0]}" alt="Stadium Image" class='w-12 h-12 rounded-full' />
                     </td>
                     <td class="p-4">${field.location}</td>
                     <td class="p-4">${field.category}</td>

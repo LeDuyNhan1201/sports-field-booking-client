@@ -81,6 +81,12 @@ async function statusElement(field) {
     }
 }
 
+function appendTooltipEditStatus() {
+    addTooltip(editFieldContainer.querySelector("#edit_field\\.button\\.bannedStatus"), "Khóa sân")
+    addTooltip(editFieldContainer.querySelector("#edit_field\\.button\\.maintenanceStatus"), "Bảo trì sân")
+    addTooltip(editFieldContainer.querySelector("#edit_field\\.button\\.openStatus"), "Mở hoạt động sân")
+}
+
 async function appendEditValue(field) {    
     editField_name.placeholder = field.name;
     editField_location.placeholder = field.location;
@@ -95,6 +101,8 @@ async function appendEditValue(field) {
     appendFieldAvailabilityEditField(field.fieldAvailabilities);
 
     statusElement(field);
+
+    appendTooltipEditStatus()
 }
 
 // tải ảnh lên form
@@ -244,6 +252,7 @@ function changeImageElement(element) {
 //load field availability
 async function appendFieldAvailabilityEditField(fieldAvailabilities) {    
     fieldAvailabilitiesElement.innerHTML = "";
+    fieldAvailabilities.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
     fieldAvailabilities.forEach((availability, index) => {
         availability = {
             id: availability.id,
@@ -569,14 +578,14 @@ editFieldContainer.querySelector("#edit_field\\.button\\.acceptStatus").addEvent
     }
 });
 
-editFieldContainer.querySelector("#edit_field\\.button\\.bannedStatus").addEventListener("click", async () => {
+editFieldContainer.querySelector("#edit_field\\.button\\.bannedStatus").addEventListener("click", async (e) => {
     if (confirm("Bạn có chắc khóa sân này không")) {
         if (currentEditSportsField.status == "INACTIVE") {
             alert("Sân này đang khóa");
         } else {
             await updateStatus("INACTIVE");
         }
-    }
+    }    
 });
 editFieldContainer.querySelector("#edit_field\\.button\\.maintenanceStatus").addEventListener("click", async () => {
     if (confirm("Bạn có chắc bảo trì sân này không")) {
