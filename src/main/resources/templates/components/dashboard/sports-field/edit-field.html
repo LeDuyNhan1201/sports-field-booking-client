@@ -122,7 +122,7 @@
 
 
                     <div class="hidden mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Promotion</label>
+                        <label class="block text-sm font-medium text-gray-700" th:text="#{order.promotion_header.title}">Promotion</label>
                         <input
                             type="text"
                             id="edit_field.promotion"
@@ -163,7 +163,7 @@
                     </div>
                     <!-- Price -->
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Price</label>
+                        <label class="block text-sm font-medium text-gray-700" th:text="#{booking_detail.price.title}">Price</label>
                         <input
                             type="number"
                             min="0"
@@ -183,10 +183,10 @@
                 <div class="flex flex-col mt-4">
                     <div class="flex px-2 justify-between text-center bg-green-300 rounded-tr-md rounded-tl-md">
                         <span class="w-1"></span>
-                        <span class="flex-1 font-semibold">Open</span>
-                        <span class="flex-1 font-semibold">Close</span>
-                        <span class="flex-1 font-semibold">Price</span>
-                        <span class="w-1"></span>
+                        <span class="flex-1 font-semibold" th:text="#{sportsList.startHour.title}">Open</span>
+                        <span class="flex-1 font-semibold" th:text="#{sportsList.endHour.title}">Close</span>
+                        <span class="flex-1 font-semibold" th:text="#{booking_detail.price.title}">Price</span>
+                        <span class="w-1" ></span>
                     </div>
                     <div id="edit_field.availability.container" class="shadow-lg h-60 overflow-y-auto custom-scrollbar pt-1"></div>
                 </div>
