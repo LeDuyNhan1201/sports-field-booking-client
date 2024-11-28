@@ -15,17 +15,17 @@
                     </a>
                 </li>
 
-                <li id="promotion-menu" class="mb-4 text-lg mt-8 hidden">
-                    <a th:text="#{dashboard.promotion.title}" th:href="@{/dashboard/promotion}"
-                        th:class="${content == 'promotion'} ? 'text-black' : 'text-black'">
-                        Promotion
-                    </a>
-                </li>
-
                 <li id="user-menu" class="mb-4 text-lg mt-8 hidden">
                     <a th:text="#{dashboard.user_heading.title}" th:href="@{/dashboard/user}"
                         th:class="${content == 'user'} ? 'text-black' : 'text-black'">
                         User
+                    </a>
+                </li>
+
+                <li id="promotion-menu" class="mb-4 text-lg mt-8 hidden">
+                    <a th:text="#{dashboard.promotion.title}" th:href="@{/dashboard/promotion}"
+                        th:class="${content == 'promotion'} ? 'text-black' : 'text-black'">
+                        Promotion
                     </a>
                 </li>
 
