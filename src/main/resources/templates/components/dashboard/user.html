@@ -33,9 +33,9 @@
         <div class="flex items-center space-x-4">
             <select id="status-filter"
                 class="block w-64 bg-white border-gray-300 p-4 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <option value="" th:text="#{dashboard.user_searchStatus.title}" class="w-full"></option>
+                <option value="allStatus" th:text="#{dashboard.user_searchStatus.title}" class="w-full"></option>
                 <option value="ACTIVE" th:text="#{dashboard.user_status.active}" class="w-full"></option>
-                <option value="INACTIVE" th:text="#{dashboard.user_status.banned}" class="w-full"></option>
+                <option value="BANNED" th:text="#{dashboard.user_status.banned}" class="w-full"></option>
             </select>
         </div>
     </div>
@@ -47,14 +47,14 @@
                 <th class="p-4 cursor-pointer" onclick="sortTable(0)" th:text="#{dashboard.user_id.title}"></th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(1)" th:text="#{dashboard.user_image.title}"></th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(2)" th:text="#{dashboard.user_username.title}"></th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.user_email.title}"></th>
+                <!-- <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.user_email.title}"></th> -->
                 <!-- <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.user_firstname.title}"></th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.user_middlename.title}"></th>
                 <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.user_lastname.title}"></th> -->
-                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.user_gender.title}"></th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.user_phone.title}"></th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.user_birthdate.title}"></th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(7)" th:text="#{dashboard.user_status.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)" th:text="#{dashboard.user_gender.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(4)" th:text="#{dashboard.user_phone.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(5)" th:text="#{dashboard.user_birthdate.title}"></th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(6)" th:text="#{dashboard.user_status.title}"></th>
                 <th class="p-4" th:text="#{dashboard.user_action.title}"></th>
             </tr>
         </thead>
